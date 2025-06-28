@@ -107,7 +107,18 @@ export default function Stats() {
     );
 
   if (!watched.length)
-    return <p className="text-gray-300 p-6">No watched movies found.</p>;
+    return (
+      <div className="min-h-[50vh] flex flex-col items-center justify-center text-center px-6">
+        <div className="text-4xl mb-3 text-gray-500">📊</div>
+        <h2 className="text-2xl font-semibold text-indigo-400 mb-2">
+          No Stats Available
+        </h2>
+        <p className="text-gray-400 max-w-md">
+          You haven't watched any movies yet. Once you do, your viewing stats
+          will come to life here!
+        </p>
+      </div>
+    );
 
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">

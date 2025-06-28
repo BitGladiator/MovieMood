@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Diary from "./pages/Diary";
 import Stats from "./pages/Stats";
+import WatchLater from "./pages/WatchLater";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/diary" element={<Diary />} />
           <Route path="/stats" element={<Stats />} />
+          <Route path="/watchlater" element={<WatchLater />} />
         </Routes>
       </div>
     </div>

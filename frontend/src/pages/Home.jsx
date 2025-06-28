@@ -35,31 +35,42 @@ export default function Home() {
     localStorage.setItem("diary", JSON.stringify([...prev, entry]));
   };
 
+  const handleAddToWatchLater = (movie) => {
+    const prev = JSON.parse(localStorage.getItem("watchLater") || "[]");
+    const exists = prev.some((m) => m.imdbID === movie.imdbID);
+
+    if (!exists) {
+      localStorage.setItem("watchLater", JSON.stringify([...prev, movie]));
+      alert("Added to Watch Later!");
+    } else {
+      alert("Movie already in Watch Later list.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white px-6 py-8">
-     <h1 className="text-4xl md:text-5xl font-extrabold text-center mb-8 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent drop-shadow-lg">
-  🎬 Movie Finder
-</h1>
-
+      <h1 className="text-4xl md:text-5xl font-extrabold text-center mb-8 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 bg-clip-text text-transparent drop-shadow-lg">
+        🎬 Movie Finder
+      </h1>
 
       <div className="max-w-2xl mx-auto mb-8">
-  <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-white/20 shadow-xl rounded-xl p-4 flex items-center gap-3">
-    <input
-      type="text"
-      className="flex-1 p-3 rounded-md bg-gray-200/70 dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      placeholder="Search for a movie..."
-      value={query}
-      onChange={(e) => setQuery(e.target.value)}
-      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-    />
-    <button
-      className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md transition font-semibold"
-      onClick={handleSearch}
-    >
-      Search
-    </button>
-  </div>
-</div>
+        <div className="bg-white/10 dark:bg-white/5 backdrop-blur-sm border border-white/20 shadow-xl rounded-xl p-4 flex items-center gap-3">
+          <input
+            type="text"
+            className="flex-1 p-3 rounded-md bg-gray-200/70 dark:bg-gray-700 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Search for a movie..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+          />
+          <button
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md transition font-semibold"
+            onClick={handleSearch}
+          >
+            Search
+          </button>
+        </div>
+      </div>
 
       {loading && (
         <p className="text-center text-gray-400 text-lg animate-pulse">
@@ -104,6 +115,12 @@ export default function Home() {
                 className="mt-3 w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md text-sm"
               >
                 ➕ Add to Diary
+              </button>
+              <button
+                onClick={() => handleAddToWatchLater(movie)}
+                className="mt-2 w-full bg-yellow-500 hover:bg-yellow-600 text-black py-2 rounded-md text-sm font-semibold"
+              >
+                ⭐ Watch Later
               </button>
             </div>
           </div>

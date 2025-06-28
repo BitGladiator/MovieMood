@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moviemood
+  labels:
+    app: moviemood
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moviemood
+  template:
+    metadata:
+      labels:
+        app: moviemood
+    spec:
+      containers:
+        - name: moviemood
+          image: cloudmorph/moviemood:01
