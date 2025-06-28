@@ -108,14 +108,14 @@ export default function Stats() {
 
   if (!watched.length)
     return (
-      <div className="min-h-[50vh] flex flex-col items-center justify-center text-center px-6">
-        <div className="text-4xl mb-3 text-gray-500">📊</div>
-        <h2 className="text-2xl font-semibold text-indigo-400 mb-2">
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-gray-300 p-8 flex flex-col items-center justify-center">
+        <div className="text-7xl animate-bounce mb-4 drop-shadow-lg">📊</div>
+        <h2 className="text-4xl md:text-5xl font-extrabold text-center bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-500 bg-clip-text text-transparent mb-3">
           No Stats Available
         </h2>
-        <p className="text-gray-400 max-w-md">
-          You haven't watched any movies yet. Once you do, your viewing stats
-          will come to life here!
+        <p className="text-lg text-gray-400 text-center max-w-md">
+          You haven’t watched any movies yet. Once you do, your viewing stats
+          will shine here!
         </p>
       </div>
     );

@@ -22,7 +22,9 @@ export default function WatchLater() {
   const handleAddToDiary = async (movie) => {
     try {
       const res = await fetch(
-        `https://www.omdbapi.com/?apikey=${import.meta.env.VITE_OMDB_API_KEY}&i=${movie.imdbID}`
+        `https://www.omdbapi.com/?apikey=${
+          import.meta.env.VITE_OMDB_API_KEY
+        }&i=${movie.imdbID}`
       );
       const data = await res.json();
 
@@ -43,7 +45,9 @@ export default function WatchLater() {
     setLoading(true);
     try {
       const res = await fetch(
-        `https://www.omdbapi.com/?apikey=${import.meta.env.VITE_OMDB_API_KEY}&i=${movie.imdbID}&plot=full`
+        `https://www.omdbapi.com/?apikey=${
+          import.meta.env.VITE_OMDB_API_KEY
+        }&i=${movie.imdbID}&plot=full`
       );
       const data = await res.json();
       if (data.Response === "True") {
@@ -65,13 +69,13 @@ export default function WatchLater() {
 
   if (!movies.length) {
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-black text-center px-6">
-        <div className="text-6xl mb-4 animate-bounce">🎬</div>
-        <h2 className="text-3xl font-bold text-lime-400 mb-2 tracking-tight">
-          No Movies Yet!
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-gray-300 p-8 flex flex-col items-center justify-center">
+        <div className="text-7xl animate-bounce mb-4 drop-shadow-lg">🎯</div>
+        <h2 className="text-4xl md:text-5xl font-extrabold text-center bg-gradient-to-r from-green-400 via-lime-400 to-emerald-500 bg-clip-text text-transparent mb-3">
+          No Movies in Watch Later
         </h2>
-        <p className="text-gray-400 text-lg max-w-md">
-          Your <span className="text-green-500 font-semibold">Watch Later</span> list is waiting to be filled. Explore and add your favorite picks!
+        <p className="text-lg text-gray-400 text-center max-w-md">
+          Add movies here to keep track of what you want to watch next!
         </p>
       </div>
     );
@@ -80,11 +84,12 @@ export default function WatchLater() {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white p-6">
-      <h1 className="text-5xl font-bold text-center mb-8 text-lime-400 tracking-tight">
-  🎯 <span className=" decoration-wavy decoration-green-500">Watch Later</span>
-</h1>
-
-
+        <h1 className="text-5xl font-bold text-center mb-8 text-lime-400 tracking-tight">
+          🎯{" "}
+          <span className=" decoration-wavy decoration-green-500">
+            Watch Later
+          </span>
+        </h1>
 
         <div className="grid gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {movies.map((movie) => (
@@ -130,7 +135,7 @@ export default function WatchLater() {
       <AnimatePresence>
         {selectedMovie && (
           <motion.div
-            className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-6"
+            className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4 overflow-y-auto"
             onClick={closeModal}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -138,7 +143,7 @@ export default function WatchLater() {
           >
             <motion.div
               onClick={(e) => e.stopPropagation()}
-              className="relative bg-gradient-to-br from-gray-800/70 to-black/90 backdrop-blur-xl rounded-2xl p-8 w-full max-w-3xl text-white shadow-2xl border border-gray-700"
+              className="relative bg-gradient-to-br from-gray-800/70 to-black/90 backdrop-blur-xl rounded-2xl p-6 w-full max-w-3xl text-white shadow-2xl border border-gray-700 overflow-hidden"
               initial={{ scale: 0.85, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.85, opacity: 0 }}
@@ -146,7 +151,7 @@ export default function WatchLater() {
             >
               <button
                 onClick={closeModal}
-                className="absolute top-6 right-6 text-gray-400 hover:text-white text-3xl font-bold"
+                className="absolute top-6 right-6 text-gray-400 hover:text-white text-3xl font-bold cursor-pointer"
               >
                 &times;
               </button>
@@ -181,33 +186,45 @@ export default function WatchLater() {
                     />
                     <div className="space-y-2 text-sm text-gray-300">
                       <p>
-                        <span className="font-bold text-lime-400">🎞️ Year:</span>{" "}
+                        <span className="font-bold text-lime-400">
+                          🎞️ Year:
+                        </span>{" "}
                         {movieDetails.Year}
                       </p>
                       <p>
-                        <span className="font-bold text-lime-400">📀 Genre:</span>{" "}
+                        <span className="font-bold text-lime-400">
+                          📀 Genre:
+                        </span>{" "}
                         {movieDetails.Genre}
                       </p>
                       <p>
-                        <span className="font-bold text-lime-400">🎬 Director:</span>{" "}
+                        <span className="font-bold text-lime-400">
+                          🎬 Director:
+                        </span>{" "}
                         {movieDetails.Director}
                       </p>
                       <p>
-                        <span className="font-bold text-lime-400">👥 Actors:</span>{" "}
+                        <span className="font-bold text-lime-400">
+                          👥 Actors:
+                        </span>{" "}
                         {movieDetails.Actors}
                       </p>
                       <p>
-                        <span className="font-bold text-lime-400">⏱ Runtime:</span>{" "}
+                        <span className="font-bold text-lime-400">
+                          ⏱ Runtime:
+                        </span>{" "}
                         {movieDetails.Runtime}
                       </p>
                       <p>
-                        <span className="font-bold text-lime-400">⭐ IMDb:</span>{" "}
+                        <span className="font-bold text-lime-400">
+                          ⭐ IMDb:
+                        </span>{" "}
                         {movieDetails.imdbRating}
                       </p>
                     </div>
                   </div>
 
-                  <div className="mt-6">
+                  <div className="mt-6 max-h-40 overflow-y-auto pr-2">
                     <h3 className="text-xl font-semibold mb-2 text-green-400">
                       🎭 Plot
                     </h3>

@@ -65,8 +65,14 @@ export default function Diary() {
   if (!diary.length) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-gray-300 p-8 flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold mb-4 tracking-tight">🎥 Your Movie Diary</h1>
-        <p className="text-lg text-gray-400">No movies added yet.</p>
+        <div className="text-7xl animate-bounce mb-4 drop-shadow-lg">🎥</div>
+        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-center bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 bg-clip-text text-transparent mb-3">
+          Your Movie Diary
+        </h1>
+        <p className="text-lg text-gray-400 text-center max-w-md">
+          No movies added yet. Start exploring and documenting your cinematic
+          adventures!
+        </p>
       </div>
     );
   }
@@ -89,7 +95,9 @@ export default function Diary() {
         </div>
 
         {filteredDiary.length === 0 && (
-          <p className="text-center text-gray-400">No matching movies found.</p>
+          <p className="text-center text-pink-400 text-lg mt-10 animate-pulse">
+            No cinematic matches found. Try a different keyword! 🎬
+          </p>
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
@@ -144,7 +152,7 @@ export default function Diary() {
             >
               <button
                 onClick={closeModal}
-                className="absolute top-6 right-6 text-gray-400 hover:text-white text-3xl font-bold"
+                className="absolute top-6 right-6 text-gray-400 hover:text-white text-3xl font-bold cursor-pointer"
               >
                 &times;
               </button>
@@ -179,37 +187,49 @@ export default function Diary() {
                     />
                     <div className="space-y-2 text-sm text-gray-300">
                       <p>
-                        <span className="font-bold text-indigo-400">🎞️ Year:</span>{" "}
+                        <span className="font-bold text-indigo-400">
+                          🎞️ Year:
+                        </span>{" "}
                         {movieDetails.Year}
                       </p>
                       <p>
-                        <span className="font-bold text-indigo-400">📀 Genre:</span>{" "}
+                        <span className="font-bold text-indigo-400">
+                          📀 Genre:
+                        </span>{" "}
                         {movieDetails.Genre}
                       </p>
                       <p>
-                        <span className="font-bold text-indigo-400">🎬 Director:</span>{" "}
+                        <span className="font-bold text-indigo-400">
+                          🎬 Director:
+                        </span>{" "}
                         {movieDetails.Director}
                       </p>
                       <p>
-                        <span className="font-bold text-indigo-400">👥 Actors:</span>{" "}
+                        <span className="font-bold text-indigo-400">
+                          👥 Actors:
+                        </span>{" "}
                         {movieDetails.Actors}
                       </p>
                       <p>
-                        <span className="font-bold text-indigo-400">⏱ Runtime:</span>{" "}
+                        <span className="font-bold text-indigo-400">
+                          ⏱ Runtime:
+                        </span>{" "}
                         {movieDetails.Runtime}
                       </p>
                       <p>
-                        <span className="font-bold text-indigo-400">⭐ IMDb:</span>{" "}
+                        <span className="font-bold text-indigo-400">
+                          ⭐ IMDb:
+                        </span>{" "}
                         {movieDetails.imdbRating}
                       </p>
                     </div>
                   </div>
 
-                  <div className="mt-6">
-                    <h3 className="text-xl font-semibold mb-2 text-pink-400">
+                  <div className="mt-6 max-h-40 overflow-y-auto pr-2">
+                    <h3 className="text-xl font-semibold mb-2 text-green-400">
                       🎭 Plot
                     </h3>
-                    <p className="text-gray-300 italic leading-relaxed border-l-4 border-indigo-500 pl-4">
+                    <p className="text-gray-300 italic leading-relaxed border-l-4 border-green-500 pl-4">
                       {movieDetails.Plot}
                     </p>
                   </div>

@@ -84,21 +84,21 @@ export default function Home() {
         {results.map((movie) => (
           <div
             key={movie.imdbID}
-            className="bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:-translate-y-1"
+            className="bg-gradient-to-br from-gray-800 via-gray-900 to-black border border-gray-700 rounded-2xl shadow-lg hover:shadow-2xl transform transition-all hover:-translate-y-1 hover:scale-105 overflow-hidden"
           >
             <div className="relative w-full h-64 bg-gray-700 flex items-center justify-center overflow-hidden">
               {movie.Poster !== "N/A" ? (
                 <img
                   src={movie.Poster}
                   alt={movie.Title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                   onError={(e) => {
                     e.currentTarget.style.display = "none";
                     e.currentTarget.parentNode.innerHTML = `
-                      <div class='text-gray-400 text-sm text-center px-2'>
-                        🎬 No Poster Available
-                      </div>
-                    `;
+                   <div class='text-gray-400 text-sm text-center px-2'>
+                     🎬 No Poster Available
+                   </div>
+                 `;
                   }}
                 />
               ) : (
@@ -107,21 +107,29 @@ export default function Home() {
                 </div>
               )}
             </div>
-            <div className="p-4">
-              <h2 className="text-lg font-semibold">{movie.Title}</h2>
-              <p className="text-gray-400 text-sm">{movie.Year}</p>
-              <button
-                onClick={() => setSelectedMovie(movie)}
-                className="mt-3 w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-md text-sm"
-              >
-                ➕ Add to Diary
-              </button>
-              <button
-                onClick={() => handleAddToWatchLater(movie)}
-                className="mt-2 w-full bg-yellow-500 hover:bg-yellow-600 text-black py-2 rounded-md text-sm font-semibold"
-              >
-                ⭐ Watch Later
-              </button>
+
+            <div className="p-4 flex flex-col justify-between h-40">
+              <div>
+                <h2 className="text-xl font-semibold text-lime-300">
+                  {movie.Title}
+                </h2>
+                <p className="text-gray-400 text-sm">{movie.Year}</p>
+              </div>
+
+              <div className="mt-3 space-y-2">
+                <button
+                  onClick={() => setSelectedMovie(movie)}
+                  className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:brightness-110 text-white py-2 rounded-md text-sm font-semibold transition-all"
+                >
+                  ➕ Add to Diary
+                </button>
+                <button
+                  onClick={() => handleAddToWatchLater(movie)}
+                  className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:brightness-110 text-black py-2 rounded-md text-sm font-semibold transition-all"
+                >
+                  ⭐ Watch Later
+                </button>
+              </div>
             </div>
           </div>
         ))}
