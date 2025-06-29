@@ -52,20 +52,19 @@ export default function Finder() {
 
       await addDoc(collection(db, "diary"), {
         uid: user.uid,
-        title: fullData.Title,
-        year: fullData.Year,
-        poster: fullData.Poster,
-        imdbID: fullData.imdbID,
-        plot: fullData.Plot,
-        review,
-        mood,
-        Genre: fullData.Genre,
-        Director: fullData.Director,
-        Actors: fullData.Actors,
-        Runtime: fullData.Runtime,
-        IMDbRating: fullData.imdbRating,
-        Country: fullData.Country,
-        createdAt: new Date(),
+  imdbID: fullData.imdbID,
+  Title: fullData.Title,
+  Year: fullData.Year,
+  Poster: fullData.Poster,
+  Genre: fullData.Genre,
+  Director: fullData.Director,
+  Actors: fullData.Actors,
+  Runtime: fullData.Runtime,
+  IMDbRating: fullData.imdbRating,
+  Plot: fullData.Plot,
+  review,
+  mood,
+  createdAt: new Date(), // Firestore Timestamp will parse this
       });
 
       toast.success("Added to diary!");
@@ -77,12 +76,28 @@ export default function Finder() {
       toast.error("Failed to add movie.");
     }
   };
+
+  const handleAddToWatchLater = async (movie) => {
+    if (!user) return toast.error("Login required.");
+    try {
+      await addDoc(collection(db, "watchLater"), {
+        uid: user.uid,
+        title: movie.Title,
+        year: movie.Year,
+        poster: movie.Poster,
+        imdbID: movie.imdbID,
+        createdAt: new Date(),
+      });
+      toast.success("Added to Watch Later!");
+    } catch (err) {
+      console.error("Failed to add to Watch Later:", err);
+      toast.error("Failed to add to Watch Later.");
+    }
+  };
+
   if (!user) {
     return (
       <div className="flex flex-col mt-[20rem]">
-        {/* Animated blobs */}
-        
-        {/* Message */}
         <div className="z-10 text-center text-white space-y-4">
           <h2 className="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-teal-300 to-indigo-500 bg-clip-text text-transparent animate-pulse">
             🔐 Please Log In
@@ -91,7 +106,6 @@ export default function Finder() {
             to search and add movies to your diary 🎬
           </p>
         </div>
-
         <style>
           {`
       @keyframes floatSlow {
@@ -109,6 +123,7 @@ export default function Finder() {
       </div>
     );
   }
+
   return (
     <div className="p-4 max-w-5xl mx-auto">
       <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 text-center mb-6 tracking-tight">
@@ -142,7 +157,6 @@ export default function Finder() {
               alt={movie.Title}
               className="w-full h-64 object-cover rounded-2xl shadow-lg border border-gray-600 hover:scale-105 hover:rotate-1 transition-transform duration-300 ease-in-out"
             />
-
             <h3 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-rose-400 to-lime-400 mt-4 text-center drop-shadow">
               {movie.Title}
             </h3>
@@ -156,6 +170,13 @@ export default function Finder() {
             >
               <span className="text-lg">➕</span> Add to Diary
             </button>
+
+            <button
+              onClick={() => handleAddToWatchLater(movie)}
+              className="mt-2 w-full flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-semibold py-2.5 rounded-xl shadow-md transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-105 active:scale-95"
+            >
+              <span className="text-lg">🕒</span> Watch Later
+            </button>
           </div>
         ))}
       </div>
@@ -163,7 +184,6 @@ export default function Finder() {
       {selectedMovie && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center px-4 py-8 overflow-y-auto">
           <div className="bg-gray-900 text-white rounded-2xl p-6 max-w-4xl w-full flex flex-col md:flex-row gap-6 border border-gray-700 shadow-2xl">
-            {/* Left: Poster */}
             <div className="flex-shrink-0">
               <img
                 src={
@@ -180,7 +200,6 @@ export default function Finder() {
               </div>
             </div>
 
-            {/* Right: Form */}
             <div className="flex-1 flex flex-col space-y-4">
               <h2 className="text-2xl font-bold text-lime-400 text-center md:text-left">
                 🎬 Add to Diary

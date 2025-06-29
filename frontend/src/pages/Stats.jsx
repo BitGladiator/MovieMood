@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth, db, collection, query, where, getDocs } from "../firebase";
+
 import {
   BarChart,
   Bar,
@@ -17,40 +20,40 @@ const COLORS = ["#60a5fa", "#34d399", "#fbbf24", "#f472b6", "#818cf8"];
 export default function Stats() {
   const [watched, setWatched] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const diaryEntries = JSON.parse(localStorage.getItem("diary") || "[]");
-
-    async function fetchMovieDetails() {
-      const movies = [];
-
-      for (const entry of diaryEntries) {
-        try {
-          const res = await fetch(
-            `https://www.omdbapi.com/?apikey=${
-              import.meta.env.VITE_OMDB_API_KEY
-            }&i=${entry.imdbID}`
-          );
-          const data = await res.json();
-          if (data.Response === "True") {
-            movies.push({
-              title: data.Title,
-              genres: data.Genre?.split(", ").filter(Boolean),
-              cast: data.Actors?.split(", ").filter(Boolean),
-              year: data.Year,
-            });
-          }
-        } catch (err) {
-          console.error("Error fetching movie:", err);
-        }
+    const unsubscribe = onAuthStateChanged(auth, async (u) => {
+      setUser(u);
+      if (!u) {
+        setLoading(false);
+        return;
       }
 
-      setWatched(movies);
-      setLoading(false);
-    }
+      try {
+        const q = query(collection(db, "diary"), where("uid", "==", u.uid));
+        const querySnapshot = await getDocs(q);
 
-    fetchMovieDetails();
+        const movies = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            title: data.title,
+            genres: data.Genre?.split(", ").filter(Boolean),
+            cast: data.Actors?.split(", ").filter(Boolean),
+            year: data.year,
+          };
+        });
+
+        setWatched(movies);
+      } catch (err) {
+        console.error("Error fetching stats:", err);
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    return unsubscribe;
   }, []);
 
   // Genre distribution
@@ -92,11 +95,10 @@ export default function Stats() {
     .map(([year, count]) => ({ year, count }))
     .sort((a, b) => a.year.localeCompare(b.year));
 
-  if (loading)
+  if (loading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white">
         <div className="w-16 h-16 border-4 border-blue-500 border-dashed rounded-full animate-spin mb-6" />
-
         <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 text-transparent bg-clip-text animate-pulse">
           Loading Movie Stats...
         </h2>
@@ -105,8 +107,19 @@ export default function Stats() {
         </p>
       </div>
     );
+  }
 
-  if (!watched.length)
+  if (!user) {
+    return (
+      <div className="flex flex-col mt-[20rem] items-center justify-center text-center text-white">
+        <p className="text-3xl md:text-4xl font-bold animate-pulse text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-purple-500 to-blue-500 drop-shadow-lg max-w-xl">
+          🔒 Please log in to view your movie stats dashboard.
+        </p>
+      </div>
+    );
+  }
+
+  if (!watched.length) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-gray-300 p-8 flex flex-col items-center justify-center">
         <div className="text-7xl animate-bounce mb-4 drop-shadow-lg">📊</div>
@@ -119,6 +132,7 @@ export default function Stats() {
         </p>
       </div>
     );
+  }
 
   return (
     <div className="p-6 min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
@@ -126,7 +140,6 @@ export default function Stats() {
         🎬 Movie Stats Dashboard
       </h1>
 
-      {/* Total movies watched — clickable */}
       <div
         onClick={() => navigate("/diary")}
         className="mb-10 bg-gray-800 rounded-2xl shadow-xl p-6 text-center cursor-pointer hover:bg-gray-700 transition"
@@ -140,7 +153,6 @@ export default function Stats() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Genre Pie Chart */}
         <div className="bg-gray-800 rounded-2xl shadow-xl p-6">
           <h2 className="text-2xl font-semibold mb-4 text-cyan-400">
             Genre Distribution
@@ -167,7 +179,6 @@ export default function Stats() {
           </div>
         </div>
 
-        {/* Actor Bar Chart */}
         <div className="bg-gray-800 rounded-2xl shadow-xl p-6">
           <h2 className="text-2xl font-semibold mb-4 text-pink-400">
             Top Actors
@@ -191,7 +202,6 @@ export default function Stats() {
           </div>
         </div>
 
-        {/* Movies by Year Bar Chart */}
         <div className="bg-gray-800 rounded-2xl shadow-xl p-6 md:col-span-2">
           <h2 className="text-2xl font-semibold mb-4 text-green-400">
             Movies Watched by Year
