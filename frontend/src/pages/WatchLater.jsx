@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Trash2, PlusCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 
 export default function WatchLater() {
   const [movies, setMovies] = useState([]);
@@ -16,6 +17,7 @@ export default function WatchLater() {
   const handleRemove = (imdbID) => {
     const updated = movies.filter((m) => m.imdbID !== imdbID);
     setMovies(updated);
+    toast.error("Movie Removed from WatchList!!")
     localStorage.setItem("watchLater", JSON.stringify(updated));
   };
 
@@ -90,6 +92,8 @@ export default function WatchLater() {
             Watch Later
           </span>
         </h1>
+       
+
 
         <div className="grid gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {movies.map((movie) => (
