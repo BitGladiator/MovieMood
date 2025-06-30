@@ -175,7 +175,7 @@ export default function Diary() {
               <h2 className="text-lime-400 font-semibold pt-2">Your Review:</h2>
               <div className="h-[10rem] overflow-y-scroll border border-lime-400 rounded-xl p-4 bg-black/30 shadow-inner shadow-lime-500/30 relative scroll-smooth hover:shadow-lime-300/50 transition-all duration-300">
                 <p className="text-sm text-lime-100 whitespace-pre-line tracking-wide leading-relaxed">
-                  {selectedEntry.review || "No plot available."}
+                  {selectedEntry.review || (<i>No Review available.</i>)}
                 </p>
               </div>
 
