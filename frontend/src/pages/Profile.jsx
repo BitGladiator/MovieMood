@@ -73,16 +73,27 @@ export default function Profile() {
 
         <div className="mt-8 space-y-4">
           <div className="bg-indigo-800/40 p-4 rounded-xl shadow">
-            <h3 className="text-lg font-semibold text-indigo-200">🎬 Diary Stats</h3>
+            <h3 className="text-lg font-semibold text-indigo-200">
+              🎬 Diary Stats
+            </h3>
             <p className="text-gray-300 text-sm mt-1">
-              You’ve logged <span className="font-semibold text-indigo-100">{diaryCount}</span> movie{diaryCount !== 1 && "s"}.
+              You’ve logged{" "}
+              <span className="font-semibold text-indigo-100">
+                {diaryCount}
+              </span>{" "}
+              movie{diaryCount !== 1 && "s"}.
             </p>
           </div>
 
           <div className="bg-yellow-700/40 p-4 rounded-xl shadow">
-            <h3 className="text-lg font-semibold text-yellow-200">⭐ Watch Later</h3>
+            <h3 className="text-lg font-semibold text-yellow-200">
+              ⭐ Watch Later
+            </h3>
             <p className="text-gray-300 text-sm mt-1">
-              <span className="font-semibold text-yellow-100">{watchLaterCount}</span> movie{watchLaterCount !== 1 && "s"} saved for later.
+              <span className="font-semibold text-yellow-100">
+                {watchLaterCount}
+              </span>{" "}
+              movie{watchLaterCount !== 1 && "s"} saved for later.
             </p>
           </div>
 

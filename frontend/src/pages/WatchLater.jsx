@@ -1,7 +1,5 @@
-// ✅ ONLY casing updated, everything else untouched
-
-import { useEffect, useState } from "react";
-import { Trash2, PlusCircle } from "lucide-react";
+import { useEffect, useState, useMemo } from "react";
+import { Trash2, PlusCircle, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { auth, db } from "../firebase";
@@ -13,8 +11,6 @@ import {
   onSnapshot,
   deleteDoc,
   doc,
-  addDoc,
-  Timestamp,
 } from "firebase/firestore";
 
 export default function WatchLater() {
@@ -23,9 +19,7 @@ export default function WatchLater() {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [movieDetails, setMovieDetails] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  const [moodModalMovie, setMoodModalMovie] = useState(null);
-  const [selectedMood, setSelectedMood] = useState("");
+  const [sortBy, setSortBy] = useState("date");
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => setUser(u));
@@ -45,8 +39,11 @@ export default function WatchLater() {
           title: d.title,
           poster: d.poster,
           year: d.year,
+          imdbRating: d.imdbRating || d.IMDbRating || null,
+          createdAt: d.createdAt || null,
         };
       });
+
       setMovies(data);
     });
 
@@ -66,63 +63,14 @@ export default function WatchLater() {
     }
   };
 
-  const handleAddToDiary = (movie, e) => {
-    e.stopPropagation();
-    setMoodModalMovie(movie);
-  };
-
-  const confirmAddToDiary = async () => {
-    if (!user || !moodModalMovie || !selectedMood) return;
-
-    try {
-      const res = await fetch(
-        `https://www.omdbapi.com/?apikey=${import.meta.env.VITE_OMDB_API_KEY}&i=${moodModalMovie.imdbID}&plot=full`
-      );
-      const fullData = await res.json();
-
-      if (fullData.Response !== "True") {
-        toast.error("❌ Failed to fetch full movie info.");
-        return;
-      }
-
-      await addDoc(collection(db, "diary"), {
-        uid: user.uid,
-        imdbID: fullData.imdbID,
-        Title: fullData.Title,
-        Year: fullData.Year,
-        Poster: fullData.Poster,
-        Genre: fullData.Genre,
-        Director: fullData.Director,
-        Actors: fullData.Actors,
-        Runtime: fullData.Runtime,
-        IMDbRating: fullData.imdbRating,
-        Plot: fullData.Plot,
-        mood: selectedMood,
-        createdAt: new Date(), // unify this field too
-      });
-
-      await handleRemove(moodModalMovie.imdbID);
-      toast.success("🎉 Added to Diary");
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to add to diary.");
-    } finally {
-      setMoodModalMovie(null);
-      setSelectedMood("");
-    }
-  };
-
-  const closeMoodModal = () => {
-    setMoodModalMovie(null);
-    setSelectedMood("");
-  };
-
   const openModal = async (movie) => {
     setSelectedMovie(movie);
     setLoading(true);
     try {
       const res = await fetch(
-        `https://www.omdbapi.com/?apikey=${import.meta.env.VITE_OMDB_API_KEY}&i=${movie.imdbID}&plot=full`
+        `https://www.omdbapi.com/?apikey=${
+          import.meta.env.VITE_OMDB_API_KEY
+        }&i=${movie.imdbID}&plot=full`
       );
       const data = await res.json();
       if (data.Response === "True") {
@@ -153,6 +101,26 @@ export default function WatchLater() {
     setMovieDetails(null);
   };
 
+  const sortedMovies = useMemo(() => {
+    const moviesCopy = [...movies];
+
+    if (sortBy === "rating") {
+      return moviesCopy.sort(
+        (a, b) => parseFloat(b.imdbRating || 0) - parseFloat(a.imdbRating || 0)
+      );
+    }
+
+    if (sortBy === "date") {
+      return moviesCopy.sort((a, b) => {
+        const aTime = a.createdAt?.toMillis?.() || 0;
+        const bTime = b.createdAt?.toMillis?.() || 0;
+        return bTime - aTime;
+      });
+    }
+
+    return moviesCopy;
+  }, [movies, sortBy]);
+
   if (!user) {
     return (
       <div className="mt-[20rem] flex items-center justify-center">
@@ -180,14 +148,36 @@ export default function WatchLater() {
   return (
     <>
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white p-6">
-        <h1 className="text-5xl font-bold text-center mb-8 text-lime-400 tracking-tight">
-          🎯 Watch Later
-        </h1>
+        <div className="relative mb-8">
+          {/* Sort Dropdown Top-Right */}
+          <div className="absolute right-0 top-0 z-10">
+            <div className="relative inline-block">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="appearance-none bg-gray-800 text-white border border-gray-600 py-2 px-4 pr-10 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-lime-400"
+              >
+                <option value="date">📅 Date Added</option>
+                <option value="rating">⭐ IMDb Rating</option>
+              </select>
+              {/* Custom Dropdown Arrow */}
+              <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400 text-sm">
+                ▼
+              </span>
+            </div>
+          </div>
+
+          {/* Centered Heading */}
+          <h1 className="text-center text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-lime-400 via-green-400 to-emerald-500 tracking-tight animate-pulse">
+            🎯 Watch Later
+          </h1>
+        </div>
+
         <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {movies.map((movie) => (
+          {sortedMovies.map((movie) => (
             <div
               key={movie.imdbID}
-              className="relative group rounded-2xl overflow-hidden shadow-xl bg-white/5 border border-gray-700 hover:scale-105 transform transition duration-300"
+              className="cursor-pointer relative group rounded-2xl overflow-hidden shadow-xl bg-white/5 border border-gray-700 hover:scale-105 transform transition duration-300"
               onClick={() => openModal(movie)}
             >
               <img
@@ -198,10 +188,16 @@ export default function WatchLater() {
               <div className="absolute bottom-0 w-full bg-gradient-to-t from-black via-black/70 to-transparent p-4">
                 <h2 className="text-xl font-bold">{movie.title}</h2>
                 <p className="text-sm text-gray-300">🎬 {movie.year}</p>
+                <div className="text-sm text-yellow-400">
+                  ⭐ {movie.imdbRating ?? "N/A"}
+                </div>
                 <div className="flex gap-2 mt-3">
                   <button
-                    onClick={(e) => handleAddToDiary(movie, e)}
-                    className="bg-green-600 px-3 py-1 rounded-md flex items-center gap-1 hover:bg-green-700 transition"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toast("🚧 Add to diary feature coming soon!");
+                    }}
+                    className="bg-green-600 px-3 py-1 rounded-md flex items-center gap-1 hover:bg-green-700 transition cursor-pointer"
                   >
                     <PlusCircle size={16} /> Diary
                   </button>
@@ -210,7 +206,7 @@ export default function WatchLater() {
                       e.stopPropagation();
                       handleRemove(movie.imdbID);
                     }}
-                    className="bg-red-600 px-3 py-1 rounded-md flex items-center gap-1 hover:bg-red-700 transition"
+                    className="bg-red-600 px-3 py-1 rounded-md flex items-center gap-1 hover:bg-red-700 transition cursor-pointer"
                   >
                     <Trash2 size={16} /> Remove
                   </button>
@@ -221,122 +217,84 @@ export default function WatchLater() {
         </div>
       </div>
 
-      {/* Mood selection modal */}
+      {/* Modal */}
       <AnimatePresence>
-        {moodModalMovie && (
+        {selectedMovie && movieDetails && (
           <motion.div
-            className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
-            onClick={closeMoodModal}
+            className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-          >
-            <motion.div
-              onClick={(e) => e.stopPropagation()}
-              className="bg-gray-900 rounded-2xl p-6 w-full max-w-md text-white shadow-xl border border-gray-700 space-y-4"
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
-            >
-              <h2 className="text-2xl font-bold text-lime-400">
-                What's your mood for "{moodModalMovie.title}"?
-              </h2>
-              <select
-                value={selectedMood}
-                onChange={(e) => setSelectedMood(e.target.value)}
-                className="w-full p-2 bg-gray-800 rounded-md border border-gray-600 text-white"
-              >
-                <option value="">Select mood</option>
-                <option value="😍 Loved it">😍 Loved it</option>
-                <option value="🙂 It was nice">🙂 It was nice</option>
-                <option value="😐 Just okay">😐 Just okay</option>
-                <option value="😞 Didn't like it">😞 Didn't like it</option>
-              </select>
-              <div className="flex justify-end gap-2">
-                <button
-                  onClick={closeMoodModal}
-                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmAddToDiary}
-                  disabled={!selectedMood}
-                  className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md disabled:opacity-50"
-                >
-                  Add to Diary
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {selectedMovie && (
-          <motion.div
-            className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
             onClick={closeModal}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
           >
             <motion.div
-              onClick={(e) => e.stopPropagation()}
-              className="bg-gray-900 text-white rounded-2xl p-6 w-full max-w-3xl shadow-2xl border border-gray-700 transform transition"
-              initial={{ scale: 0.9 }}
+              className="bg-gray-900 text-white rounded-xl max-w-2xl w-full p-6 shadow-xl relative"
+              initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
-              exit={{ scale: 0.9 }}
+              exit={{ scale: 0.8 }}
+              onClick={(e) => e.stopPropagation()}
             >
               <button
+                className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition"
                 onClick={closeModal}
-                className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl"
               >
-                ×
+                <X size={24} />
               </button>
               {loading ? (
-                <div className="h-40 flex items-center justify-center">
-                  <div className="w-12 h-12 border-4 border-lime-500 rounded-full animate-spin" />
+                <div className="text-center text-xl">Loading...</div>
+              ) : movieDetails.error ? (
+                <div className="text-center text-red-400">
+                  {movieDetails.error}
                 </div>
-              ) : movieDetails?.error ? (
-                <p className="text-red-500">{movieDetails.error}</p>
               ) : (
-                <div className="space-y-4">
-                  <h2 className="text-3xl font-bold text-lime-400">
-                    {movieDetails.title}
-                  </h2>
-                  <div className="flex flex-col md:flex-row gap-6">
+                <>
+                  <div className="flex flex-col sm:flex-row gap-6">
                     <img
-                      src={movieDetails.poster}
+                      src={
+                        movieDetails.poster !== "N/A"
+                          ? movieDetails.poster
+                          : "/no-poster.png"
+                      }
                       alt={movieDetails.title}
-                      className="w-40 rounded-lg border border-gray-700 shadow-lg"
+                      className="w-full sm:w-1/3 rounded-lg shadow-md"
                     />
-                    <div className="text-sm space-y-2">
-                      <p><strong>🎞️ Year:</strong> {movieDetails.year}</p>
-                      <p><strong>📀 Genre:</strong> {movieDetails.genre}</p>
-                      <p><strong>🎬 Director:</strong> {movieDetails.director}</p>
-                      <p><strong>👥 Actors:</strong> {movieDetails.actors}</p>
-                      <p><strong>⏱ Runtime:</strong> {movieDetails.runtime}</p>
-                      <p><strong>⭐ IMDb:</strong> {movieDetails.imdbRating}</p>
+                    <div className="flex-1">
+                      <h2 className="text-3xl font-bold mb-2">
+                        {movieDetails.title}
+                      </h2>
+                      <p className="text-sm text-gray-400 mb-2">
+                        {movieDetails.year} • {movieDetails.genre}
+                      </p>
+                      <div className="h-[6rem] overflow-y-scroll p-2 rounded-md border border-gray-700 bg-white/5 backdrop-blur-sm text-sm text-gray-200 scroll-smooth scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
+                        <p className="mb-0">{movieDetails.plot}</p>
+                      </div>
+
+                      <br />
+                      <p className="text-sm">
+                        🎬 Director: {movieDetails.director}
+                      </p>
+                      <p className="text-sm">🎭 Cast: {movieDetails.actors}</p>
+                      <p className="text-sm">
+                        ⏱ Runtime: {movieDetails.runtime}
+                      </p>
+                      <p className="text-sm text-yellow-400 mt-2">
+                        ⭐ IMDb Rating: {movieDetails.imdbRating}
+                      </p>
+
+                      {/* ▶️ Watch Trailer Button */}
+                      <a
+                        href={`https://www.youtube.com/results?search_query=${encodeURIComponent(
+                          movieDetails.title + " trailer"
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition"
+                      >
+                        ▶️ Watch Trailer
+                      </a>
                     </div>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-green-400">Plot</h3>
-                    <p className="text-gray-300 italic border-l-4 border-green-500 pl-3 max-h-40 overflow-y-auto">
-                      {movieDetails.plot}
-                    </p>
-                  </div>
-                  <a
-                    href={`https://www.youtube.com/results?search_query=${encodeURIComponent(
-                      movieDetails.title + " trailer"
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block mt-2 bg-red-600 px-4 py-2 rounded-md hover:bg-red-700 transition"
-                  >
-                    ▶️ Watch Trailer
-                  </a>
-                </div>
+                </>
               )}
             </motion.div>
           </motion.div>

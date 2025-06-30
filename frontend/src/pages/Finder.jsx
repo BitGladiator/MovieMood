@@ -52,19 +52,19 @@ export default function Finder() {
 
       await addDoc(collection(db, "diary"), {
         uid: user.uid,
-  imdbID: fullData.imdbID,
-  Title: fullData.Title,
-  Year: fullData.Year,
-  Poster: fullData.Poster,
-  Genre: fullData.Genre,
-  Director: fullData.Director,
-  Actors: fullData.Actors,
-  Runtime: fullData.Runtime,
-  IMDbRating: fullData.imdbRating,
-  Plot: fullData.Plot,
-  review,
-  mood,
-  createdAt: new Date(), // Firestore Timestamp will parse this
+        imdbID: fullData.imdbID,
+        Title: fullData.Title,
+        Year: fullData.Year,
+        Poster: fullData.Poster,
+        Genre: fullData.Genre,
+        Director: fullData.Director,
+        Actors: fullData.Actors,
+        Runtime: fullData.Runtime,
+        IMDbRating: fullData.imdbRating,
+        Plot: fullData.Plot,
+        review,
+        mood,
+        createdAt: new Date(), // Firestore Timestamp will parse this
       });
 
       toast.success("Added to diary!");
@@ -80,12 +80,20 @@ export default function Finder() {
   const handleAddToWatchLater = async (movie) => {
     if (!user) return toast.error("Login required.");
     try {
+      const res = await fetch(
+        `https://www.omdbapi.com/?apikey=${
+          import.meta.env.VITE_OMDB_API_KEY
+        }&i=${movie.imdbID}`
+      );
+
+      const fullData = await res.json();
       await addDoc(collection(db, "watchLater"), {
         uid: user.uid,
         title: movie.Title,
         year: movie.Year,
         poster: movie.Poster,
         imdbID: movie.imdbID,
+        imdbRating: parseFloat(fullData.imdbRating),
         createdAt: new Date(),
       });
       toast.success("Added to Watch Later!");

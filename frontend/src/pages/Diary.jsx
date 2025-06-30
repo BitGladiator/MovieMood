@@ -1,4 +1,3 @@
-// Diary.jsx
 import { useEffect, useState } from "react";
 import { auth, db, collection, query, where, getDocs } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -54,13 +53,14 @@ export default function Diary() {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-12 h-12 border-4 border-lime-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-lime-400 font-semibold text-lg animate-pulse">
-            Loading your diary...
-          </p>
-        </div>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white">
+        <div className="w-16 h-16 border-4 border-blue-500 border-dashed rounded-full animate-spin mb-6" />
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 text-transparent bg-clip-text animate-pulse">
+          Loading Your Diary...
+        </h2>
+        <p className="mt-2 text-gray-400 text-sm italic">
+          Fetching data from the Finder 🎬
+        </p>
       </div>
     );
 
@@ -78,15 +78,15 @@ export default function Diary() {
   if (entries.length === 0)
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-gray-300 flex flex-col items-center justify-center p-8">
-      <div className="text-7xl animate-bounce mb-4">🎯</div>
-      <h2 className="text-4xl font-bold text-center bg-gradient-to-r from-green-400 to-lime-400 bg-clip-text text-transparent mb-3">
-        No Movies in Your Diary
-      </h2>
-      <p className="text-lg text-gray-400 text-center max-w-md">
-        Browse and add movies 
-      </p>
-    </div>
-  );
+        <div className="text-7xl animate-bounce mb-4">🎯</div>
+        <h2 className="text-4xl font-bold text-center bg-gradient-to-r from-green-400 to-lime-400 bg-clip-text text-transparent mb-3">
+          No Movies in Your Diary
+        </h2>
+        <p className="text-lg text-gray-400 text-center max-w-md">
+          Browse and add movies
+        </p>
+      </div>
+    );
 
   return (
     <>
@@ -97,9 +97,7 @@ export default function Diary() {
             onClick={() => setSelectedEntry(entry)}
             className="cursor-pointer"
           >
-            <Card
-              className="flex flex-col justify-between rounded-3xl bg-white/10 backdrop-blur-lg border border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.2)] transition duration-300 hover:shadow-[0_12px_40px_rgb(0,0,0,0.3)]"
-            >
+            <Card className="flex flex-col justify-between rounded-3xl bg-white/10 backdrop-blur-lg border border-gray-700 shadow-[0_8px_30px_rgb(0,0,0,0.2)] transition duration-300 hover:shadow-[0_12px_40px_rgb(0,0,0,0.3)]">
               <CardContent className="p-5 flex flex-col h-full">
                 <img
                   src={entry.Poster}
@@ -131,46 +129,61 @@ export default function Diary() {
 
       {selectedEntry && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center px-4 py-8">
-          <div className="bg-gray-900 text-white rounded-2xl p-6 max-w-3xl w-full flex flex-col md:flex-row gap-6 border border-gray-700 shadow-2xl">
+          <div className="bg-gray-900 text-white rounded-2xl p-6 max-w-3xl w-full flex flex-col md:flex-row gap-6 border border-gray-700 shadow-2xl relative">
+            {/* Poster */}
             <div className="flex-shrink-0 hidden md:block">
               <img
                 src={selectedEntry.Poster}
-                alt={selectedEntry.title}
+                alt={selectedEntry.Title}
                 className="w-40 h-60 object-cover rounded-xl border border-gray-700"
               />
             </div>
-            <div className="flex-1 space-y-3">
-              <h2 className="text-2xl font-bold text-lime-400">
+
+            {/* Content */}
+            <div className="flex-1 space-y-4 relative">
+              {/* Mood Badge - Top Right */}
+              <div className="absolute top-0 right-0 mt-2 mr-2">
+                <span className="text-xs font-semibold bg-lime-800/40 text-lime-300 px-3 py-1 rounded-full border border-lime-500 shadow-md">
+                  Mood: {selectedEntry.mood}
+                </span>
+              </div>
+
+              {/* Title */}
+              <h2 className="text-3xl font-bold text-lime-400 break-words">
                 {selectedEntry.Title}
               </h2>
+
+              {/* Metadata */}
               <p className="text-gray-400 italic">📅 {selectedEntry.Year}</p>
               <p className="text-sm text-gray-300">
-                <strong> Genre:</strong> {selectedEntry.Genre}
+                <strong>Genre:</strong> {selectedEntry.Genre}
               </p>
               <p className="text-sm text-gray-300">
-                <strong> Director:</strong> {selectedEntry.Director}
+                <strong>Director:</strong> {selectedEntry.Director}
               </p>
               <p className="text-sm text-gray-300">
-                <strong> Actors:</strong> {selectedEntry.Actors}
+                <strong>Actors:</strong> {selectedEntry.Actors}
               </p>
               <p className="text-sm text-gray-300">
-                <strong> Runtime:</strong> {selectedEntry.Runtime}
+                <strong>Runtime:</strong> {selectedEntry.Runtime}
               </p>
               <p className="text-sm text-gray-300">
-                <strong> IMDb Rating:</strong> {selectedEntry.IMDbRating}
+                <strong>IMDb Rating:</strong> {selectedEntry.IMDbRating}
               </p>
+
+              {/* Review */}
+              <h2 className="text-lime-400 font-semibold pt-2">Your Review:</h2>
               <div className="h-[10rem] overflow-y-scroll border border-lime-400 rounded-xl p-4 bg-black/30 shadow-inner shadow-lime-500/30 relative scroll-smooth hover:shadow-lime-300/50 transition-all duration-300">
                 <p className="text-sm text-lime-100 whitespace-pre-line tracking-wide leading-relaxed">
-                  {selectedEntry.Plot || "No plot available."}
+                  {selectedEntry.review || "No plot available."}
                 </p>
               </div>
-              <p className="text-sm">
-                Mood: <span className="italic">{selectedEntry.mood}</span>
-              </p>
+
+              {/* Close Button */}
               <div className="text-right pt-2">
                 <button
                   onClick={() => setSelectedEntry(null)}
-                  className="px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700"
+                  className="px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-gray-700 transition"
                 >
                   Close
                 </button>

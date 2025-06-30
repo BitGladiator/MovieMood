@@ -7,22 +7,24 @@ export default function AddToDiaryModal({ movie, onClose, onSave }) {
 
   const handleSave = async () => {
     if (!mood) return toast.error("Please select a mood!");
-  
+
     try {
       const res = await fetch(
-        `https://www.omdbapi.com/?apikey=${import.meta.env.VITE_OMDB_API_KEY}&i=${movie.imdbID}&plot=full`
+        `https://www.omdbapi.com/?apikey=${
+          import.meta.env.VITE_OMDB_API_KEY
+        }&i=${movie.imdbID}&plot=full`
       );
       const data = await res.json();
-  
+
       if (data.Response !== "True") throw new Error("Movie details not found");
-  
+
       const entry = {
         ...data,
         review,
         mood,
         date: new Date().toISOString(),
       };
-  
+
       onSave(entry);
       onClose();
       toast.success("Movie added to diary!");
@@ -31,7 +33,7 @@ export default function AddToDiaryModal({ movie, onClose, onSave }) {
       toast.error("Failed to add movie to diary.");
     }
   };
-  
+
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center px-4">
       <div className="w-full max-w-3xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white rounded-2xl shadow-2xl p-6 flex gap-6 items-start border border-gray-700">
