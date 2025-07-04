@@ -41,7 +41,7 @@ export default function Stats() {
             title: data.title,
             genres: data.Genre?.split(", ").filter(Boolean),
             cast: data.Actors?.split(", ").filter(Boolean),
-            year: data.year,
+            year: data.Year,
           };
         });
 
@@ -76,7 +76,7 @@ export default function Stats() {
       acc[actor] = (acc[actor] || 0) + 1;
       return acc;
     }, {});
-
+    console.log("🔍 Watched movies:", watched);
   const topActors = Object.entries(actorCounts)
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count)
@@ -93,6 +93,7 @@ export default function Stats() {
 
   const yearData = Object.entries(yearCounts)
     .map(([year, count]) => ({ year, count }))
+
     .sort((a, b) => a.year.localeCompare(b.year));
 
   if (loading) {
@@ -206,6 +207,7 @@ export default function Stats() {
           <h2 className="text-2xl font-semibold mb-4 text-green-400">
             Movies Watched by Year
           </h2>
+
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={yearData}>

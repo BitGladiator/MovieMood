@@ -2,6 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import logo from "../images/logo.png"
 export default function Navbar() {
   const [showModal, setShowModal] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -16,7 +17,6 @@ export default function Navbar() {
     }
   }, [showModal]);
 
-  // Close menu on outside click
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -36,102 +36,77 @@ export default function Navbar() {
 
   return (
     <nav className="w-full px-6 py-3 bg-gradient-to-r from-gray-900 via-black to-gray-900 shadow-lg flex items-center justify-between flex-wrap relative z-50">
-      <Link
-        to="/"
-        className="text-2xl font-extrabold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 text-transparent bg-clip-text tracking-wide drop-shadow-sm"
-      >
-        🎥 MovieMood
-      </Link>
+    <Link to="/" className="flex items-center gap-2 group">
+  <span className="text-3xl md:text-4xl font-extrabold tracking-tight uppercase bg-gradient-to-r from-red-600 via-yellow-400 to-red-600 text-transparent bg-clip-text drop-shadow-lg group-hover:scale-105 transition-transform duration-300">
+    🎥 MovieMood
+  </span>
+</Link>
 
-      {/* Mobile menu toggle */}
-      
 
-      {/* Nav Links */}
       <div
         ref={menuRef}
         className={`${
           menuOpen ? "block" : "hidden"
         } absolute md:static top-16 left-0 md:flex md:items-center md:gap-6 w-full md:w-auto bg-gray-900 md:bg-transparent p-4 md:p-0 rounded-md md:rounded-none`}
       >
-        <NavLink
-          to="/"
-          className={linkClass}
-          onClick={() => setMenuOpen(false)}
-        >
+        <NavLink to="/" className={linkClass} onClick={() => setMenuOpen(false)}>
           Home
         </NavLink>
-        <NavLink
-          to="/finder"
-          className={linkClass}
-          onClick={() => setMenuOpen(false)}
-        >
+        <NavLink to="/finder" className={linkClass} onClick={() => setMenuOpen(false)}>
           Finder
         </NavLink>
-        <NavLink
-          to="/diary"
-          className={linkClass}
-          onClick={() => setMenuOpen(false)}
-        >
+        <NavLink to="/diary" className={linkClass} onClick={() => setMenuOpen(false)}>
           Diary
         </NavLink>
-        <NavLink
-          to="/stats"
-          className={linkClass}
-          onClick={() => setMenuOpen(false)}
-        >
+        <NavLink to="/stats" className={linkClass} onClick={() => setMenuOpen(false)}>
           Stats
         </NavLink>
-        <NavLink
-          to="/watchlater"
-          className={linkClass}
-          onClick={() => setMenuOpen(false)}
-        >
+        <NavLink to="/watchlater" className={linkClass} onClick={() => setMenuOpen(false)}>
           WatchLater
         </NavLink>
       </div>
+
       <div className="flex items-center gap-4">
-      <button
-        className="text-white md:hidden"
-        onClick={() => setMenuOpen(!menuOpen)}
-      >
-        {menuOpen ? <X /> : <Menu />}
-      </button>
-  {/* Profile Badge */}
-  <div className="flex items-center gap-4">
-  <Link
-    to="/login"
-    className="text-sm text-indigo-400 hover:text-white border border-indigo-400 px-4 py-2 rounded-full transition duration-300 hover:bg-indigo-500 hover:shadow-lg"
-  >
-    Login
-  </Link>
-  <Link
-    to="/register"
-    className="text-sm text-green-400 hover:text-white border border-green-400 px-4 py-2 rounded-full transition duration-300 hover:bg-green-500 hover:shadow-lg"
-  >
-    Register
-  </Link>
-</div>
-  <Link to="/profile">
-    <img
-      src="https://img.icons8.com/fluency-systems-filled/48/user-male-circle.png"
-      alt="Profile"
-      className="w-10 h-10 rounded-full border-2 border-indigo-600 hover:scale-105 transition-transform bg-white"
-    />
-  </Link>
+        <button
+          className="text-white md:hidden"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? <X /> : <Menu />}
+        </button>
 
-  {/* Surprise Button (visible on md and up) */}
-  <div className="hidden md:block">
-    <button
-      onClick={() => setShowModal(true)}
-      className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition cursor-pointer"
-    >
-      🎁 Surprise Me
-    </button>
-  </div>
-</div>
-      
+        <div className="flex items-center gap-4">
+          <Link
+            to="/login"
+            className="text-sm text-indigo-400 hover:text-white border border-indigo-400 px-4 py-2 rounded-full transition duration-300 hover:bg-indigo-500 hover:shadow-lg"
+          >
+            Login
+          </Link>
+          <Link
+            to="/register"
+            className="text-sm text-green-400 hover:text-white border border-green-400 px-4 py-2 rounded-full transition duration-300 hover:bg-green-500 hover:shadow-lg"
+          >
+            Register
+          </Link>
+        </div>
 
-      {/* Mobile surprise button below links */}
+        <Link to="/profile">
+          <img
+            src="https://img.icons8.com/fluency-systems-filled/48/user-male-circle.png"
+            alt="Profile"
+            className="w-10 h-10 rounded-full border-2 border-indigo-600 hover:scale-105 transition-transform bg-white"
+          />
+        </Link>
+
+        <div className="hidden md:block">
+          <button
+            onClick={() => setShowModal(true)}
+            className="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 transition cursor-pointer"
+          >
+            🎁 Surprise Me
+          </button>
+        </div>
+      </div>
+
       {menuOpen && (
         <div className="block md:hidden w-full mt-2">
           <button
@@ -146,7 +121,6 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Surprise Modal */}
       <AnimatePresence>
         {showModal && (
           <motion.div

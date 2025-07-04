@@ -11,6 +11,8 @@ import {
   onSnapshot,
   deleteDoc,
   doc,
+  addDoc,
+  serverTimestamp,
 } from "firebase/firestore";
 
 export default function WatchLater() {
@@ -20,6 +22,8 @@ export default function WatchLater() {
   const [movieDetails, setMovieDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState("date");
+  const [mood, setMood] = useState("");
+  const [review, setReview] = useState("");
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => setUser(u));
@@ -63,6 +67,37 @@ export default function WatchLater() {
     }
   };
 
+  const handleAddToDiary = async () => {
+    if (!movieDetails || !user) return;
+    if (!mood) return toast.error("Please select a mood");
+
+    try {
+      await addDoc(collection(db, "diary"), {
+        uid: user.uid,
+        imdbID: movieDetails.imdbID,
+        Title: movieDetails.title,
+        Poster: movieDetails.poster,
+        Year: movieDetails.year,
+        Genre: movieDetails.genre,
+        Director: movieDetails.director,
+        Actors: movieDetails.actors,
+        Runtime: movieDetails.runtime,
+        IMDbRating: movieDetails.imdbRating,
+        mood,
+        review,
+        createdAt: serverTimestamp(),
+      });
+
+      await handleRemove(movieDetails.imdbID);
+
+      toast.success("📔 Added to Diary!");
+      closeModal();
+    } catch (err) {
+      toast.error("Failed to add to diary.");
+      console.error(err);
+    }
+  };
+
   const openModal = async (movie) => {
     setSelectedMovie(movie);
     setLoading(true);
@@ -99,6 +134,8 @@ export default function WatchLater() {
   const closeModal = () => {
     setSelectedMovie(null);
     setMovieDetails(null);
+    setMood("");
+    setReview("");
   };
 
   const sortedMovies = useMemo(() => {
@@ -149,7 +186,6 @@ export default function WatchLater() {
     <>
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white p-6">
         <div className="relative mb-8">
-          {/* Sort Dropdown Top-Right */}
           <div className="absolute right-0 top-0 z-10">
             <div className="relative inline-block">
               <select
@@ -160,14 +196,12 @@ export default function WatchLater() {
                 <option value="date">📅 Date Added</option>
                 <option value="rating">⭐ IMDb Rating</option>
               </select>
-              {/* Custom Dropdown Arrow */}
               <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400 text-sm">
                 ▼
               </span>
             </div>
           </div>
 
-          {/* Centered Heading */}
           <h1 className="text-center text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-lime-400 via-green-400 to-emerald-500 tracking-tight animate-pulse">
             🎯 Watch Later
           </h1>
@@ -195,7 +229,7 @@ export default function WatchLater() {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      toast("🚧 Add to diary feature coming soon!");
+                      openModal(movie);
                     }}
                     className="bg-green-600 px-3 py-1 rounded-md flex items-center gap-1 hover:bg-green-700 transition cursor-pointer"
                   >
@@ -217,7 +251,6 @@ export default function WatchLater() {
         </div>
       </div>
 
-      {/* Modal */}
       <AnimatePresence>
         {selectedMovie && movieDetails && (
           <motion.div
@@ -249,15 +282,17 @@ export default function WatchLater() {
               ) : (
                 <>
                   <div className="flex flex-col sm:flex-row gap-6">
-                    <img
+                    <div>  <img
                       src={
                         movieDetails.poster !== "N/A"
                           ? movieDetails.poster
                           : "/no-poster.png"
                       }
                       alt={movieDetails.title}
-                      className="w-full sm:w-1/3 rounded-lg shadow-md"
-                    />
+                      className="hidden sm:block w-48 h-auto rounded-lg shadow-md object-cover"
+                    /></div>
+                  
+
                     <div className="flex-1">
                       <h2 className="text-3xl font-bold mb-2">
                         {movieDetails.title}
@@ -281,16 +316,51 @@ export default function WatchLater() {
                         ⭐ IMDb Rating: {movieDetails.imdbRating}
                       </p>
 
-                      {/* ▶️ Watch Trailer Button */}
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium mb-1">
+                          Mood
+                        </label>
+                        <select
+                          value={mood}
+                          onChange={(e) => setMood(e.target.value)}
+                          className="w-full bg-gray-800 text-white border border-gray-600 rounded-md px-3 py-2"
+                        >
+                          <option value="">Select a mood</option>
+                          <option value="happy">😊 Happy</option>
+                          <option value="sad">😢 Sad</option>
+                          <option value="excited">🤩 Excited</option>
+                          <option value="bored">😐 Bored</option>
+                        </select>
+                      </div>
+
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium mb-1">
+                          Review
+                        </label>
+                        <textarea
+                          value={review}
+                          onChange={(e) => setReview(e.target.value)}
+                          className="w-full bg-gray-800 text-white border border-gray-600 rounded-md px-3 py-2"
+                          rows={3}
+                          placeholder="Write your thoughts..."
+                        ></textarea>
+                      </div>
+
+                      <button
+                        onClick={handleAddToDiary}
+                        className="mt-4 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md"
+                      >
+                        ✅ Add to Diary
+                      </button>
                       <a
                         href={`https://www.youtube.com/results?search_query=${encodeURIComponent(
                           movieDetails.title + " trailer"
                         )}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition"
+                        className="m-2 inline-flex items-center gap-2 mt-4 bg-gradient-to-r from-red-500 via-yellow-500 to-pink-500 hover:opacity-90 text-white font-semibold px-4 py-2 rounded-md shadow-md transition-all duration-300"
                       >
-                        ▶️ Watch Trailer
+                        🎬 Watch Trailer
                       </a>
                     </div>
                   </div>
