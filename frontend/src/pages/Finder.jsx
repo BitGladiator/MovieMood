@@ -57,7 +57,7 @@ export default function Finder() {
         Year: fullData.Year,
         Poster: fullData.Poster,
         Genre: fullData.Genre,
-        Director: fullData.Director,
+        director: fullData.Director,
         Actors: fullData.Actors,
         Runtime: fullData.Runtime,
         IMDbRating: fullData.imdbRating,
