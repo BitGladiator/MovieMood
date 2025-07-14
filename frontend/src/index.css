@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@keyframes fade-in-up {
+/* @keyframes fade-in-up {
   0% {
     opacity: 0;
     transform: translateY(20px);
@@ -48,4 +48,120 @@
 .animate-gradient {
   background-size: 200% 200%;
   animation: gradientShift 6s ease infinite;
+} */
+/* @keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-20px) translateX(10px);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-slow-reverse {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 30s linear infinite;
+}
+
+.animate-spin-slow-reverse {
+  animation: spin-slow-reverse 35s linear infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+} */
+ /* Film strip animation */
+/* Film animation - optimized */
+/* === CINEMATIC ANIMATIONS === */
+/* === ANIMATIONS === */
+/* ===== CORE ANIMATIONS ===== */
+/* Keyframe Animations */
+@keyframes float-orb-1 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(20px, 20px); }
+}
+
+@keyframes float-orb-2 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-20px, -20px); }
+}
+
+@keyframes float-poster {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-50px) rotate(5deg); }
+  100% { transform: translateY(0) rotate(0deg); }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes shine {
+  0% { background-position: -100% 0; }
+  100% { background-position: 100% 0; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* Animation Classes */
+.animate-float-orb-1 {
+  animation: float-orb-1 15s ease-in-out infinite;
+}
+
+.animate-float-orb-2 {
+  animation: float-orb-2 18s ease-in-out infinite;
+}
+
+.animate-marquee {
+  display: inline-block;
+  animation: marquee 30s linear infinite;
+  white-space: nowrap;
+}
+
+.animate-shine {
+  animation: shine 3s ease-in-out infinite;
+}
+
+.animate-bounce {
+  animation: bounce 2s infinite;
+}
+
+.typewriter {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typewriter 3s steps(40) 1s 1 normal both;
+  border-right: 2px solid #8b5cf6;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .animate-marquee {
+    animation-duration: 40s;
+  }
 }
