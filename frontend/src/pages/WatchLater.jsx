@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { Trash2, PlusCircle, X } from "lucide-react";
+import { Trash2, PlusCircle, X, Clock, Star, Calendar, Filter, Popcorn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { auth, db } from "../firebase";
@@ -25,6 +25,8 @@ export default function WatchLater() {
   const [sortBy, setSortBy] = useState("date");
   const [mood, setMood] = useState("");
   const [review, setReview] = useState("");
+  const [isHovering, setIsHovering] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (u) => setUser(u));
@@ -61,7 +63,16 @@ export default function WatchLater() {
 
     try {
       await deleteDoc(doc(db, "watchLater", movieToDelete.id));
-      toast.error("📌 Removed from Watch Later");
+      toast.custom((t) => (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          className="bg-gradient-to-r from-red-600 to-rose-700 text-white px-6 py-3 rounded-xl shadow-xl flex items-center gap-2"
+        >
+          🎥 Removed from Watch Later
+        </motion.div>
+      ));
     } catch (err) {
       toast.error("Failed to remove movie.");
       console.error(err);
@@ -91,7 +102,16 @@ export default function WatchLater() {
 
       await handleRemove(movieDetails.imdbID);
 
-      toast.success("📔 Added to Diary!");
+      toast.custom((t) => (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          className="bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-6 py-3 rounded-xl shadow-xl flex items-center gap-2"
+        >
+          🎬 Added to Diary!
+        </motion.div>
+      ));
       closeModal();
     } catch (err) {
       toast.error("Failed to add to diary.");
@@ -139,13 +159,19 @@ export default function WatchLater() {
     setReview("");
   };
 
+  const filteredMovies = useMemo(() => {
+    return movies.filter(movie => 
+      movie.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [movies, searchQuery]);
+
   const sortedMovies = useMemo(() => {
-    const moviesCopy = [...movies];
+    const moviesCopy = [...filteredMovies];
 
     if (sortBy === "rating") {
-      return moviesCopy.sort(
-        (a, b) => parseFloat(b.imdbRating || 0) - parseFloat(a.imdbRating || 0)
-      );
+      return moviesCopy
+        .filter(movie => movie.imdbRating) // Filter first
+        .sort((a, b) => parseFloat(b.imdbRating) - parseFloat(a.imdbRating)); // Then sort
     }
 
     if (sortBy === "date") {
@@ -157,11 +183,11 @@ export default function WatchLater() {
     }
 
     return moviesCopy;
-  }, [movies, sortBy]);
+  }, [filteredMovies, sortBy]);
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-gray-950 via-gray-900 to-black">
         {/* Animated background elements */}
         <div className="absolute -top-1/3 -left-1/4 w-[800px] h-[800px] bg-purple-900/20 blur-[150px] rounded-full animate-float-slow pointer-events-none"></div>
         <div className="absolute -bottom-1/3 -right-1/4 w-[800px] h-[800px] bg-blue-900/20 blur-[150px] rounded-full animate-float-slow-reverse pointer-events-none"></div>
@@ -275,87 +301,313 @@ export default function WatchLater() {
 
   if (!movies.length) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-gray-300 flex flex-col items-center justify-center p-8">
-        <div className="text-7xl animate-bounce mb-4">🎯</div>
-        <h2 className="text-4xl font-bold text-center bg-gradient-to-r from-green-400 to-lime-400 bg-clip-text text-transparent mb-3">
-          No Movies in Watch Later
-        </h2>
-        <p className="text-lg text-gray-400 text-center max-w-md">
-          Browse and add movies you'd like to watch next!
-        </p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-gray-300 flex flex-col items-center justify-center p-8 relative overflow-hidden">
+        {/* Background elements */}
+        <div className="absolute -top-1/3 -left-1/4 w-[800px] h-[800px] bg-purple-900/10 blur-[150px] rounded-full animate-float-slow pointer-events-none"></div>
+        <div className="absolute -bottom-1/3 -right-1/4 w-[800px] h-[800px] bg-blue-900/10 blur-[150px] rounded-full animate-float-slow-reverse pointer-events-none"></div>
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center relative z-10"
+        >
+          <motion.div
+            animate={{
+              rotate: [0, 5, -5, 0],
+              y: [0, -10, 0]
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="text-8xl mb-6"
+          >
+            🎯
+          </motion.div>
+          <h2 className="text-4xl font-bold text-center bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent mb-4">
+            Your Watch Later is Empty
+          </h2>
+          <p className="text-lg text-gray-400 max-w-md mb-8">
+            Start building your cinematic queue by adding movies you're excited to watch.
+          </p>
+          <Link
+            to="/finder"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            <PlusCircle size={18} />
+            Discover Movies
+          </Link>
+        </motion.div>
       </div>
     );
   }
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white p-6">
-        <div className="relative mb-8">
-          <div className="absolute right-0 top-0 z-10">
-            <div className="relative inline-block">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none bg-gray-800 text-white border border-gray-600 py-2 px-4 pr-10 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-lime-400"
-              >
-                <option value="date">📅 Date Added</option>
-                <option value="rating">⭐ IMDb Rating</option>
-              </select>
-              <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-400 text-sm">
-                ▼
-              </span>
-            </div>
-          </div>
-
-          <h1 className="text-center text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-lime-400 via-green-400 to-emerald-500 tracking-tight animate-pulse">
-            🎯 Watch Later
-          </h1>
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white p-4 sm:p-8 relative overflow-hidden">
+        {/* Background elements */}
+        <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-500 rounded-full filter blur-[80px]"></div>
+          <div className="absolute bottom-1/3 right-1/4 w-72 h-72 bg-blue-500 rounded-full filter blur-[80px]"></div>
         </div>
 
-        <div className="grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {sortedMovies.map((movie) => (
-            <div
-              key={movie.imdbID}
-              className="cursor-pointer relative group rounded-2xl overflow-hidden shadow-xl bg-white/5 border border-gray-700 hover:scale-105 transform transition duration-300"
-              onClick={() => openModal(movie)}
-            >
-              <img
-                src={movie.poster !== "N/A" ? movie.poster : "/no-poster.png"}
-                alt={movie.title}
-                className="w-full h-80 object-cover opacity-80 group-hover:opacity-60 transition duration-300"
-              />
-              <div className="absolute bottom-0 w-full bg-gradient-to-t from-black via-black/70 to-transparent p-4">
-                <h2 className="text-xl font-bold">{movie.title}</h2>
-                <p className="text-sm text-gray-300">🎬 {movie.year}</p>
-                <div className="text-sm text-yellow-400">
-                  ⭐ {movie.imdbRating ?? "N/A"}
-                </div>
-                <div className="flex gap-2 mt-3">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openModal(movie);
-                    }}
-                    className="bg-green-600 px-3 py-1 rounded-md flex items-center gap-1 hover:bg-green-700 transition cursor-pointer"
+        <div className="max-w-7xl mx-auto relative z-10">
+          {/* Header with sort controls */}
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4"
+          >
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                Your Watch Later
+              </h1>
+              <p className="text-gray-400">{movies.length} {movies.length === 1 ? 'movie' : 'movies'} in your queue</p>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+              {/* Search bar */}
+              <div className="relative w-full sm:w-64">
+                <input
+                  type="text"
+                  placeholder="Search your list..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl py-3 px-4 pl-10 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                />
+                <svg
+                  className="absolute left-3 top-3.5 h-5 w-5 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+              
+              {/* Sort dropdown */}
+              <div className="flex items-center gap-3 bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-2">
+                <Filter size={18} className="text-gray-400" />
+                <div className="relative inline-block">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    className="appearance-none bg-transparent text-white py-2 pl-3 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
                   >
-                    <PlusCircle size={16} /> Diary
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemove(movie.imdbID);
-                    }}
-                    className="bg-red-600 px-3 py-1 rounded-md flex items-center gap-1 hover:bg-red-700 transition cursor-pointer"
-                  >
-                    <Trash2 size={16} /> Remove
-                  </button>
+                    <option value="date" className="bg-gray-900">
+                      <div className="flex items-center gap-2">
+                        <Calendar size={16} />
+                        Date Added
+                      </div>
+                    </option>
+                    <option value="rating" className="bg-gray-900">
+                      <div className="flex items-center gap-2">
+                        <Star size={16} />
+                        IMDb Rating
+                      </div>
+                    </option>
+                  </select>
+                  <span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-gray-400">
+                    ▼
+                  </span>
                 </div>
               </div>
             </div>
-          ))}
+          </motion.div>
+
+          {/* Stats bar */}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+          >
+            <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4 flex items-center gap-3">
+              <div className="p-2 bg-emerald-900/30 rounded-lg">
+                <Popcorn className="text-emerald-400" size={20} />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Total Movies</p>
+                <p className="text-xl font-bold">{movies.length}</p>
+              </div>
+            </div>
+            
+            <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4 flex items-center gap-3">
+              <div className="p-2 bg-purple-900/30 rounded-lg">
+                <Star className="text-purple-400" size={20} />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Avg Rating</p>
+                <p className="text-xl font-bold">
+                  {movies.filter(m => m.imdbRating).length > 0 
+                    ? (movies.reduce((acc, m) => acc + (parseFloat(m.imdbRating) || 0), 0) / 
+                      movies.filter(m => m.imdbRating).length).toFixed(1)
+                    : 'N/A'}
+                </p>
+              </div>
+            </div>
+            
+            <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4 flex items-center gap-3">
+              <div className="p-2 bg-blue-900/30 rounded-lg">
+                <Calendar className="text-blue-400" size={20} />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Oldest</p>
+                <p className="text-xl font-bold">
+                  {movies.length > 0 
+                    ? new Date(Math.min(...movies.map(m => m.createdAt?.toMillis?.() || Date.now()))).getFullYear()
+                    : 'N/A'}
+                </p>
+              </div>
+            </div>
+            
+            <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4 flex items-center gap-3">
+              <div className="p-2 bg-amber-900/30 rounded-lg">
+                <Clock className="text-amber-400" size={20} />
+              </div>
+              <div>
+                <p className="text-sm text-gray-400">Recently Added</p>
+                <p className="text-xl font-bold">
+                  {movies.length > 0 
+                    ? new Date(Math.max(...movies.map(m => m.createdAt?.toMillis?.() || 0))).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                    : 'N/A'}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Movie grid */}
+          {sortedMovies.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-16"
+            >
+              <div className="text-6xl mb-4">🔍</div>
+              <h3 className="text-2xl font-bold text-gray-300 mb-2">No movies found</h3>
+              <p className="text-gray-500 max-w-md mx-auto">
+                Try adjusting your search or add more movies to your watch later list
+              </p>
+            </motion.div>
+          ) : (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, staggerChildren: 0.1 }}
+              className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            >
+              <AnimatePresence>
+                {sortedMovies.map((movie) => (
+                  <motion.div
+                    key={movie.imdbID}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                    layout
+                    className="relative group"
+                    onMouseEnter={() => setIsHovering(movie.imdbID)}
+                    onMouseLeave={() => setIsHovering(null)}
+                  >
+                    {/* Movie card */}
+                    <motion.div
+                      whileHover={{ scale: 1.03 }}
+                      className="relative rounded-2xl overflow-hidden shadow-xl cursor-pointer h-full bg-gray-900/50 backdrop-blur-sm border border-gray-800"
+                      onClick={() => openModal(movie)}
+                    >
+                      {/* Poster image with gradient overlay */}
+                      <div className="relative aspect-[2/3] w-full">
+                        <img
+                          src={movie.poster !== "N/A" ? movie.poster : "/no-poster.png"}
+                          alt={movie.title}
+                          className="w-full h-full object-cover transition-all duration-500"
+                          style={{
+                            filter: isHovering === movie.imdbID ? 'brightness(0.7)' : 'brightness(0.6)'
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                        
+                        {/* Date added badge */}
+                        {movie.createdAt && (
+                          <div className="absolute top-3 left-3 bg-black/70 text-xs text-gray-300 px-2 py-1 rounded-full backdrop-blur-sm">
+                            {new Date(movie.createdAt.toMillis()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Movie info */}
+                      <div className="absolute bottom-0 left-0 w-full p-4">
+                        <motion.h2 
+                          className="text-xl font-bold line-clamp-1"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.1 }}
+                        >
+                          {movie.title}
+                        </motion.h2>
+                        <div className="flex items-center justify-between mt-1">
+                          <span className="text-sm text-gray-300">{movie.year}</span>
+                          {movie.imdbRating && (
+                            <div className="flex items-center gap-1 text-sm bg-black/50 px-2 py-1 rounded">
+                              <Star size={14} className="text-yellow-400 fill-yellow-400" />
+                              <span>{movie.imdbRating}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Action buttons that appear on hover */}
+                      <motion.div 
+                        className="absolute inset-0 flex items-center justify-center gap-3"
+                        initial={{ opacity: 0 }}
+                        animate={{ 
+                          opacity: isHovering === movie.imdbID ? 1 : 0 
+                        }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openModal(movie);
+                          }}
+                          className="bg-emerald-600 hover:bg-emerald-700 p-3 rounded-full shadow-lg transition-all"
+                          title="Add to Diary"
+                        >
+                          <PlusCircle size={20} />
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemove(movie.imdbID);
+                          }}
+                          className="bg-rose-600 hover:bg-rose-700 p-3 rounded-full shadow-lg transition-all"
+                          title="Remove"
+                        >
+                          <Trash2 size={20} />
+                        </motion.button>
+                      </motion.div>
+                    </motion.div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          )}
         </div>
       </div>
 
+      {/* Movie details modal */}
       <AnimatePresence>
         {selectedMovie && movieDetails && (
           <motion.div
@@ -366,107 +618,169 @@ export default function WatchLater() {
             onClick={closeModal}
           >
             <motion.div
-              className="bg-gray-900 text-white rounded-xl max-w-2xl w-full p-6 shadow-xl relative"
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.8 }}
+              className="bg-gray-900 text-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-800"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
               <button
-                className="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition"
+                className="absolute top-4 right-4 z-10 bg-gray-800 hover:bg-gray-700 p-2 rounded-full transition"
                 onClick={closeModal}
               >
                 <X size={24} />
               </button>
+
               {loading ? (
-                <div className="text-center text-xl">Loading...</div>
+                <div className="min-h-[400px] flex items-center justify-center">
+                  <div className="flex flex-col items-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500 mb-4"></div>
+                    <p className="text-gray-400">Fetching movie details...</p>
+                  </div>
+                </div>
               ) : movieDetails.error ? (
-                <div className="text-center text-red-400">
+                <div className="min-h-[400px] flex items-center justify-center text-red-400">
                   {movieDetails.error}
                 </div>
               ) : (
                 <>
-                  <div className="flex flex-col sm:flex-row gap-6">
-                    <div>  <img
-                      src={
-                        movieDetails.poster !== "N/A"
-                          ? movieDetails.poster
-                          : "/no-poster.png"
-                      }
-                      alt={movieDetails.title}
-                      className="hidden sm:block w-48 h-auto rounded-lg shadow-md object-cover"
-                    /></div>
-                  
+                  {/* Movie header with backdrop */}
+                  <div className="relative h-48 bg-gradient-to-r from-purple-900 to-blue-900 overflow-hidden rounded-t-2xl">
+                    {movieDetails.poster !== "N/A" && (
+                      <img
+                        src={movieDetails.poster}
+                        alt={movieDetails.title}
+                        className="absolute bottom-0 left-6 w-32 h-48 object-cover rounded-t-lg shadow-xl border-2 border-white/10"
+                      />
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
+                    <div className="relative z-10 p-6 pl-48">
+                      <h2 className="text-3xl font-bold">{movieDetails.title}</h2>
+                      <div className="flex items-center gap-4 mt-2">
+                        <span className="text-gray-300">{movieDetails.year}</span>
+                        {movieDetails.imdbRating && (
+                          <div className="flex items-center gap-1 bg-black/40 px-3 py-1 rounded-full">
+                            <Star size={16} className="text-yellow-400 fill-yellow-400" />
+                            <span>{movieDetails.imdbRating}</span>
+                          </div>
+                        )}
+                        <span className="text-gray-300">{movieDetails.runtime}</span>
+                      </div>
+                    </div>
+                  </div>
 
-                    <div className="flex-1">
-                      <h2 className="text-3xl font-bold mb-2">
-                        {movieDetails.title}
-                      </h2>
-                      <p className="text-sm text-gray-400 mb-2">
-                        {movieDetails.year} • {movieDetails.genre}
-                      </p>
-                      <div className="h-[6rem] overflow-y-scroll p-2 rounded-md border border-gray-700 bg-white/5 backdrop-blur-sm text-sm text-gray-200 scroll-smooth scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent">
-                        <p className="mb-0">{movieDetails.plot}</p>
+                  {/* Movie content */}
+                  <div className="p-6 pt-0">
+                    <div className="ml-[calc(8rem+24px)] min-h-[8rem]">
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {movieDetails.genre?.split(',').map(g => (
+                          <span key={g} className="text-xs bg-gray-800 text-gray-300 px-3 py-1 rounded-full">
+                            {g.trim()}
+                          </span>
+                        ))}
                       </div>
 
-                      <br />
-                      <p className="text-sm">
-                        🎬 Director: {movieDetails.director}
-                      </p>
-                      <p className="text-sm">🎭 Cast: {movieDetails.actors}</p>
-                      <p className="text-sm">
-                        ⏱ Runtime: {movieDetails.runtime}
-                      </p>
-                      <p className="text-sm text-yellow-400 mt-2">
-                        ⭐ IMDb Rating: {movieDetails.imdbRating}
-                      </p>
+                      <div className="mb-6">
+                        <h3 className="text-sm font-semibold text-gray-400 mb-1">SYNOPSIS</h3>
+                        <p className="text-gray-300">{movieDetails.plot}</p>
+                      </div>
 
-                      <div className="mt-4">
-                        <label className="block text-sm font-medium mb-1">
-                          Mood
-                        </label>
-                        <select
-                          value={mood}
-                          onChange={(e) => setMood(e.target.value)}
-                          className="w-full bg-gray-800 text-white border border-gray-600 rounded-md px-3 py-2"
-                        >
-                          <option value="">Select a mood</option>
-                          <option value="happy">😊 Happy</option>
-                          <option value="sad">😢 Sad</option>
-                          <option value="excited">🤩 Excited</option>
-                          <option value="bored">😐 Bored</option>
-                        </select>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                          <h3 className="text-sm font-semibold text-gray-400 mb-1">DIRECTOR</h3>
+                          <p>{movieDetails.director}</p>
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-semibold text-gray-400 mb-1">CAST</h3>
+                          <p className="text-gray-300">{movieDetails.actors}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Diary form */}
+                    <div className="bg-gray-800/50 rounded-xl p-6 mt-6 border border-gray-700">
+                      <h3 className="text-xl font-bold mb-4">Add to Diary</h3>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">Your Mood</label>
+                          <select
+                            value={mood}
+                            onChange={(e) => setMood(e.target.value)}
+                            className="w-full bg-gray-900 text-white border border-gray-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                          >
+                            <option value="">How did it make you feel?</option>
+                            <option value="happy">😊 Happy</option>
+                            <option value="sad">😢 Sad</option>
+                            <option value="excited">🤩 Excited</option>
+                            <option value="thoughtful">🤔 Thoughtful</option>
+                            <option value="bored">😐 Bored</option>
+                            <option value="inspired">✨ Inspired</option>
+                          </select>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">Rating</label>
+                          <div className="flex gap-2">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <motion.button
+                                key={star}
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                                className={`text-3xl ${mood === star.toString() ? 'text-yellow-400' : 'text-gray-500'}`}
+                                onClick={() => setMood(star.toString())}
+                              >
+                                {mood >= star ? '★' : '☆'}
+                              </motion.button>
+                            ))}
+                          </div>
+                        </div>
                       </div>
 
                       <div className="mt-4">
-                        <label className="block text-sm font-medium mb-1">
-                          Review
-                        </label>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">Review</label>
                         <textarea
                           value={review}
                           onChange={(e) => setReview(e.target.value)}
-                          className="w-full bg-gray-800 text-white border border-gray-600 rounded-md px-3 py-2"
-                          rows={3}
-                          placeholder="Write your thoughts..."
+                          className="w-full bg-gray-900 text-white border border-gray-700 rounded-lg px-4 py-3 h-32 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                          placeholder="Share your thoughts about this movie..."
                         ></textarea>
                       </div>
 
-                      <button
-                        onClick={handleAddToDiary}
-                        className="mt-4 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-md"
-                      >
-                        ✅ Add to Diary
-                      </button>
-                      <a
-                        href={`https://www.youtube.com/results?search_query=${encodeURIComponent(
-                          movieDetails.title + " trailer"
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="m-2 inline-flex items-center gap-2 mt-4 bg-gradient-to-r from-red-500 via-yellow-500 to-pink-500 hover:opacity-90 text-white font-semibold px-4 py-2 rounded-md shadow-md transition-all duration-300"
-                      >
-                        🎬 Watch Trailer
-                      </a>
+                      <div className="flex flex-wrap gap-3 mt-6">
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={handleAddToDiary}
+                          className="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-medium rounded-lg shadow-md transition-all flex items-center gap-2"
+                        >
+                          <PlusCircle size={18} />
+                          Add to Diary
+                        </motion.button>
+                        
+                        <motion.a
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          href={`https://www.youtube.com/results?search_query=${encodeURIComponent(
+                            movieDetails.title + " trailer"
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white font-medium rounded-lg shadow-md transition-all flex items-center gap-2"
+                        >
+                          🎬 Watch Trailer
+                        </motion.a>
+                        
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleRemove(movieDetails.imdbID)}
+                          className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg shadow-md transition-all flex items-center gap-2"
+                        >
+                          <Trash2 size={18} />
+                          Remove from List
+                        </motion.button>
+                      </div>
                     </div>
                   </div>
                 </>

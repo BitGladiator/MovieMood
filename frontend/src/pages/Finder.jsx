@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import MoodSelector from "../components/MoodSelector";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+
 export default function Finder() {
   const [search, setSearch] = useState("");
   const [results, setResults] = useState([]);
@@ -13,6 +14,7 @@ export default function Finder() {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [review, setReview] = useState("");
   const [mood, setMood] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (u) => setUser(u));
@@ -22,6 +24,8 @@ export default function Finder() {
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!search.trim()) return;
+    
+    setIsLoading(true);
     try {
       const res = await fetch(
         `https://www.omdbapi.com/?apikey=${
@@ -29,12 +33,18 @@ export default function Finder() {
         }&s=${search}`
       );
       const data = await res.json();
-      if (data.Response === "True") setResults(data.Search);
-      else setResults([]);
-      toast.success("Movies Fetched Successfully!!");
+      if (data.Response === "True") {
+        setResults(data.Search);
+        toast.success("Movies found successfully!");
+      } else {
+        setResults([]);
+        toast.error(data.Error || "No movies found");
+      }
     } catch (err) {
       console.error("Search failed:", err);
       toast.error("Search failed");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -65,7 +75,7 @@ export default function Finder() {
         Plot: fullData.Plot,
         review,
         mood,
-        createdAt: new Date(), // Firestore Timestamp will parse this
+        createdAt: new Date(),
       });
 
       toast.success("Added to diary!");
@@ -94,7 +104,7 @@ export default function Finder() {
         year: movie.Year,
         poster: movie.Poster,
         imdbID: movie.imdbID,
-        imdbRating: parseFloat(fullData.imdbRating),
+        imdbRating: parseFloat(fullData.imdbRating) || 0,
         createdAt: new Date(),
       });
       toast.success("Added to Watch Later!");
@@ -106,59 +116,65 @@ export default function Finder() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-        {/* Animated background elements */}
-        <div className="absolute -top-1/3 -left-1/4 w-[800px] h-[800px] bg-purple-900/20 blur-[150px] rounded-full animate-float-slow pointer-events-none"></div>
-        <div className="absolute -bottom-1/3 -right-1/4 w-[800px] h-[800px] bg-blue-900/20 blur-[150px] rounded-full animate-float-slow-reverse pointer-events-none"></div>
+      <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-black">
+        {/* Cinematic background elements */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-black to-gray-950 z-0"></div>
         
-        {/* Floating particles */}
-        {[...Array(30)].map((_, i) => (
-          <div 
-            key={i}
-            className="absolute w-1 h-1 bg-white rounded-full opacity-10"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              animation: `twinkle ${3 + Math.random() * 5}s infinite ${Math.random() * 2}s`
-            }}
-          />
-        ))}
-  
+        {/* Animated film reel effect */}
+        <div className="absolute inset-0 overflow-hidden z-0">
+          {[...Array(20)].map((_, i) => (
+            <div 
+              key={i}
+              className="absolute h-1 w-32 bg-yellow-400/10"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                transform: `rotate(${Math.random() * 360}deg)`,
+                animation: `filmReel ${15 + Math.random() * 10}s linear infinite`,
+                animationDelay: `${Math.random() * 5}s`
+              }}
+            />
+          ))}
+        </div>
+        
+        {/* Projector light effect */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-48 bg-gradient-to-b from-yellow-500/5 to-transparent pointer-events-none"></div>
+
         {/* Main content */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="relative z-10 max-w-2xl mx-auto text-center p-8 md:p-12 backdrop-blur-lg bg-gradient-to-br from-gray-900/80 to-gray-950/80 rounded-3xl border border-gray-800/50 shadow-2xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="relative z-10 max-w-2xl w-full mx-auto text-center p-8 md:p-12 backdrop-blur-sm bg-gray-900/80 rounded-3xl border border-gray-800 shadow-2xl"
         >
           {/* Decorative elements */}
           <div className="absolute -top-10 -right-10 w-32 h-32 bg-purple-500/10 rounded-full filter blur-xl"></div>
           <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/10 rounded-full filter blur-xl"></div>
           
-          {/* Animated movie icon */}
+          {/* Animated clapperboard icon */}
           <motion.div
             animate={{
-              y: [0, -15, 0],
-              rotate: [0, 5, -5, 0]
+              rotate: [0, 5, -5, 0],
+              scale: [1, 1.05, 1]
             }}
             transition={{
-              duration: 6,
+              duration: 4,
               repeat: Infinity,
-              ease: "easeInOut"
+              repeatType: "reverse"
             }}
             className="text-6xl md:text-7xl mb-6"
           >
             🎬
           </motion.div>
           
-          {/* Main heading */}
+          {/* Main heading with cinematic text effect */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-purple-500 to-blue-500 mb-6 leading-tight"
+            className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 mb-6 leading-tight tracking-tight"
           >
-            Unlock Your Cinematic Universe
+            Welcome to CineArchive
           </motion.h1>
           
           {/* Subheading */}
@@ -168,7 +184,7 @@ export default function Finder() {
             transition={{ delay: 0.3 }}
             className="text-lg md:text-xl text-gray-300 mb-8 max-w-lg mx-auto"
           >
-            Log in to access your personalized movie diary, track your watch history, and discover new favorites.
+            Your personal movie diary awaits. Log in to track films you've watched, save ones you want to see, and relive your cinematic journey.
           </motion.p>
           
           {/* Action buttons */}
@@ -180,38 +196,30 @@ export default function Finder() {
           >
             <Link
               to="/login"
-              className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+              className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-yellow-500 to-red-600 hover:from-yellow-600 hover:to-red-700 text-gray-900 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 group"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 group-hover:animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
               Sign In
             </Link>
             <Link
               to="/register"
-              className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 border border-gray-700"
+              className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 border border-gray-700 group"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
               </svg>
               Create Account
             </Link>
           </motion.div>
         </motion.div>
-  
+
         {/* Animation keyframes */}
         <style jsx global>{`
-          @keyframes float-slow {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(10px, 10px); }
-          }
-          @keyframes float-slow-reverse {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-10px, -10px); }
-          }
-          @keyframes twinkle {
-            0%, 100% { opacity: 0.1; }
-            50% { opacity: 0.5; }
+          @keyframes filmReel {
+            0% { transform: translateX(-100vw) rotate(0deg); }
+            100% { transform: translateX(100vw) rotate(360deg); }
           }
         `}</style>
       </div>
@@ -219,249 +227,315 @@ export default function Finder() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-black to-gray-950 p-4 pb-12 relative overflow-x-hidden">
-    {/* Animated background elements */}
-    <div className="fixed -top-1/2 -left-1/4 w-[800px] h-[800px] bg-purple-900/20 blur-[100px] rounded-full animate-float-slow pointer-events-none"></div>
-    <div className="fixed -bottom-1/4 -right-1/4 w-[600px] h-[600px] bg-indigo-900/20 blur-[100px] rounded-full animate-float-slow-reverse pointer-events-none"></div>
-    
-    {/* Floating particles */}
-    <div className="fixed inset-0 overflow-hidden pointer-events-none">
-      {[...Array(30)].map((_, i) => (
-        <div 
-          key={i}
-          className="absolute w-0.5 h-0.5 bg-white rounded-full opacity-10"
-          style={{
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            animation: `twinkle ${3 + Math.random() * 5}s infinite ${Math.random() * 2}s`,
-            transform: `scale(${0.5 + Math.random()})`
-          }}
-        />
-      ))}
-    </div>
-  
-    <div className="max-w-6xl mx-auto relative z-10">
-      {/* Premium Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-center mb-10"
-      >
-        <h1 className="text-5xl sm:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 mb-4 tracking-tight leading-tight">
-          🎬 Movie Finder
-        </h1>
-        <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-          Discover your next favorite film with our premium movie database
-        </p>
-      </motion.div>
-  
-      {/* Premium Search Form */}
-      <motion.form 
-        onSubmit={handleSearch}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="flex flex-col sm:flex-row gap-4 mb-12 max-w-3xl mx-auto"
-      >
-        <div className="relative flex-1">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur-md opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search for a movie title..."
-            className="relative w-full px-6 py-4 rounded-xl bg-gray-900/80 backdrop-blur-sm text-white placeholder-gray-400 border border-gray-700 focus:ring-2 focus:ring-lime-400 focus:outline-none transition-all duration-300 shadow-lg hover:shadow-purple-500/20"
+    <div className="min-h-screen bg-black p-4 pb-12 relative overflow-x-hidden">
+      {/* Cinematic curtain effect */}
+      <div className="fixed inset-0 bg-gradient-to-b from-red-900/10 via-transparent to-transparent pointer-events-none z-0"></div>
+      <div className="fixed inset-0 bg-gradient-to-t from-blue-900/10 via-transparent to-transparent pointer-events-none z-0"></div>
+      
+      {/* Film grain overlay for texture */}
+      <div className="fixed inset-0 pointer-events-none z-0 opacity-5">
+        {[...Array(200)].map((_, i) => (
+          <div 
+            key={i}
+            className="absolute w-1 h-1 bg-white rounded-full"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+            }}
           />
-        </div>
-        <button
-          type="submit"
-          className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 group"
+        ))}
+      </div>
+
+      {/* Projector light effect */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[150%] h-48 bg-gradient-to-b from-yellow-400/5 to-transparent pointer-events-none z-0"></div>
+
+      {/* Main content container */}
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Premium Header with cinematic flair */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="text-center mb-12 pt-8"
         >
-          <span>Search</span>
-          <svg 
-            className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </button>
-      </motion.form>
-  
-      {/* Movie Grid */}
-      <motion.div 
-        className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
-      >
-        {results.map((movie) => (
           <motion.div
-            key={movie.imdbID}
-            whileHover={{ y: -8, scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300 }}
-            className="group relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-950 to-black rounded-3xl p-5 shadow-2xl border border-gray-800 hover:border-lime-400/30 transition-all duration-300"
+            animate={{
+              scale: [1, 1.02, 1],
+              opacity: [1, 0.9, 1]
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              repeatType: "reverse"
+            }}
+            className="inline-block mb-4"
           >
-            {/* Glow effect on hover */}
-            <div className="absolute inset-0 bg-gradient-to-br from-lime-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl pointer-events-none"></div>
-            
-            {/* Poster with shimmer effect */}
-            <div className="relative overflow-hidden rounded-2xl shadow-lg border border-gray-700">
-              <img
-                src={movie.Poster !== "N/A" ? movie.Poster : "/fallback.png"}
-                alt={movie.Title}
-                className="w-full h-72 object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none"></div>
-            </div>
-  
-            {/* Movie Info */}
-            <div className="mt-4 relative z-10">
-              <h3 className="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-rose-400 to-lime-400 group-hover:from-sky-300 group-hover:via-rose-300 group-hover:to-lime-300 transition-all duration-300">
-                {movie.Title}
-              </h3>
-              <div className="flex items-center justify-between mt-2">
-                <p className="text-sm font-medium text-gray-400 flex items-center gap-1">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                  </svg>
-                  {movie.Year}
-                </p>
-                {movie.imdbRating && (
-                  <p className="text-sm font-bold text-amber-400 flex items-center gap-1">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                    {movie.imdbRating}
-                  </p>
-                )}
-              </div>
-            </div>
-  
-            {/* Action Buttons */}
-            <div className="mt-6 space-y-3">
-              <button
-                onClick={() => setSelectedMovie(movie)}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-lime-400 to-emerald-500 hover:from-lime-500 hover:to-emerald-600 text-gray-900 font-semibold py-3 rounded-xl shadow-md transition-all duration-300 group"
-              >
-                <span className="group-hover:scale-110 transition-transform duration-300">➕</span>
-                <span>Add to Diary</span>
-              </button>
-              <button
-                onClick={() => handleAddToWatchLater(movie)}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-gray-900 font-semibold py-3 rounded-xl shadow-md transition-all duration-300 group"
-              >
-                <span className="group-hover:scale-110 transition-transform duration-300">⏱️</span>
-                <span>Watch Later</span>
-              </button>
+            <div className="text-6xl sm:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 mb-2 tracking-tight leading-tight">
+              🎬 MovieFinder Pro
             </div>
           </motion.div>
-        ))}
-      </motion.div>
-  
-      {/* Premium Movie Modal */}
-      {selectedMovie && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-lg flex items-center justify-center overflow-y-auto"
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto font-light tracking-wide">
+            Discover, catalog, and relive your cinematic journey
+          </p>
+        </motion.div>
+
+        {/* Premium Search Form with cinematic effects */}
+        <motion.form 
+          onSubmit={handleSearch}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+          className="flex flex-col sm:flex-row gap-4 mb-16 max-w-3xl mx-auto px-4"
         >
-          <motion.div
-            initial={{ scale: 0.95, y: 20 }}
-            animate={{ scale: 1, y: 0 }}
-            exit={{ scale: 0.95, y: 20 }}
-            transition={{ type: "spring", stiffness: 300, damping: 25 }}
-            className="relative bg-gradient-to-br from-gray-900 to-gray-950 text-white rounded-3xl p-8 max-w-4xl w-full flex flex-col md:flex-row gap-8 border border-gray-800 shadow-2xl  h-[38rem] mt-[5rem] overflow-scroll"
-          >
-            {/* Modal background elements */}
-            <div className="absolute -top-20 -right-20 w-40 h-40 bg-purple-500/10 rounded-full filter blur-xl"></div>
-            <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-indigo-500/10 rounded-full filter blur-xl"></div>
+          <div className="relative flex-1">
+            {/* Glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-red-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
             
-            {/* Close button */}
-            <button
-              onClick={() => setSelectedMovie(null)}
-              className="absolute top-6 right-6 text-gray-400 hover:text-white text-2xl cursor-pointer transition-colors duration-300 z-10"
+            {/* Search input */}
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search for movies..."
+              className="relative w-full px-6 py-4 rounded-xl bg-gray-900/80 backdrop-blur-sm text-white placeholder-gray-500 border border-gray-700 focus:ring-2 focus:ring-yellow-400 focus:outline-none transition-all duration-300 shadow-lg hover:shadow-red-500/20 text-lg font-medium"
+            />
+            
+            {/* Search icon */}
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+          </div>
+          
+          {/* Search button */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={`px-8 py-4 bg-gradient-to-r from-yellow-500 to-red-600 hover:from-yellow-600 hover:to-red-700 text-gray-900 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 group ${
+              isLoading ? "opacity-80 cursor-not-allowed" : ""
+            }`}
+          >
+            {isLoading ? (
+              <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-gray-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            ) : (
+              <>
+                <span>Search</span>
+                <svg 
+                  className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </>
+            )}
+          </button>
+        </motion.form>
+
+        {/* Results section */}
+        {results.length > 0 ? (
+          <motion.div 
+            className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 px-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+          >
+            {results.map((movie) => (
+              <motion.div
+                key={movie.imdbID}
+                whileHover={{ y: -10, scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                className="group relative overflow-hidden bg-gradient-to-br from-gray-900 via-gray-950 to-black rounded-3xl p-5 shadow-2xl border border-gray-800 hover:border-yellow-400/50 transition-all duration-500"
+              >
+                {/* Glow effect on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl pointer-events-none"></div>
+                
+                {/* Poster with cinematic frame */}
+                <div className="relative overflow-hidden rounded-2xl shadow-lg border-2 border-gray-700 group-hover:border-yellow-400/30 transition-all duration-500">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10 pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent z-10 pointer-events-none"></div>
+                  
+                  {/* Movie poster with loading shimmer */}
+                  {movie.Poster !== "N/A" ? (
+                    <img
+                      src={movie.Poster}
+                      alt={movie.Title}
+                      className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-700"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="w-full h-80 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+                      <span className="text-gray-500 text-lg">No Poster</span>
+                    </div>
+                  )}
+                  
+                  {/* Title overlay */}
+                  <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
+                    <h3 className="text-xl font-bold text-white truncate">{movie.Title}</h3>
+                    <p className="text-sm text-gray-300">{movie.Year}</p>
+                  </div>
+                </div>
+
+                {/* Action buttons with cinematic styling */}
+                <div className="mt-6 space-y-3">
+                  <button
+                    onClick={() => setSelectedMovie(movie)}
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-gray-900 font-bold py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group"
+                  >
+                    <span className="group-hover:animate-pulse">📽️</span>
+                    <span>Add to Diary</span>
+                  </button>
+                  <button
+                    onClick={() => handleAddToWatchLater(movie)}
+                    className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white font-bold py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 group border border-gray-700"
+                  >
+                    <span className="group-hover:animate-spin">⏱️</span>
+                    <span>Watch Later</span>
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-center py-20"
+          >
+            <div className="text-5xl mb-4">🍿</div>
+            <h3 className="text-2xl font-bold text-gray-300 mb-2">Start Your Search</h3>
+            <p className="text-gray-500 max-w-md mx-auto">
+              {isLoading ? "Searching for movies..." : "Find your favorite movies by searching above"}
+            </p>
+          </motion.div>
+        )}
+
+        {/* Premium Movie Modal */}
+        {selectedMovie && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-lg flex items-center justify-center p-4 overflow-y-auto"
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className="relative bg-gradient-to-br from-gray-900 to-gray-950 text-white rounded-3xl p-8 max-w-4xl w-full flex flex-col md:flex-row gap-8 border border-gray-800 shadow-2xl overflow-hidden max-h-[90vh]"
             >
-              &times;
-            </button>
-  
-            {/* Movie Poster */}
-            <div className="flex-shrink-0 w-full md:w-1/3">
-              <div className="relative overflow-hidden rounded-2xl shadow-xl border border-gray-700">
-                <img
-                  src={selectedMovie.Poster !== "N/A" ? selectedMovie.Poster : "/fallback.png"}
-                  alt={selectedMovie.Title}
-                  className="w-full h-auto object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none"></div>
-                <div className="absolute bottom-0 left-0 p-4 w-full">
-                  <h3 className="text-xl font-bold text-white">{selectedMovie.Title}</h3>
-                  <p className="text-gray-300 text-sm">{selectedMovie.Year}</p>
+              {/* Modal background elements */}
+              <div className="absolute -top-20 -right-20 w-40 h-40 bg-yellow-500/10 rounded-full filter blur-xl"></div>
+              <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-red-500/10 rounded-full filter blur-xl"></div>
+              
+              {/* Close button */}
+              <button
+                onClick={() => setSelectedMovie(null)}
+                className="absolute top-6 right-6 text-gray-400 hover:text-white text-2xl cursor-pointer transition-colors duration-300 z-10"
+              >
+                &times;
+              </button>
+
+              {/* Movie Poster */}
+              <div className="flex-shrink-0 w-full md:w-1/3 relative">
+                <div className="sticky top-8">
+                  <div className="relative overflow-hidden rounded-2xl shadow-xl border-2 border-gray-700">
+                    <img
+                      src={selectedMovie.Poster !== "N/A" ? selectedMovie.Poster : "/fallback.png"}
+                      alt={selectedMovie.Title}
+                      className="w-full h-auto object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none"></div>
+                    <div className="absolute bottom-0 left-0 p-4 w-full">
+                      <h3 className="text-xl font-bold text-white">{selectedMovie.Title}</h3>
+                      <p className="text-gray-300 text-sm">{selectedMovie.Year}</p>
+                    </div>
+                  </div>
+                  
+                  {/* Action buttons */}
+                  <div className="flex flex-col gap-3 mt-6">
+                    <button
+                      onClick={handleSaveToDiary}
+                      disabled={!mood}
+                      className={`px-6 py-3 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
+                        mood 
+                          ? "bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-gray-900 shadow-lg hover:shadow-yellow-500/30"
+                          : "bg-gray-800 text-gray-500 cursor-not-allowed"
+                      }`}
+                    >
+                      <span>🎬</span>
+                      <span>Save to Diary</span>
+                    </button>
+                    <button
+                      onClick={() => setSelectedMovie(null)}
+                      className="px-6 py-3 rounded-xl border border-gray-700 bg-gray-900/50 text-gray-300 hover:bg-gray-800/50 hover:text-white transition-all duration-300"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className="flex flex-col justify-end gap-4 pt-4">
-                <button
-                  onClick={() => setSelectedMovie(null)}
-                  className="px-6 py-3 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-800/50 hover:text-white transition-all duration-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSaveToDiary}
-                  className="px-8 py-3 rounded-xl  bg-gradient-to-r from-lime-500 to-emerald-600 hover:from-lime-600 hover:to-emerald-700 text-gray-900 font-bold shadow-lg hover:shadow-lime-500/30 transition-all duration-300 flex items-center justify-center gap-2"
-                >
-                   Save to Diary
-                </button>
+
+              {/* Movie Details Form */}
+              <div className="flex-1 flex flex-col space-y-6 overflow-y-auto">
+                <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500">
+                  Add to Your Movie Diary
+                </h2>
+
+                {/* Review section */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-400 tracking-wide">YOUR REVIEW</label>
+                  <textarea
+                    className="w-full p-4 rounded-xl bg-gray-800/50 backdrop-blur-sm border border-gray-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 min-h-[120px]"
+                    placeholder="Share your thoughts about this movie..."
+                    value={review}
+                    onChange={(e) => setReview(e.target.value)}
+                  />
+                </div>
+
+                {/* Mood selector */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-400 tracking-wide">YOUR MOOD</label>
+                  <MoodSelector selected={mood} onSelect={setMood} />
+                </div>
+
+                {/* Additional movie details (fetched when selected) */}
+                {selectedMovie && (
+                  <div className="mt-6 border-t border-gray-800 pt-6">
+                    <h3 className="text-lg font-semibold text-gray-300 mb-3">MOVIE DETAILS</h3>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p className="text-gray-500">Director</p>
+                        <p className="text-gray-300">{selectedMovie.Director || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Actors</p>
+                        <p className="text-gray-300">{selectedMovie.Actors ? selectedMovie.Actors.split(',').slice(0, 3).join(', ') : "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Genre</p>
+                        <p className="text-gray-300">{selectedMovie.Genre || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-gray-500">Runtime</p>
+                        <p className="text-gray-300">{selectedMovie.Runtime || "N/A"}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-            </div>
-  
-            {/* Movie Details Form */}
-            <div className="flex-1 flex flex-col space-y-4">
-              <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-emerald-500">
-                🎬 Add to Diary
-              </h2>
-  
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-400">Your Review</label>
-                <textarea
-                  className="w-full p-4 rounded-xl bg-gray-800/50 backdrop-blur-sm border border-gray-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-lime-400 focus:border-transparent transition-all duration-300 "
-                  placeholder="Share your thoughts about this movie..."
-                  value={review}
-                  onChange={(e) => setReview(e.target.value)}
-                  rows={3}
-                />
-              </div>
-  
-              <div className="space-y-1">
-                <label className="text-sm font-medium text-gray-400">Your Mood</label>
-                <MoodSelector selected={mood} onSelect={setMood} />
-              </div>
-  
-              
-            </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
+        )}
+      </div>
     </div>
-  
-    {/* Animation keyframes */}
-    <style jsx global>{`
-      @keyframes float-slow {
-        0%, 100% { transform: translate(0, 0); }
-        50% { transform: translate(20px, 20px); }
-      }
-      @keyframes float-slow-reverse {
-        0%, 100% { transform: translate(0, 0); }
-        50% { transform: translate(-20px, -20px); }
-      }
-      @keyframes twinkle {
-        0%, 100% { opacity: 0.1; }
-        50% { opacity: 0.5; }
-      }
-    `}</style>
-  </div>
   );
 }
