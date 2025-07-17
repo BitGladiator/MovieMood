@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Finder from "./pages/Finder";
+import DashBoard from "./pages/DashBoard";
 export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
@@ -42,6 +43,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/finder" element={<Finder />} />
+          <Route path="/dashboard" element={<DashBoard />} />
         </Routes>
       </div>
     </div>

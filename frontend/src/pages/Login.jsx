@@ -11,7 +11,7 @@ export default function Login() {
     e.preventDefault();
     try {
       await login(formData.email, formData.password);
-      navigate("/profile");
+      navigate("/dashboard");
     } catch (error) {
       alert("Login failed. Please check your credentials.");
       console.error("Login error:", error);

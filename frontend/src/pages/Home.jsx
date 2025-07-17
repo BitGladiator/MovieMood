@@ -1,16 +1,20 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, Navigate } from "react-router-dom";
+
 import emailjs from "emailjs-com";
 import { StarIcon } from "lucide-react";
 
 export default function Home() {
+  const isLoggedIn = localStorage.getItem("token"); // or use context/auth state
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
   const [status, setStatus] = useState("");
-
+  if (isLoggedIn) {
+    return <Navigate to="/dashboard" />;
+  }
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
