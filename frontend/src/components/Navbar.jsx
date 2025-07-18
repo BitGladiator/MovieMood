@@ -11,6 +11,7 @@ export default function Navbar() {
   const [surpriseMovie, setSurpriseMovie] = useState(null);
   const [user, setUser] = useState(null);
   const [scrolled, setScrolled] = useState(false);
+  const [profileHover, setProfileHover] = useState(false);
   const menuRef = useRef();
 
   useEffect(() => {
@@ -50,7 +51,7 @@ export default function Navbar() {
     <motion.nav 
       className={`w-full px-6 py-3 backdrop-blur-xl flex items-center justify-between flex-wrap sticky top-0 z-50 transition-all duration-500 ${
         scrolled 
-          ? "bg-gray-900/90 border-b border-gray-800/50 shadow-2xl" 
+          ? "bg-gray-900/95 border-b border-gray-800/50 shadow-2xl" 
           : "bg-transparent border-b border-transparent"
       }`}
       initial={{ y: -100 }}
@@ -207,44 +208,119 @@ export default function Navbar() {
             </Link>
           </div>
         ) : (
-          <div className="relative group">
+          <div className="relative group"
+            onMouseEnter={() => setProfileHover(true)}
+            onMouseLeave={() => setProfileHover(false)}
+          >
             <Link to="/profile" className="block">
               <motion.div 
-                className="w-9 h-9 rounded-full border-2 border-indigo-500/70 hover:border-pink-400 transition-all duration-300 shadow-lg hover:shadow-pink-500/20 overflow-hidden"
-                whileHover={{ scale: 1.05 }}
+                className="relative w-10 h-10 rounded-full overflow-hidden"
+                animate={{
+                  scale: profileHover ? 1.1 : 1,
+                }}
+                transition={{ type: "spring", stiffness: 500 }}
               >
+                {/* Profile image with cinematic border effect */}
+                <div className="absolute inset-0 rounded-full border-2 border-transparent group-hover:border-purple-400/50 transition-all duration-500 z-10 pointer-events-none">
+                  <motion.div 
+                    className="absolute inset-0 rounded-full border-2 border-transparent"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      opacity: [0, 0.5, 0],
+                      borderColor: ["rgba(192, 132, 252, 0)", "rgba(192, 132, 252, 0.5)", "rgba(192, 132, 252, 0)"]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                </div>
+                
+                {/* Glow effect */}
+                <motion.div 
+                  className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+                  animate={{
+                    opacity: profileHover ? 0.3 : 0,
+                  }}
+                />
+                
                 <img
                   src={
                     user.photoURL ||
-                    "https://img.icons8.com/fluency-systems-filled/48/user-male-circle.png"
+                    "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Circle-icons-profile.svg/2048px-Circle-icons-profile.svg.png"
                   }
                   alt="Profile"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover relative z-0"
                 />
+                
+                {/* Active status indicator */}
+                {/* <motion.div 
+                  className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 rounded-full border-2 border-gray-900 z-20"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 500 }}
+                /> */}
               </motion.div>
             </Link>
-            <motion.div 
-              className="absolute right-0 top-full mt-2 w-48 bg-gray-900/95 backdrop-blur-xl rounded-xl shadow-2xl border border-gray-800/50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-1 group-hover:translate-y-0 z-50 overflow-hidden"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ 
-                opacity: 0,
-                y: 10,
-                transition: { duration: 0 }
-              }}
-            >
-              <Link
-                to="/profile"
-                className="block px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors border-b border-gray-800/50"
-              >
-                <span className="text-pink-400 mr-2">👤</span> Profile
-              </Link>
-              <Link
-                to="/settings"
-                className="block px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors"
-              >
-                <span className="text-blue-400 mr-2">⚙️</span> Settings
-              </Link>
-            </motion.div>
+            
+            {/* Enhanced Profile Dropdown */}
+            <AnimatePresence>
+              {profileHover && (
+                <motion.div 
+                  className="absolute right-0 top-full mt-2 w-56 bg-gray-900/95 backdrop-blur-xl rounded-xl shadow-2xl border border-gray-800/50 overflow-hidden z-50"
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  {/* Profile header */}
+                  <div className="p-4 border-b border-gray-800/50 bg-gradient-to-r from-purple-900/20 to-pink-900/20">
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <img
+                          src={
+                            user.photoURL ||
+                            "https://img.icons8.com/fluency-systems-filled/48/user-male-circle.png"
+                          }
+                          alt="Profile"
+                          className="w-10 h-10 rounded-full border-2 border-purple-500/50"
+                        />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-white truncate">{user.displayName || "User"}</h4>
+                        <p className="text-xs text-gray-400">{user.email}</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Menu items */}
+                  <div className="py-1">
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2"
+                    >
+                      <span className="text-purple-400">👤</span>
+                      <span>Profile</span>
+                    </Link>
+                    <Link
+                      to="/settings"
+                      className="block px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2"
+                    >
+                      <span className="text-blue-400">⚙️</span>
+                      <span>Settings</span>
+                    </Link>
+                    <Link
+                      to="/logout"
+                      className="block px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2 border-t border-gray-800/50"
+                    >
+                      <span className="text-red-400">🚪</span>
+                      <span>Logout</span>
+                    </Link>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
 
@@ -331,6 +407,9 @@ export default function Navbar() {
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Film grain effect for cinematic feel */}
+              <div className="absolute inset-0 opacity-5 pointer-events-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPgogIDxmaWx0ZXIgaWQ9Im5vaXNlIj4KICAgIDxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjA1IiBudW1PY3RhdmVzPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+CiAgICA8ZmVDb2xvck1hdHJpeCB0eXBlPSJzYXR1cmF0ZSIgdmFsdWVzPSIwIi8+CiAgPC9maWx0ZXI+CiAgPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI25vaXNlKSIgb3BhY2l0eT0iMC4yIi8+Cjwvc3ZnPg==')]"></div>
+
               {/* Glowing background effect */}
               <motion.div 
                 className="absolute inset-0 opacity-20"
@@ -348,14 +427,22 @@ export default function Navbar() {
               {/* Close button */}
               <button
                 onClick={() => setShowModal(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl cursor-pointer transition-colors duration-300 z-10 bg-gray-800/80 rounded-full w-8 h-8 flex items-center justify-center border border-gray-700/50"
+                className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl cursor-pointer transition-colors duration-300 z-10 bg-gray-800/80 rounded-full w-8 h-8 flex items-center justify-center border border-gray-700/50 hover:border-pink-500/50 hover:bg-pink-500/10 hover:shadow-[0_0_10px_rgba(236,72,153,0.3)]"
               >
                 &times;
               </button>
 
-              {/* Movie Poster */}
+              {/* Movie Poster - Cinematic style */}
               <div className="w-full md:w-2/5 h-64 md:h-auto min-h-[300px] bg-gray-800 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent z-10" />
+                {/* Poster overlay effects */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-10" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/10 to-black/30 z-10" />
+                
+                {/* Film strip effect */}
+                <div className="absolute top-0 left-0 w-full h-2 bg-black/50 z-20"></div>
+                <div className="absolute bottom-0 left-0 w-full h-2 bg-black/50 z-20"></div>
+                <div className="absolute top-0 left-0 h-full w-2 bg-black/50 z-20"></div>
+                
                 <img
                   src={
                     surpriseMovie?.Poster !== "N/A"
@@ -365,12 +452,36 @@ export default function Navbar() {
                   alt={surpriseMovie?.Title}
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute bottom-0 left-0 p-6 w-full z-20">
+                
+                {/* Title with cinematic reveal effect */}
+                <motion.div 
+                  className="absolute bottom-0 left-0 p-6 w-full z-20"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
                   <h3 className="text-2xl font-bold text-white drop-shadow-lg">
                     {surpriseMovie?.Title}
                   </h3>
                   <p className="text-gray-300 text-sm">{surpriseMovie?.Year}</p>
-                </div>
+                  
+                  {/* Rating stars */}
+                  <div className="flex items-center mt-2">
+                    {[...Array(5)].map((_, i) => (
+                      <svg
+                        key={i}
+                        className={`w-4 h-4 ${i < Math.floor(surpriseMovie?.imdbRating / 2) ? 'text-amber-400' : 'text-gray-600'}`}
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ))}
+                    <span className="ml-1 text-xs text-gray-400">
+                      ({surpriseMovie?.imdbRating || "N/A"}/10)
+                    </span>
+                  </div>
+                </motion.div>
               </div>
 
               {/* Movie Details */}
@@ -390,14 +501,14 @@ export default function Navbar() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <span className="px-3 py-1 bg-purple-900/50 text-purple-300 rounded-full text-xs font-medium backdrop-blur-sm">
-                    ⭐ {surpriseMovie?.imdbRating || "N/A"} IMDb
+                  <span className="px-3 py-1 bg-purple-900/50 text-purple-300 rounded-full text-xs font-medium backdrop-blur-sm flex items-center gap-1">
+                    <span className="text-yellow-400">⭐</span> {surpriseMovie?.imdbRating || "N/A"} IMDb
                   </span>
-                  <span className="px-3 py-1 bg-blue-900/50 text-blue-300 rounded-full text-xs font-medium backdrop-blur-sm">
-                    🎭 {surpriseMovie?.Genre?.split(",")[0] || "N/A"}
+                  <span className="px-3 py-1 bg-blue-900/50 text-blue-300 rounded-full text-xs font-medium backdrop-blur-sm flex items-center gap-1">
+                    <span className="text-pink-400">🎭</span> {surpriseMovie?.Genre?.split(",")[0] || "N/A"}
                   </span>
-                  <span className="px-3 py-1 bg-emerald-900/50 text-emerald-300 rounded-full text-xs font-medium backdrop-blur-sm">
-                    ⏱️ {surpriseMovie?.Runtime || "N/A"}
+                  <span className="px-3 py-1 bg-emerald-900/50 text-emerald-300 rounded-full text-xs font-medium backdrop-blur-sm flex items-center gap-1">
+                    <span className="text-cyan-400">⏱️</span> {surpriseMovie?.Runtime || "N/A"}
                   </span>
                 </motion.div>
 
@@ -408,8 +519,10 @@ export default function Navbar() {
                   transition={{ delay: 0.4 }}
                 >
                   <div>
-                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                      Plot
+                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-2">
+                      <span className="w-4 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent flex-1"></span>
+                      <span>Plot</span>
+                      <span className="w-4 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent flex-1"></span>
                     </h4>
                     <p className="text-gray-300 text-sm leading-relaxed">
                       {surpriseMovie?.Plot || "No plot available."}
@@ -445,20 +558,30 @@ export default function Navbar() {
                   transition={{ delay: 0.5 }}
                 >
                   <motion.button 
-                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2.5 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-300 flex items-center justify-center gap-2 text-sm"
+                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2.5 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-300 flex items-center justify-center gap-2 text-sm relative overflow-hidden"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <span>➕</span>
-                    <span>Watchlist</span>
+                    <span className="relative z-10">➕ Watchlist</span>
+                    <motion.span 
+                      className="absolute inset-0 bg-gradient-to-r from-pink-600/20 to-purple-600/20 opacity-0 hover:opacity-100"
+                      initial={{ x: -100 }}
+                      whileHover={{ x: 0, opacity: 1 }}
+                      transition={{ duration: 0.4 }}
+                    />
                   </motion.button>
                   <motion.button 
-                    className="flex-1 bg-gray-800/50 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-gray-700/50 transition-all duration-300 flex items-center justify-center gap-2 text-sm border border-gray-700/50 backdrop-blur-sm"
+                    className="flex-1 bg-gray-800/50 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-gray-700/50 transition-all duration-300 flex items-center justify-center gap-2 text-sm border border-gray-700/50 backdrop-blur-sm relative overflow-hidden"
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <span>🎬</span>
-                    <span>Similar</span>
+                    <span className="relative z-10">🎬 Similar</span>
+                    <motion.span 
+                      className="absolute inset-0 bg-gradient-to-r from-gray-800/20 to-gray-700/20 opacity-0 hover:opacity-100"
+                      initial={{ x: -100 }}
+                      whileHover={{ x: 0, opacity: 1 }}
+                      transition={{ duration: 0.4 }}
+                    />
                   </motion.button>
                 </motion.div>
               </div>

@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import { updateProfile } from "firebase/auth"; // Add this import
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -38,30 +39,46 @@ const db = getFirestore(app);
 // Auth Helpers
 const signup = async (username, email, password) => {
   try {
+    // 1. Create user
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const user = res.user;
+
+    // 2. Set displayName in Firebase Auth
+    await updateProfile(user, {
+      displayName: username,
+    });
+
+    // 3. Store additional data in Firestore
     await setDoc(doc(db, "users", user.uid), {
       id: user.uid,
       username: username.toLowerCase(),
       email,
-      name: "",
+      name: username, // Set name here too
       avatar: "",
       bio: "Hey! there I am using chat app",
       lastSeen: Date.now(),
     });
+
+    // 4. Create chats document
     await setDoc(doc(db, "chats", user.uid), { chatsData: [] });
+
+    toast.success("Account created successfully!");
+    return user; // Return user with updated profile
   } catch (error) {
     console.error(error);
     toast.error(error.code.split("/")[1].split("-").join(" "));
+    throw error;
   }
 };
 
-const login = async (email, password) => {
+export const login = async (email, password) => {
   try {
-    await signInWithEmailAndPassword(auth, email, password);
+    const res = await signInWithEmailAndPassword(auth, email, password);
+    const user = res.user;
+    return user; // Return the full user object (includes displayName)
   } catch (error) {
-    console.error(error);
-    toast.error(error.code.split("/")[1].split("-").join(" "));
+    console.error("Login error:", error);
+    throw error; // Re-throw to handle in the UI
   }
 };
 
@@ -98,7 +115,7 @@ export {
   auth,
   db,
   signup,
-  login,
+  
   logout,
   resetPass,
   addDoc,

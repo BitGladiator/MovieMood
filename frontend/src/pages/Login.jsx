@@ -10,7 +10,10 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(formData.email, formData.password);
+      const user = await login(formData.email, formData.password);
+      const username = user.displayName; // Get the username
+      
+      
       navigate("/dashboard");
     } catch (error) {
       alert("Login failed. Please check your credentials.");

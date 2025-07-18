@@ -19,7 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [user, setUser] = useState({
-    name: "Movie Buff",
+    name: "",
     email: "",
     avatar: "https://img.icons8.com/fluency-systems-filled/96/user-male-circle.png"
   });
@@ -46,7 +46,7 @@ const Dashboard = () => {
         // Set basic user info
         setUser({
           uid: currentUser.uid,
-          name: currentUser.displayName || "Movie Buff",
+          name: currentUser.displayName || currentUser.email.split('@')[0] || "Movie Buff",
           email: currentUser.email,
           avatar: currentUser.photoURL || "https://img.icons8.com/fluency-systems-filled/96/user-male-circle.png"
         });
@@ -81,7 +81,7 @@ const Dashboard = () => {
           const recentQuery = query(
             collection(db, "diary"),
             where("uid", "==", currentUser.uid),
-            orderBy("dateWatched", "desc"), // Changed from createdAt to dateWatched
+            orderBy("dateWatched", "desc"),
             limit(4)
           );
           const recentSnapshot = await getDocs(recentQuery);
@@ -183,7 +183,7 @@ const Dashboard = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              Welcome back, <span className="text-white">{user?.name?.split(' ')[0] || 'Cinephile'}</span>
+              Welcome back, <span className="text-white">{user.name}</span>
             </motion.h1>
             <p className="text-gray-400 text-lg max-w-2xl">
               Your personal film curator is ready. Let's explore your cinematic universe.
@@ -198,7 +198,7 @@ const Dashboard = () => {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-md opacity-20"></div>
               <img
-                src={user?.avatar}
+                src={user.avatar}
                 alt="User avatar"
                 className="w-14 h-14 rounded-full border-2 border-purple-400/50 relative z-10 object-cover"
                 onError={(e) => {
@@ -207,8 +207,8 @@ const Dashboard = () => {
               />
             </div>
             <div>
-              <p className="font-medium">{user?.name || "Movie Buff"}</p>
-              <p className="text-sm text-gray-400">{user?.email || ""}</p>
+              <p className="font-medium">{user.name}</p>
+              <p className="text-sm text-gray-400">{user.email}</p>
               <div className="flex items-center gap-2 mt-1">
                 <span className="text-xs px-2 py-0.5 bg-purple-600/30 text-purple-300 rounded-full border border-purple-500/30">
                   PRO MEMBER
