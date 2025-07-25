@@ -212,3 +212,51 @@
 .animate-grid-pan {
   animation: grid-pan 120s linear infinite;
 }
+:root {
+  /* Base colors */
+  --color-primary: 139, 92, 246; /* purple-500 */
+  --color-secondary: 59, 130, 246; /* blue-500 */
+  
+  /* Theme classes */
+  &.theme-purple {
+    --color-primary: 139, 92, 246; /* purple-500 */
+    --color-secondary: 59, 130, 246; /* blue-500 */
+  }
+  
+  &.theme-crimson {
+    --color-primary: 225, 29, 72; /* rose-500 */
+    --color-secondary: 236, 72, 153; /* pink-500 */
+  }
+  
+  &.theme-emerald {
+    --color-primary: 16, 185, 129; /* emerald-500 */
+    --color-secondary: 6, 182, 212; /* cyan-500 */
+  }
+  
+  &.theme-amber {
+    --color-primary: 245, 158, 11; /* amber-500 */
+    --color-secondary: 249, 115, 22; /* orange-500 */
+  }
+}
+
+/* Use these variables in your components */
+.bg-primary {
+  background-color: rgb(var(--color-primary));
+}
+
+.text-primary {
+  color: rgb(var(--color-primary));
+}
+
+.border-primary {
+  border-color: rgb(var(--color-primary));
+}
+
+/* Gradient backgrounds */
+.bg-gradient-theme {
+  background-image: linear-gradient(
+    to right,
+    rgb(var(--color-primary)),
+    rgb(var(--color-secondary))
+  );
+}

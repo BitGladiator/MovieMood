@@ -1,26 +1,44 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { login } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const user = await login(formData.email, formData.password);
-      const username = user.displayName; // Get the username
       
+      // If "Remember Me" is checked, store the credentials
+      if (rememberMe) {
+        localStorage.setItem('rememberedEmail', formData.email);
+        // Note: Storing passwords in localStorage is not secure
+        // Consider using a more secure method like session tokens
+      } else {
+        localStorage.removeItem('rememberedEmail');
+      }
       
       navigate("/dashboard");
     } catch (error) {
       alert("Login failed. Please check your credentials.");
       console.error("Login error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
-
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem('rememberedEmail');
+    if (rememberedEmail) {
+      setFormData(prev => ({ ...prev, email: rememberedEmail }));
+      setRememberMe(true);
+    }
+  }, []);
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden p-4">
       {/* Premium Background */}
@@ -64,7 +82,9 @@ export default function Login() {
               style={{
                 top: `${Math.random() * 100}%`,
                 left: `${Math.random() * 100}%`,
-                animation: `twinkle ${5 + Math.random() * 10}s infinite ${Math.random() * 3}s`,
+                animation: `twinkle ${5 + Math.random() * 10}s infinite ${
+                  Math.random() * 3
+                }s`,
                 transform: `scale(${0.5 + Math.random() * 2})`,
               }}
             />
@@ -148,57 +168,76 @@ export default function Login() {
           </div>
 
           <div className="mt-8 flex items-center justify-between">
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <div className="relative w-5 h-5 bg-neutral-800 border border-neutral-700 rounded-sm flex items-center justify-center transition-all group-hover:border-purple-500">
-                <input
-                  type="checkbox"
-                  className="absolute opacity-0 cursor-pointer w-full h-full"
-                />
+  <label className="flex items-center space-x-2 cursor-pointer">
+    <div className="relative w-5 h-5 bg-neutral-800 border border-neutral-700 rounded-sm flex items-center justify-center transition-all group-hover:border-purple-500">
+      <input
+        type="checkbox"
+        checked={rememberMe}
+        onChange={(e) => setRememberMe(e.target.checked)}
+        className="absolute opacity-0 cursor-pointer w-full h-full"
+      />
+      <svg
+        className={`w-3 h-3 text-purple-500 transition-opacity ${
+          rememberMe ? 'opacity-100' : 'opacity-0'
+        }`}
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="3"
+          d="M5 13l4 4L19 7"
+        />
+      </svg>
+    </div>
+    <span className="text-sm text-neutral-400">Remember me</span>
+  </label>
+
+  <a
+    href="#"
+    className="text-sm text-neutral-400 hover:text-purple-400 transition-colors"
+  >
+    Forgot password?
+  </a>
+</div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full cursor-pointer mt-8 py-3.5 px-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_-5px_rgba(139,92,246,0.4)] relative overflow-hidden group"
+          >
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="relative h-5 w-5">
+                  {/* Premium loading spinner */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                  {/* Optional: Pulse effect */}
+                  <div className="absolute inset-0 rounded-full bg-purple-500 animate-ping opacity-30"></div>
+                </div>
+                <span>Authenticating...</span>
+              </div>
+            ) : (
+              <span className="relative z-10 flex items-center justify-center gap-2">
                 <svg
-                  className="w-3 h-3 text-purple-500 opacity-0 transition-opacity"
+                  className="w-5 h-5 transition-transform group-hover:translate-x-1"
                   fill="none"
-                  viewBox="0 0 24 24"
                   stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth="3"
-                    d="M5 13l4 4L19 7"
+                    strokeWidth="2"
+                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
                   />
                 </svg>
-              </div>
-              <span className="text-sm text-neutral-400">Remember me</span>
-            </label>
-
-            <a
-              href="#"
-              className="text-sm text-neutral-400 hover:text-purple-400 transition-colors"
-            >
-              Forgot password?
-            </a>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full mt-8 py-3.5 px-6 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_-5px_rgba(139,92,246,0.4)] relative overflow-hidden group"
-          >
-            <span className="relative z-10 flex items-center justify-center gap-2">
-              <svg
-                className="w-5 h-5 transition-transform group-hover:translate-x-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-                />
-              </svg>
-              Sign In
-            </span>
+                Sign In
+              </span>
+            )}
             <span className="absolute inset-0 bg-gradient-to-r from-purple-700/30 to-blue-700/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
           </button>
 

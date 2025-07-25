@@ -12,6 +12,9 @@ import Finder from "./pages/Finder";
 import DashBoard from "./pages/DashBoard";
 import Features from "./pages/Features";
 import HowitWorks from "./pages/HowitWorks";
+import Logout from "./pages/Logout";
+import Settings from "./pages/Settings";
+
 export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
@@ -48,7 +51,8 @@ export default function App() {
           <Route path="/dashboard" element={<DashBoard />} />
           <Route path="/features" element={<Features/>} />
           <Route path="/how-it-works" element={<HowitWorks/>} />
-
+          <Route path="/logout" element={<Logout />} />
+          <Route path="/settings" element={<Settings/>} />
         </Routes>
       </div>
     </div>
