@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FaHeart, FaStar, FaFilm } from "react-icons/fa";
 import { FiClock, FiTrendingUp, FiFilm } from "react-icons/fi";
 import { auth, db, logout } from "../firebase";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import {
   collection,
@@ -576,15 +576,15 @@ const Dashboard = () => {
                 Get personalized recommendations, advanced stats, and exclusive content with our Premium membership.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <button className="px-8 py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-full font-semibold shadow-lg hover:shadow-purple-500/30 transition-all duration-300 flex items-center justify-center gap-2">
+                <Link to={'/payment'} className="px-8 py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-full font-semibold shadow-lg hover:shadow-purple-500/30 transition-all duration-300 flex items-center justify-center gap-2">
                   Upgrade Now
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                   </svg>
-                </button>
-                <button className="px-8 py-3.5 bg-gray-800/50 border border-gray-700 hover:bg-gray-700/50 rounded-full font-medium shadow-lg transition-all duration-300 flex items-center justify-center gap-2">
+                </Link>
+                <Link to={'/pricing'}  className="px-8 py-3.5 bg-gray-800/50 border border-gray-700 hover:bg-gray-700/50 rounded-full font-medium shadow-lg transition-all duration-300 flex items-center justify-center gap-2">
                   Learn More
-                </button>
+                </Link>
               </div>
             </div>
           </motion.div>
