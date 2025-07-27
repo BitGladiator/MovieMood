@@ -23,7 +23,7 @@ const Dashboard = () => {
     email: "",
     avatar: "https://img.icons8.com/fluency-systems-filled/96/user-male-circle.png"
   });
-
+  
   const [stats, setStats] = useState({
     diaryCount: 0,
     watchLaterCount: 0,
@@ -34,7 +34,12 @@ const Dashboard = () => {
 
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+  function getGreeting() {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  }
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
@@ -183,7 +188,7 @@ const Dashboard = () => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              Welcome back, <span className="text-white">{user.name}</span>
+              {getGreeting()}, <span className="text-white">{user.name}</span>
             </motion.h1>
             <p className="text-gray-400 text-lg max-w-2xl">
               Your personal film curator is ready. Let's explore your cinematic universe.

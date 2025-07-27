@@ -115,7 +115,6 @@ export {
   auth,
   db,
   signup,
-  
   logout,
   resetPass,
   addDoc,

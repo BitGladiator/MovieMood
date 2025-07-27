@@ -1,5 +1,14 @@
 import { useEffect, useState, useMemo } from "react";
-import { Trash2, PlusCircle, X, Clock, Star, Calendar, Filter, Popcorn } from "lucide-react";
+import {
+  Trash2,
+  PlusCircle,
+  X,
+  Clock,
+  Star,
+  Calendar,
+  Filter,
+  Popcorn,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { auth, db } from "../firebase";
@@ -26,6 +35,7 @@ export default function WatchLater() {
   const [mood, setMood] = useState("");
   const [review, setReview] = useState("");
   const [isHovering, setIsHovering] = useState(null);
+  const [rating, setRating] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
@@ -160,7 +170,7 @@ export default function WatchLater() {
   };
 
   const filteredMovies = useMemo(() => {
-    return movies.filter(movie => 
+    return movies.filter((movie) =>
       movie.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [movies, searchQuery]);
@@ -170,7 +180,7 @@ export default function WatchLater() {
 
     if (sortBy === "rating") {
       return moviesCopy
-        .filter(movie => movie.imdbRating) // Filter first
+        .filter((movie) => movie.imdbRating) // Filter first
         .sort((a, b) => parseFloat(b.imdbRating) - parseFloat(a.imdbRating)); // Then sort
     }
 
@@ -191,20 +201,22 @@ export default function WatchLater() {
         {/* Animated background elements */}
         <div className="absolute -top-1/3 -left-1/4 w-[800px] h-[800px] bg-purple-900/20 blur-[150px] rounded-full animate-float-slow pointer-events-none"></div>
         <div className="absolute -bottom-1/3 -right-1/4 w-[800px] h-[800px] bg-blue-900/20 blur-[150px] rounded-full animate-float-slow-reverse pointer-events-none"></div>
-        
+
         {/* Floating particles */}
         {[...Array(30)].map((_, i) => (
-          <div 
+          <div
             key={i}
             className="absolute w-1 h-1 bg-white rounded-full opacity-10"
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
-              animation: `twinkle ${3 + Math.random() * 5}s infinite ${Math.random() * 2}s`
+              animation: `twinkle ${3 + Math.random() * 5}s infinite ${
+                Math.random() * 2
+              }s`,
             }}
           />
         ))}
-  
+
         {/* Main content */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -215,23 +227,23 @@ export default function WatchLater() {
           {/* Decorative elements */}
           <div className="absolute -top-10 -right-10 w-32 h-32 bg-purple-500/10 rounded-full filter blur-xl"></div>
           <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/10 rounded-full filter blur-xl"></div>
-          
+
           {/* Animated movie icon */}
           <motion.div
             animate={{
               y: [0, -15, 0],
-              rotate: [0, 5, -5, 0]
+              rotate: [0, 5, -5, 0],
             }}
             transition={{
               duration: 6,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
             className="text-6xl md:text-7xl mb-6"
           >
             🎬
           </motion.div>
-          
+
           {/* Main heading */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -241,7 +253,7 @@ export default function WatchLater() {
           >
             Unlock Your Cinematic Universe
           </motion.h1>
-          
+
           {/* Subheading */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -249,9 +261,10 @@ export default function WatchLater() {
             transition={{ delay: 0.3 }}
             className="text-lg md:text-xl text-gray-300 mb-8 max-w-lg mx-auto"
           >
-            Log in to access your personalized movie diary, track your watch history, and discover new favorites.
+            Log in to access your personalized movie diary, track your watch
+            history, and discover new favorites.
           </motion.p>
-          
+
           {/* Action buttons */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -263,8 +276,18 @@ export default function WatchLater() {
               to="/login"
               className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                />
               </svg>
               Sign In
             </Link>
@@ -272,27 +295,52 @@ export default function WatchLater() {
               to="/register"
               className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 border border-gray-700"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                />
               </svg>
               Create Account
             </Link>
           </motion.div>
         </motion.div>
-  
+
         {/* Animation keyframes */}
         <style jsx global>{`
           @keyframes float-slow {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(10px, 10px); }
+            0%,
+            100% {
+              transform: translate(0, 0);
+            }
+            50% {
+              transform: translate(10px, 10px);
+            }
           }
           @keyframes float-slow-reverse {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-10px, -10px); }
+            0%,
+            100% {
+              transform: translate(0, 0);
+            }
+            50% {
+              transform: translate(-10px, -10px);
+            }
           }
           @keyframes twinkle {
-            0%, 100% { opacity: 0.1; }
-            50% { opacity: 0.5; }
+            0%,
+            100% {
+              opacity: 0.1;
+            }
+            50% {
+              opacity: 0.5;
+            }
           }
         `}</style>
       </div>
@@ -305,8 +353,8 @@ export default function WatchLater() {
         {/* Background elements */}
         <div className="absolute -top-1/3 -left-1/4 w-[800px] h-[800px] bg-purple-900/10 blur-[150px] rounded-full animate-float-slow pointer-events-none"></div>
         <div className="absolute -bottom-1/3 -right-1/4 w-[800px] h-[800px] bg-blue-900/10 blur-[150px] rounded-full animate-float-slow-reverse pointer-events-none"></div>
-        
-        <motion.div 
+
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -315,12 +363,12 @@ export default function WatchLater() {
           <motion.div
             animate={{
               rotate: [0, 5, -5, 0],
-              y: [0, -10, 0]
+              y: [0, -10, 0],
             }}
             transition={{
               duration: 4,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
             className="text-8xl mb-6"
           >
@@ -330,7 +378,8 @@ export default function WatchLater() {
             Your Watch Later is Empty
           </h2>
           <p className="text-lg text-gray-400 max-w-md mb-8">
-            Start building your cinematic queue by adding movies you're excited to watch.
+            Start building your cinematic queue by adding movies you're excited
+            to watch.
           </p>
           <Link
             to="/finder"
@@ -355,7 +404,7 @@ export default function WatchLater() {
 
         <div className="max-w-7xl mx-auto relative z-10">
           {/* Header with sort controls */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -365,9 +414,12 @@ export default function WatchLater() {
               <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">
                 Your Watch Later
               </h1>
-              <p className="text-gray-400">{movies.length} {movies.length === 1 ? 'movie' : 'movies'} in your queue</p>
+              <p className="text-gray-400">
+                {movies.length} {movies.length === 1 ? "movie" : "movies"} in
+                your queue
+              </p>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
               {/* Search bar */}
               <div className="relative w-full sm:w-64">
@@ -392,7 +444,7 @@ export default function WatchLater() {
                   />
                 </svg>
               </div>
-              
+
               {/* Sort dropdown */}
               <div className="flex items-center gap-3 bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-2">
                 <Filter size={18} className="text-gray-400" />
@@ -424,7 +476,7 @@ export default function WatchLater() {
           </motion.div>
 
           {/* Stats bar */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
@@ -439,7 +491,7 @@ export default function WatchLater() {
                 <p className="text-xl font-bold">{movies.length}</p>
               </div>
             </div>
-            
+
             <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4 flex items-center gap-3">
               <div className="p-2 bg-purple-900/30 rounded-lg">
                 <Star className="text-purple-400" size={20} />
@@ -447,14 +499,18 @@ export default function WatchLater() {
               <div>
                 <p className="text-sm text-gray-400">Avg Rating</p>
                 <p className="text-xl font-bold">
-                  {movies.filter(m => m.imdbRating).length > 0 
-                    ? (movies.reduce((acc, m) => acc + (parseFloat(m.imdbRating) || 0), 0) / 
-                      movies.filter(m => m.imdbRating).length).toFixed(1)
-                    : 'N/A'}
+                  {movies.filter((m) => m.imdbRating).length > 0
+                    ? (
+                        movies.reduce(
+                          (acc, m) => acc + (parseFloat(m.imdbRating) || 0),
+                          0
+                        ) / movies.filter((m) => m.imdbRating).length
+                      ).toFixed(1)
+                    : "N/A"}
                 </p>
               </div>
             </div>
-            
+
             <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4 flex items-center gap-3">
               <div className="p-2 bg-blue-900/30 rounded-lg">
                 <Calendar className="text-blue-400" size={20} />
@@ -462,13 +518,19 @@ export default function WatchLater() {
               <div>
                 <p className="text-sm text-gray-400">Oldest</p>
                 <p className="text-xl font-bold">
-                  {movies.length > 0 
-                    ? new Date(Math.min(...movies.map(m => m.createdAt?.toMillis?.() || Date.now()))).getFullYear()
-                    : 'N/A'}
+                  {movies.length > 0
+                    ? new Date(
+                        Math.min(
+                          ...movies.map(
+                            (m) => m.createdAt?.toMillis?.() || Date.now()
+                          )
+                        )
+                      ).getFullYear()
+                    : "N/A"}
                 </p>
               </div>
             </div>
-            
+
             <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-xl p-4 flex items-center gap-3">
               <div className="p-2 bg-amber-900/30 rounded-lg">
                 <Clock className="text-amber-400" size={20} />
@@ -476,9 +538,16 @@ export default function WatchLater() {
               <div>
                 <p className="text-sm text-gray-400">Recently Added</p>
                 <p className="text-xl font-bold">
-                  {movies.length > 0 
-                    ? new Date(Math.max(...movies.map(m => m.createdAt?.toMillis?.() || 0))).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-                    : 'N/A'}
+                  {movies.length > 0
+                    ? new Date(
+                        Math.max(
+                          ...movies.map((m) => m.createdAt?.toMillis?.() || 0)
+                        )
+                      ).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })
+                    : "N/A"}
                 </p>
               </div>
             </div>
@@ -492,13 +561,16 @@ export default function WatchLater() {
               className="text-center py-16"
             >
               <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-2xl font-bold text-gray-300 mb-2">No movies found</h3>
+              <h3 className="text-2xl font-bold text-gray-300 mb-2">
+                No movies found
+              </h3>
               <p className="text-gray-500 max-w-md mx-auto">
-                Try adjusting your search or add more movies to your watch later list
+                Try adjusting your search or add more movies to your watch later
+                list
               </p>
             </motion.div>
           ) : (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, staggerChildren: 0.1 }}
@@ -526,26 +598,38 @@ export default function WatchLater() {
                       {/* Poster image with gradient overlay */}
                       <div className="relative aspect-[2/3] w-full">
                         <img
-                          src={movie.poster !== "N/A" ? movie.poster : "/no-poster.png"}
+                          src={
+                            movie.poster !== "N/A"
+                              ? movie.poster
+                              : "/no-poster.png"
+                          }
                           alt={movie.title}
                           className="w-full h-full object-cover transition-all duration-500"
                           style={{
-                            filter: isHovering === movie.imdbID ? 'brightness(0.7)' : 'brightness(0.6)'
+                            filter:
+                              isHovering === movie.imdbID
+                                ? "brightness(0.7)"
+                                : "brightness(0.6)",
                           }}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
-                        
+
                         {/* Date added badge */}
                         {movie.createdAt && (
                           <div className="absolute top-3 left-3 bg-black/70 text-xs text-gray-300 px-2 py-1 rounded-full backdrop-blur-sm">
-                            {new Date(movie.createdAt.toMillis()).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            {new Date(
+                              movie.createdAt.toMillis()
+                            ).toLocaleDateString("en-US", {
+                              month: "short",
+                              day: "numeric",
+                            })}
                           </div>
                         )}
                       </div>
 
                       {/* Movie info */}
                       <div className="absolute bottom-0 left-0 w-full p-4">
-                        <motion.h2 
+                        <motion.h2
                           className="text-xl font-bold line-clamp-1"
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -554,10 +638,15 @@ export default function WatchLater() {
                           {movie.title}
                         </motion.h2>
                         <div className="flex items-center justify-between mt-1">
-                          <span className="text-sm text-gray-300">{movie.year}</span>
+                          <span className="text-sm text-gray-300">
+                            {movie.year}
+                          </span>
                           {movie.imdbRating && (
                             <div className="flex items-center gap-1 text-sm bg-black/50 px-2 py-1 rounded">
-                              <Star size={14} className="text-yellow-400 fill-yellow-400" />
+                              <Star
+                                size={14}
+                                className="text-yellow-400 fill-yellow-400"
+                              />
                               <span>{movie.imdbRating}</span>
                             </div>
                           )}
@@ -565,11 +654,11 @@ export default function WatchLater() {
                       </div>
 
                       {/* Action buttons that appear on hover */}
-                      <motion.div 
+                      <motion.div
                         className="absolute inset-0 flex items-center justify-center gap-3"
                         initial={{ opacity: 0 }}
-                        animate={{ 
-                          opacity: isHovering === movie.imdbID ? 1 : 0 
+                        animate={{
+                          opacity: isHovering === movie.imdbID ? 1 : 0,
                         }}
                         transition={{ duration: 0.2 }}
                       >
@@ -625,10 +714,14 @@ export default function WatchLater() {
               onClick={(e) => e.stopPropagation()}
             >
               <button
-                className="absolute top-4 right-4 z-10 bg-gray-800 hover:bg-gray-700 p-2 rounded-full transition"
-                onClick={closeModal}
+                className="absolute top-4 right-4 z-50 bg-gray-800/80 hover:bg-gray-700/80 p-2 rounded-full transition-all duration-200 shadow-lg"
+                onClick={(e) => {
+                  e.stopPropagation(); 
+                  closeModal(); 
+                }}
+                aria-label="Close modal"
               >
-                <X size={24} />
+                <X size={24} className="text-gray-300 hover:text-white" />
               </button>
 
               {loading ? (
@@ -655,16 +748,25 @@ export default function WatchLater() {
                     )}
                     <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
                     <div className="relative z-10 p-6 pl-48">
-                      <h2 className="text-3xl font-bold">{movieDetails.title}</h2>
+                      <h2 className="text-3xl font-bold">
+                        {movieDetails.title}
+                      </h2>
                       <div className="flex items-center gap-4 mt-2">
-                        <span className="text-gray-300">{movieDetails.year}</span>
+                        <span className="text-gray-300">
+                          {movieDetails.year}
+                        </span>
                         {movieDetails.imdbRating && (
                           <div className="flex items-center gap-1 bg-black/40 px-3 py-1 rounded-full">
-                            <Star size={16} className="text-yellow-400 fill-yellow-400" />
+                            <Star
+                              size={16}
+                              className="text-yellow-400 fill-yellow-400"
+                            />
                             <span>{movieDetails.imdbRating}</span>
                           </div>
                         )}
-                        <span className="text-gray-300">{movieDetails.runtime}</span>
+                        <span className="text-gray-300">
+                          {movieDetails.runtime}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -673,25 +775,34 @@ export default function WatchLater() {
                   <div className="p-6 pt-0">
                     <div className="ml-[calc(8rem+24px)] min-h-[8rem]">
                       <div className="flex flex-wrap gap-2 mb-4">
-                        {movieDetails.genre?.split(',').map(g => (
-                          <span key={g} className="text-xs bg-gray-800 text-gray-300 px-3 py-1 rounded-full">
+                        {movieDetails.genre?.split(",").map((g) => (
+                          <span
+                            key={g}
+                            className="text-xs bg-gray-800 text-gray-300 px-3 py-1 rounded-full"
+                          >
                             {g.trim()}
                           </span>
                         ))}
                       </div>
 
                       <div className="mb-6">
-                        <h3 className="text-sm font-semibold text-gray-400 mb-1">SYNOPSIS</h3>
+                        <h3 className="text-sm font-semibold text-gray-400 mb-1">
+                          SYNOPSIS
+                        </h3>
                         <p className="text-gray-300">{movieDetails.plot}</p>
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div>
-                          <h3 className="text-sm font-semibold text-gray-400 mb-1">DIRECTOR</h3>
+                          <h3 className="text-sm font-semibold text-gray-400 mb-1">
+                            DIRECTOR
+                          </h3>
                           <p>{movieDetails.director}</p>
                         </div>
                         <div>
-                          <h3 className="text-sm font-semibold text-gray-400 mb-1">CAST</h3>
+                          <h3 className="text-sm font-semibold text-gray-400 mb-1">
+                            CAST
+                          </h3>
                           <p className="text-gray-300">{movieDetails.actors}</p>
                         </div>
                       </div>
@@ -700,10 +811,13 @@ export default function WatchLater() {
                     {/* Diary form */}
                     <div className="bg-gray-800/50 rounded-xl p-6 mt-6 border border-gray-700">
                       <h3 className="text-xl font-bold mb-4">Add to Diary</h3>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Mood select dropdown */}
                         <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-2">Your Mood</label>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Your Mood
+                          </label>
                           <select
                             value={mood}
                             onChange={(e) => setMood(e.target.value)}
@@ -718,19 +832,27 @@ export default function WatchLater() {
                             <option value="inspired">✨ Inspired</option>
                           </select>
                         </div>
-                        
+
+                        {/* Star rating */}
                         <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-2">Rating</label>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Rating
+                          </label>
                           <div className="flex gap-2">
                             {[1, 2, 3, 4, 5].map((star) => (
                               <motion.button
                                 key={star}
+                                type="button"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
-                                className={`text-3xl ${mood === star.toString() ? 'text-yellow-400' : 'text-gray-500'}`}
-                                onClick={() => setMood(star.toString())}
+                                className={`text-3xl ${
+                                  rating >= star
+                                    ? "text-yellow-400"
+                                    : "text-gray-500"
+                                }`}
+                                onClick={() => setRating(star)}
                               >
-                                {mood >= star ? '★' : '☆'}
+                                {rating >= star ? "★" : "☆"}
                               </motion.button>
                             ))}
                           </div>
@@ -738,7 +860,9 @@ export default function WatchLater() {
                       </div>
 
                       <div className="mt-4">
-                        <label className="block text-sm font-medium text-gray-300 mb-2">Review</label>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Review
+                        </label>
                         <textarea
                           value={review}
                           onChange={(e) => setReview(e.target.value)}
@@ -757,7 +881,7 @@ export default function WatchLater() {
                           <PlusCircle size={18} />
                           Add to Diary
                         </motion.button>
-                        
+
                         <motion.a
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
@@ -768,9 +892,9 @@ export default function WatchLater() {
                           rel="noopener noreferrer"
                           className="px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white font-medium rounded-lg shadow-md transition-all flex items-center gap-2"
                         >
-                          🎬 Watch Trailer
+                          Watch Trailer
                         </motion.a>
-                        
+
                         <motion.button
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}

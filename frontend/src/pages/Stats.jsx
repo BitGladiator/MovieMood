@@ -16,7 +16,16 @@ import {
 } from "recharts";
 import { saveAs } from "file-saver";
 import { motion } from "framer-motion";
-import { FiDownload, FiFilter, FiBarChart2, FiPieChart, FiStar, FiClock, FiCalendar, FiAward } from "react-icons/fi";
+import {
+  FiDownload,
+  FiFilter,
+  FiBarChart2,
+  FiPieChart,
+  FiStar,
+  FiClock,
+  FiCalendar,
+  FiAward,
+} from "react-icons/fi";
 
 const COLORS = ["#6366f1", "#8b5cf6", "#d946ef", "#ec4899", "#f43f5e"];
 
@@ -180,28 +189,32 @@ export default function Stats() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-          className="w-20 h-20 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full mb-8"
-        />
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="text-3xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-transparent bg-clip-text"
-        >
-          Loading Your Cinematic Journey
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.7 }}
-          transition={{ delay: 0.6 }}
-          className="mt-4 text-gray-400 text-sm italic"
-        >
-          Fetching your movie memories...
-        </motion.p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white px-4 py-8">
+        <div className="flex flex-col items-center justify-center w-full max-w-xs sm:max-w-md">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            className="w-20 h-20 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full mb-8"
+          />
+
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 text-transparent bg-clip-text text-center px-2"
+          >
+            Loading Your Cinematic Journey
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.7 }}
+            transition={{ delay: 0.6 }}
+            className="mt-4 text-gray-400 text-sm sm:text-base italic text-center max-w-xs"
+          >
+            Fetching your movie memories...
+          </motion.p>
+        </div>
       </div>
     );
   }
@@ -272,7 +285,8 @@ export default function Stats() {
             transition={{ delay: 0.3 }}
             className="text-lg md:text-xl text-gray-300 mb-8 max-w-lg mx-auto"
           >
-            Sign in to unlock your personalized movie statistics dashboard with premium visualizations.
+            Sign in to unlock your personalized movie statistics dashboard with
+            premium visualizations.
           </motion.p>
 
           <motion.div
@@ -314,7 +328,8 @@ export default function Stats() {
               Your Movie Stats
             </h1>
             <p className="text-gray-400 mt-1">
-              {filtered.length} {filtered.length === 1 ? "movie" : "movies"} analyzed
+              {filtered.length} {filtered.length === 1 ? "movie" : "movies"}{" "}
+              analyzed
             </p>
           </div>
 
@@ -371,7 +386,9 @@ export default function Stats() {
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 font-medium text-sm capitalize relative ${
-                activeTab === tab ? "text-purple-400" : "text-gray-400 hover:text-white"
+                activeTab === tab
+                  ? "text-purple-400"
+                  : "text-gray-400 hover:text-white"
               }`}
             >
               {tab}
@@ -393,7 +410,8 @@ export default function Stats() {
               No movies match your filters
             </h3>
             <p className="text-gray-500 max-w-md mx-auto">
-              Try adjusting your genre or year filters to see your movie statistics.
+              Try adjusting your genre or year filters to see your movie
+              statistics.
             </p>
           </div>
         ) : (
@@ -412,13 +430,19 @@ export default function Stats() {
                   <StatCard
                     icon={<FiClock className="text-purple-400" />}
                     title="Total Runtime"
-                    value={`${Math.floor(totalRuntime / 60)}h ${totalRuntime % 60}m`}
+                    value={`${Math.floor(totalRuntime / 60)}h ${
+                      totalRuntime % 60
+                    }m`}
                     change={`Longest: ${longestMovie.runtime}m`}
                   />
                   <StatCard
                     icon={<FiStar className="text-pink-400" />}
                     title="Highest Rated"
-                    value={highestRatedMovie.rating ? `${highestRatedMovie.rating}/10` : "N/A"}
+                    value={
+                      highestRatedMovie.rating
+                        ? `${highestRatedMovie.rating}/10`
+                        : "N/A"
+                    }
                     change={highestRatedMovie.title}
                   />
                   <StatCard
@@ -443,7 +467,9 @@ export default function Stats() {
                           outerRadius={80}
                           innerRadius={40}
                           paddingAngle={5}
-                          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                          label={({ name, percent }) =>
+                            `${name} ${(percent * 100).toFixed(0)}%`
+                          }
                         >
                           {genreData.map((_, i) => (
                             <Cell key={i} fill={COLORS[i % COLORS.length]} />
@@ -452,7 +478,9 @@ export default function Stats() {
                         <Tooltip
                           formatter={(value, name, props) => [
                             value,
-                            `${name}: ${((props.payload.percent || 0) * 100).toFixed(1)}%`,
+                            `${name}: ${(
+                              (props.payload.percent || 0) * 100
+                            ).toFixed(1)}%`,
                           ]}
                         />
                         <Legend />
@@ -509,7 +537,9 @@ export default function Stats() {
                         outerRadius={120}
                         innerRadius={60}
                         paddingAngle={2}
-                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                        label={({ name, percent }) =>
+                          `${name} ${(percent * 100).toFixed(0)}%`
+                        }
                       >
                         {genreData.map((_, i) => (
                           <Cell key={i} fill={COLORS[i % COLORS.length]} />
@@ -518,10 +548,16 @@ export default function Stats() {
                       <Tooltip
                         formatter={(value, name, props) => [
                           value,
-                          `${name}: ${((props.payload.percent || 0) * 100).toFixed(1)}%`,
+                          `${name}: ${(
+                            (props.payload.percent || 0) * 100
+                          ).toFixed(1)}%`,
                         ]}
                       />
-                      <Legend layout="vertical" align="right" verticalAlign="middle" />
+                      <Legend
+                        layout="vertical"
+                        align="right"
+                        verticalAlign="middle"
+                      />
                     </PieChart>
                   </ResponsiveContainer>
                 </ChartCard>
@@ -602,7 +638,10 @@ export default function Stats() {
             {/* Timeline Tab */}
             {activeTab === "timeline" && (
               <div className="space-y-8">
-                <ChartCard title="Movies by Release Year" icon={<FiBarChart2 />}>
+                <ChartCard
+                  title="Movies by Release Year"
+                  icon={<FiBarChart2 />}
+                >
                   <ResponsiveContainer width="100%" height={400}>
                     <BarChart data={yearData}>
                       <XAxis

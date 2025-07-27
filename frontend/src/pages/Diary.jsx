@@ -79,22 +79,28 @@ export default function Diary() {
       });
     }
   };
-
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-900 to-gray-950 text-white">
-        <div className="relative">
-          <div className="w-24 h-24 border-4 border-transparent border-t-indigo-600 border-r-indigo-600 rounded-full animate-spin mb-8" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-16 h-16 border-4 border-transparent border-b-purple-600 border-l-purple-600 rounded-full animate-spin-reverse" />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-900 to-gray-950 text-white p-4">
+        <div className="relative w-full max-w-md flex flex-col items-center">
+          {/* Double spinner animation */}
+          <div className="relative">
+            <div className="w-24 h-24 border-4 border-transparent border-t-indigo-600 border-r-indigo-600 rounded-full animate-spin mb-8" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-16 h-16 border-4 border-transparent border-b-purple-600 border-l-purple-600 rounded-full animate-spin-reverse" />
+            </div>
+          </div>
+  
+          {/* Text content */}
+          <div className="text-center w-full">
+            <h2 className="text-2xl sm:text-4xl font-bold bg-gradient-to-r from-indigo-400 via-purple-500 to-pink-500 text-transparent bg-clip-text animate-pulse">
+              Loading Your Cinematic Journey
+            </h2>
+            <p className="mt-4 text-gray-400 text-sm sm:text-base italic font-light tracking-wider">
+              Preparing your personalized movie experience...
+            </p>
           </div>
         </div>
-        <h2 className="text-4xl font-bold bg-gradient-to-r from-indigo-400 via-purple-500 to-pink-500 text-transparent bg-clip-text animate-pulse">
-          Loading Your Cinematic Journey
-        </h2>
-        <p className="mt-4 text-gray-400 text-sm italic font-light tracking-wider">
-          Preparing your personalized movie experience...
-        </p>
       </div>
     );
   }

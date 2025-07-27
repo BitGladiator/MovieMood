@@ -106,16 +106,16 @@ export default function Navbar() {
       >
         {(user
           ? [
-              { path: "/dashboard", name: "Dashboard", icon: "📊" },
-              { path: "/finder", name: "Finder", icon: "🔍" },
-              { path: "/diary", name: "Diary", icon: "📔" },
-              { path: "/stats", name: "Stats", icon: "📈" },
-              { path: "/watchlater", name: "Watch Later", icon: "⏱️" },
+              { path: "/dashboard", name: "Dashboard"},
+              { path: "/finder", name: "Finder" },
+              { path: "/diary", name: "Diary",},
+              { path: "/stats", name: "Stats", icon: "" },
+              { path: "/watchlater", name: "Watch Later",},
             ]
           : [
-              { path: "/", name: "Home", icon: "🏠" },
-              { path: "/features", name: "Features", icon: "✨" },
-              { path: "/how-it-works", name: "How It Works", icon: "⚙️" },
+              { path: "/", name: "Home", },
+              { path: "/features", name: "Features", },
+              { path: "/how-it-works", name: "How It Works",},
             ]
         ).map((item) => (
           <NavLink
@@ -288,7 +288,7 @@ export default function Navbar() {
                         />
                       </div>
                       <div>
-                        <h4 className="font-medium text-white truncate">{user.displayName || "User"}</h4>
+                        <h4 className="font-medium text-white truncate">{user.name || "User"}</h4>
                         <p className="text-xs text-gray-400">{user.email}</p>
                       </div>
                     </div>
@@ -300,21 +300,21 @@ export default function Navbar() {
                       to="/profile"
                       className="block px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2"
                     >
-                      <span className="text-purple-400">👤</span>
+                      {/* <span className="text-purple-400">👤</span> */}
                       <span>Profile</span>
                     </Link>
                     <Link
                       to="/settings"
                       className="block px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2"
                     >
-                      <span className="text-blue-400">⚙️</span>
+                      {/* <span className="text-blue-400">⚙️</span> */}
                       <span>Settings</span>
                     </Link>
                     <Link
                       to="/logout"
                       className="block px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2 border-t border-gray-800/50"
                     >
-                      <span className="text-red-400">🚪</span>
+                      {/* <span className="text-red-400">🚪</span> */}
                       <span>Logout</span>
                     </Link>
                   </div>

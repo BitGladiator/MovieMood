@@ -249,7 +249,7 @@ export default function Home() {
                 <ChevronDown className="w-5 h-5 animate-bounce" />
               </Link>
               <Link
-                to="/demo"
+                to="/how-it-works"
                 className="px-8 py-4 rounded-xl font-semibold text-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-lg flex items-center justify-center space-x-2"
               >
                 <span>See How It Works</span>
