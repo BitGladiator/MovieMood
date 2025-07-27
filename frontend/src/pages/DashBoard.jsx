@@ -11,7 +11,7 @@ import {
   where,
   getDocs,
   orderBy,
-  limit
+  limit,
 } from "firebase/firestore";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -21,24 +21,25 @@ const Dashboard = () => {
   const [user, setUser] = useState({
     name: "",
     email: "",
-    avatar: "https://img.icons8.com/fluency-systems-filled/96/user-male-circle.png"
+    avatar:
+      "https://img.icons8.com/fluency-systems-filled/96/user-male-circle.png",
   });
-  
+
   const [stats, setStats] = useState({
     diaryCount: 0,
     watchLaterCount: 0,
     recentlyAdded: [],
     topRated: [],
-    monthlyActivity: Array(12).fill(0)
+    monthlyActivity: Array(12).fill(0),
   });
 
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   function getGreeting() {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning';
-    if (hour < 18) return 'Good afternoon';
-    return 'Good evening';
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
   }
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -51,27 +52,41 @@ const Dashboard = () => {
         // Set basic user info
         setUser({
           uid: currentUser.uid,
-          name: currentUser.displayName || currentUser.email.split('@')[0] || "Movie Buff",
+          name:
+            currentUser.displayName ||
+            currentUser.email.split("@")[0] ||
+            "Movie Buff",
           email: currentUser.email,
-          avatar: currentUser.photoURL || "https://img.icons8.com/fluency-systems-filled/96/user-male-circle.png"
+          avatar:
+            currentUser.photoURL ||
+            "https://img.icons8.com/fluency-systems-filled/96/user-male-circle.png",
         });
 
         // Fetch basic counts
         const [diarySnapshot, watchSnapshot] = await Promise.all([
-          getDocs(query(collection(db, "diary"), where("uid", "==", currentUser.uid))),
-          getDocs(query(collection(db, "watchLater"), where("uid", "==", currentUser.uid)))
+          getDocs(
+            query(collection(db, "diary"), where("uid", "==", currentUser.uid))
+          ),
+          getDocs(
+            query(
+              collection(db, "watchLater"),
+              where("uid", "==", currentUser.uid)
+            )
+          ),
         ]);
 
         // Calculate monthly activity
         const monthlyCounts = Array(12).fill(0);
         const now = new Date();
-        
+
         diarySnapshot.forEach((doc) => {
           const data = doc.data();
           if (data.dateWatched) {
             const watchedDate = new Date(data.dateWatched);
-            const monthDiff = (now.getFullYear() - watchedDate.getFullYear()) * 12 + 
-                             now.getMonth() - watchedDate.getMonth();
+            const monthDiff =
+              (now.getFullYear() - watchedDate.getFullYear()) * 12 +
+              now.getMonth() -
+              watchedDate.getMonth();
             if (monthDiff >= 0 && monthDiff < 12) {
               monthlyCounts[11 - monthDiff]++;
             }
@@ -81,7 +96,7 @@ const Dashboard = () => {
         // Fetch recent and top-rated movies (with error handling)
         let recentMovies = [];
         let topRatedMovies = [];
-        
+
         try {
           const recentQuery = query(
             collection(db, "diary"),
@@ -90,10 +105,15 @@ const Dashboard = () => {
             limit(4)
           );
           const recentSnapshot = await getDocs(recentQuery);
-          recentMovies = recentSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          recentMovies = recentSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
         } catch (error) {
           console.warn("Error fetching recent movies:", error);
-          toast.warning("Couldn't load recent movies. Create the index in Firebase Console.");
+          toast.warning(
+            "Couldn't load recent movies. Create the index in Firebase Console."
+          );
         }
 
         try {
@@ -105,10 +125,15 @@ const Dashboard = () => {
             limit(4)
           );
           const topRatedSnapshot = await getDocs(topRatedQuery);
-          topRatedMovies = topRatedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          topRatedMovies = topRatedSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
         } catch (error) {
           console.warn("Error fetching top-rated movies:", error);
-          toast.warning("Couldn't load top-rated movies. Create the index in Firebase Console.");
+          toast.warning(
+            "Couldn't load top-rated movies. Create the index in Firebase Console."
+          );
         }
 
         setStats({
@@ -116,9 +141,8 @@ const Dashboard = () => {
           watchLaterCount: watchSnapshot.size,
           recentlyAdded: recentMovies,
           topRated: topRatedMovies,
-          monthlyActivity: monthlyCounts
+          monthlyActivity: monthlyCounts,
         });
-
       } catch (error) {
         console.error("Dashboard error:", error);
         toast.error("Failed to load dashboard data");
@@ -158,7 +182,9 @@ const Dashboard = () => {
           <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-300 to-pink-300 text-transparent bg-clip-text">
             Curating Your Cinema Universe
           </h2>
-          <p className="mt-2 text-gray-400">Loading your personalized dashboard...</p>
+          <p className="mt-2 text-gray-400">
+            Loading your personalized dashboard...
+          </p>
         </motion.div>
       </div>
     );
@@ -182,7 +208,7 @@ const Dashboard = () => {
           className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-16"
         >
           <div>
-            <motion.h1 
+            <motion.h1
               className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-300 via-pink-300 to-amber-300 text-transparent bg-clip-text mb-2"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -191,10 +217,11 @@ const Dashboard = () => {
               {getGreeting()}, <span className="text-white">{user.name}</span>
             </motion.h1>
             <p className="text-gray-400 text-lg max-w-2xl">
-              Your personal film curator is ready. Let's explore your cinematic universe.
+              Your personal film curator is ready. Let's explore your cinematic
+              universe.
             </p>
           </div>
-          
+
           <motion.div
             whileHover={{ scale: 1.05 }}
             className="flex items-center gap-4 bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-4 shadow-lg relative overflow-hidden"
@@ -207,7 +234,8 @@ const Dashboard = () => {
                 alt="User avatar"
                 className="w-14 h-14 rounded-full border-2 border-purple-400/50 relative z-10 object-cover"
                 onError={(e) => {
-                  e.target.src = "https://img.icons8.com/fluency-systems-filled/96/user-male-circle.png";
+                  e.target.src =
+                    "https://img.icons8.com/fluency-systems-filled/96/user-male-circle.png";
                 }}
               />
             </div>
@@ -234,19 +262,21 @@ const Dashboard = () => {
           className="flex overflow-x-auto pb-2 mb-8 scrollbar-hide"
         >
           <div className="flex space-x-2">
-            {["overview", "diary", "watchlist", "stats", "achievements"].map((tab) => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                  activeTab === tab
-                    ? "bg-purple-600 text-white shadow-purple-500/30"
-                    : "bg-gray-800/50 text-gray-300 hover:bg-gray-700/50"
-                }`}
-              >
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              </button>
-            ))}
+            {["overview", "diary", "watchlist", "stats", "achievements"].map(
+              (tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                    activeTab === tab
+                      ? "bg-purple-600 text-white shadow-purple-500/30"
+                      : "bg-gray-800/50 text-gray-300 hover:bg-gray-700/50"
+                  }`}
+                >
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </button>
+              )
+            )}
           </div>
         </motion.div>
 
@@ -264,10 +294,10 @@ const Dashboard = () => {
                   <FiTrendingUp className="text-purple-400" />
                   Your Film Journey at a Glance
                 </h2>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {/* Diary count */}
-                  <motion.div 
+                  <motion.div
                     whileHover={{ y: -5 }}
                     className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 shadow-lg overflow-hidden relative group"
                   >
@@ -285,7 +315,7 @@ const Dashboard = () => {
                   </motion.div>
 
                   {/* Watch later */}
-                  <motion.div 
+                  <motion.div
                     whileHover={{ y: -5 }}
                     className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 shadow-lg overflow-hidden relative group"
                   >
@@ -303,7 +333,7 @@ const Dashboard = () => {
                   </motion.div>
 
                   {/* Top rated */}
-                  <motion.div 
+                  <motion.div
                     whileHover={{ y: -5 }}
                     className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 shadow-lg overflow-hidden relative group"
                   >
@@ -321,7 +351,7 @@ const Dashboard = () => {
                   </motion.div>
 
                   {/* Activity */}
-                  <motion.div 
+                  <motion.div
                     whileHover={{ y: -5 }}
                     className="bg-gray-800/50 backdrop-blur-sm border border-gray-700/50 rounded-xl p-6 shadow-lg overflow-hidden relative group"
                   >
@@ -330,9 +360,13 @@ const Dashboard = () => {
                         <FaHeart className="w-6 h-6 text-blue-400" />
                       </div>
                       <div>
-                        <p className="text-gray-400 text-sm">Monthly Activity</p>
+                        <p className="text-gray-400 text-sm">
+                          Monthly Activity
+                        </p>
                         <p className="text-3xl font-bold mt-1">
-                          {stats.monthlyActivity.reduce((a, b) => a + b, 0).toLocaleString()}
+                          {stats.monthlyActivity
+                            .reduce((a, b) => a + b, 0)
+                            .toLocaleString()}
                         </p>
                       </div>
                     </div>
@@ -351,13 +385,23 @@ const Dashboard = () => {
                     <FiFilm className="text-purple-400" />
                     Recently Added to Your Diary
                   </h2>
-                  <button 
+                  <button
                     className="text-sm text-purple-400 hover:text-purple-300 transition-colors flex items-center gap-1"
                     onClick={() => setActiveTab("diary")}
                   >
                     View all
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 5l7 7-7 7"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -375,13 +419,17 @@ const Dashboard = () => {
                       >
                         <div className="h-48 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center relative overflow-hidden">
                           {movie.poster ? (
-                            <img 
+                            <img
                               src={`https://image.tmdb.org/t/p/w500${movie.poster}`}
                               alt={movie.title}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                               onError={(e) => {
                                 e.target.src = "";
-                                e.target.parentElement.classList.add("text-gray-500", "text-center", "p-4");
+                                e.target.parentElement.classList.add(
+                                  "text-gray-500",
+                                  "text-center",
+                                  "p-4"
+                                );
                                 e.target.parentElement.innerHTML = `
                                   <FiFilm className="w-12 h-12 mx-auto mb-2" />
                                   <p>Poster unavailable</p>
@@ -396,9 +444,17 @@ const Dashboard = () => {
                           )}
                         </div>
                         <div className="p-5">
-                          <h3 className="font-bold text-lg mb-1 line-clamp-1">{movie.title || "Untitled Movie"}</h3>
+                          <h3 className="font-bold text-lg mb-1 line-clamp-1">
+                            {movie.title || "Untitled Movie"}
+                          </h3>
                           <div className="flex items-center justify-between text-sm text-gray-400">
-                            <span>{movie.dateWatched ? new Date(movie.dateWatched).toLocaleDateString() : "No date"}</span>
+                            <span>
+                              {movie.dateWatched
+                                ? new Date(
+                                    movie.dateWatched
+                                  ).toLocaleDateString()
+                                : "No date"}
+                            </span>
                             {movie.rating && (
                               <span className="flex items-center gap-1 font-medium text-amber-400">
                                 <FaStar className="text-amber-400" />
@@ -413,7 +469,7 @@ const Dashboard = () => {
                 ) : (
                   <div className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-8 text-center">
                     <p className="text-gray-400">Your movie diary is empty</p>
-                    <button 
+                    <button
                       className="mt-4 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg text-sm font-medium transition-colors hover:from-purple-500 hover:to-indigo-500"
                       onClick={() => navigate("/add-movie")}
                     >
@@ -434,17 +490,27 @@ const Dashboard = () => {
                     <FaStar className="text-amber-400" />
                     Your Highest Rated Films
                   </h2>
-                  <button 
+                  <button
                     className="text-sm text-amber-400 hover:text-amber-300 transition-colors flex items-center gap-1"
                     onClick={() => setActiveTab("diary")}
                   >
                     View all
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 5l7 7-7 7"
+                      />
                     </svg>
                   </button>
                 </div>
-                
+
                 {stats.topRated.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {stats.topRated.map((movie, index) => (
@@ -465,13 +531,17 @@ const Dashboard = () => {
                         )}
                         <div className="h-48 bg-gradient-to-br from-amber-900/20 to-gray-900 flex items-center justify-center relative overflow-hidden">
                           {movie.poster ? (
-                            <img 
+                            <img
                               src={`https://image.tmdb.org/t/p/w500${movie.poster}`}
                               alt={movie.title}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                               onError={(e) => {
                                 e.target.src = "";
-                                e.target.parentElement.classList.add("text-gray-500", "text-center", "p-4");
+                                e.target.parentElement.classList.add(
+                                  "text-gray-500",
+                                  "text-center",
+                                  "p-4"
+                                );
                                 e.target.parentElement.innerHTML = `
                                   <FaStar className="w-12 h-12 mx-auto mb-2 text-amber-400" />
                                   <p>Poster unavailable</p>
@@ -486,10 +556,16 @@ const Dashboard = () => {
                           )}
                         </div>
                         <div className="p-5">
-                          <h3 className="font-bold text-lg mb-1 line-clamp-1">{movie.title || "Untitled Movie"}</h3>
+                          <h3 className="font-bold text-lg mb-1 line-clamp-1">
+                            {movie.title || "Untitled Movie"}
+                          </h3>
                           <div className="flex items-center justify-between text-sm">
                             <span className="text-gray-400">
-                              {movie.dateWatched ? new Date(movie.dateWatched).toLocaleDateString() : "No date"}
+                              {movie.dateWatched
+                                ? new Date(
+                                    movie.dateWatched
+                                  ).toLocaleDateString()
+                                : "No date"}
                             </span>
                             <span className="flex items-center gap-1 font-medium text-amber-400">
                               <FaStar className="text-amber-400" />
@@ -503,7 +579,9 @@ const Dashboard = () => {
                 ) : (
                   <div className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-8 text-center">
                     <p className="text-gray-400">No top rated movies yet</p>
-                    <p className="text-sm text-gray-500 mt-1">Rate movies 4 stars or higher to see them here</p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Rate movies 4 stars or higher to see them here
+                    </p>
                   </div>
                 )}
               </motion.div>
@@ -522,15 +600,24 @@ const Dashboard = () => {
                 <div className="h-64">
                   <div className="flex items-end h-48 gap-1">
                     {stats.monthlyActivity.map((count, index) => {
-                      const month = new Date(0, index).toLocaleString('default', { month: 'short' });
+                      const month = new Date(0, index).toLocaleString(
+                        "default",
+                        { month: "short" }
+                      );
                       const maxCount = Math.max(...stats.monthlyActivity, 1); // Ensure we don't divide by zero
-                      const height = `${Math.min((count / maxCount) * 100, 100)}%`;
+                      const height = `${Math.min(
+                        (count / maxCount) * 100,
+                        100
+                      )}%`;
                       return (
                         <motion.div
                           key={index}
                           initial={{ height: 0 }}
                           animate={{ height }}
-                          transition={{ delay: 1.1 + index * 0.05, duration: 0.8 }}
+                          transition={{
+                            delay: 1.1 + index * 0.05,
+                            duration: 0.8,
+                          }}
                           className="flex-1 bg-gradient-to-t from-blue-500 to-cyan-500 rounded-t-sm relative group"
                         >
                           <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-400">
@@ -551,7 +638,10 @@ const Dashboard = () => {
           {/* Other tabs content would go here */}
           {activeTab !== "overview" && (
             <div className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-8 text-center">
-              <p className="text-gray-400">{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} view coming soon</p>
+              <p className="text-gray-400">
+                {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} view
+                coming soon
+              </p>
             </div>
           )}
 
@@ -564,7 +654,7 @@ const Dashboard = () => {
           >
             <div className="absolute -top-20 -right-20 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
             <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl"></div>
-            
+
             <div className="relative z-10 max-w-3xl mx-auto text-center">
               <div className="inline-flex items-center gap-2 bg-purple-600/30 border border-purple-500/50 px-4 py-1.5 rounded-full text-sm font-medium mb-6">
                 <span className="text-purple-300">✨ Premium Feature</span>
@@ -573,16 +663,33 @@ const Dashboard = () => {
                 Unlock Your Full Cinematic Experience
               </h2>
               <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
-                Get personalized recommendations, advanced stats, and exclusive content with our Premium membership.
+                Get personalized recommendations, advanced stats, and exclusive
+                content with our Premium membership.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Link to={'/payment'} className="px-8 py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-full font-semibold shadow-lg hover:shadow-purple-500/30 transition-all duration-300 flex items-center justify-center gap-2">
+                <Link
+                  to={"/payment"}
+                  className="px-8 py-3.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 rounded-full font-semibold shadow-lg hover:shadow-purple-500/30 transition-all duration-300 flex items-center justify-center gap-2"
+                >
                   Upgrade Now
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 5l7 7-7 7"
+                    />
                   </svg>
                 </Link>
-                <Link to={'/pricing'}  className="px-8 py-3.5 bg-gray-800/50 border border-gray-700 hover:bg-gray-700/50 rounded-full font-medium shadow-lg transition-all duration-300 flex items-center justify-center gap-2">
+                <Link
+                  to={"/pricing"}
+                  className="px-8 py-3.5 bg-gray-800/50 border border-gray-700 hover:bg-gray-700/50 rounded-full font-medium shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+                >
                   Learn More
                 </Link>
               </div>
@@ -606,16 +713,16 @@ const Dashboard = () => {
       />
 
       {/* Add these keyframes to your global CSS */}
-      <style jsx global>{`
-        @keyframes float-slow {
-          0%, 100% { transform: translateY(0) translateX(0); }
-          50% { transform: translateY(-30px) translateX(20px); }
-        }
-        @keyframes float-reverse-slow {
-          0%, 100% { transform: translateY(0) translateX(0); }
-          50% { transform: translateY(30px) translateX(-20px); }
-        }
-      `}</style>
+      <style>{`
+  @keyframes float-slow {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-30px) translateX(20px); }
+  }
+  @keyframes float-reverse-slow {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(30px) translateX(-20px); }
+  }
+`}</style>
     </div>
   );
 };

@@ -349,7 +349,7 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* Final CTA */}
+     
       <section className="py-20 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto text-center bg-gray-900/50 border border-gray-800 rounded-2xl p-12">
@@ -363,7 +363,7 @@ export default function Pricing() {
               Join thousands of film lovers who found their perfect movie match
             </h2>
             <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
-              Start your 14-day free trial today. No credit card required.
+              Start your 7-day free trial today. No credit card required.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link

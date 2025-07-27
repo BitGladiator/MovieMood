@@ -298,21 +298,21 @@ export default function Navbar() {
                   <div className="py-1">
                     <Link
                       to="/profile"
-                      className="block px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2"
+                      className=" px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2"
                     >
                       {/* <span className="text-purple-400">👤</span> */}
                       <span>Profile</span>
                     </Link>
                     <Link
                       to="/settings"
-                      className="block px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2"
+                      className=" px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2"
                     >
                       {/* <span className="text-blue-400">⚙️</span> */}
                       <span>Settings</span>
                     </Link>
                     <Link
                       to="/logout"
-                      className="block px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2 border-t border-gray-800/50"
+                      className=" px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2 border-t border-gray-800/50"
                     >
                       {/* <span className="text-red-400">🚪</span> */}
                       <span>Logout</span>

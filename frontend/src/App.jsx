@@ -15,6 +15,7 @@ import HowitWorks from "./pages/HowitWorks";
 import Logout from "./pages/Logout";
 import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
+import Payment from "./components/Payment";
 
 export default function App() {
   return (
@@ -55,6 +56,7 @@ export default function App() {
           <Route path="/logout" element={<Logout />} />
           <Route path="/settings" element={<Settings/>} />
           <Route path="/pricing" element={<Pricing/>}/>
+          <Route path="/payment" element={<Payment/>}/>
         </Routes>
       </div>
     </div>
