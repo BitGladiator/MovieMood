@@ -42,7 +42,10 @@ export default function Payment() {
     paypalScriptRef.current = script;
 
     return () => {
-      if (paypalScriptRef.current) {
+      if (
+        paypalScriptRef.current &&
+        document.body.contains(paypalScriptRef.current)
+      ) {
         document.body.removeChild(paypalScriptRef.current);
       }
     };
