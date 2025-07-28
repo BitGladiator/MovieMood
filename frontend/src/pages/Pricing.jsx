@@ -51,9 +51,10 @@ export default function Pricing() {
         "VIP support",
         "Offline downloads",
       ],
-      cta: "Start Free Trial",
+      cta: "Get Premium",
       popular: false,
       color: "from-amber-400 to-orange-500",
+      link: "/payment"
     },
   ];
 
@@ -206,7 +207,7 @@ export default function Pricing() {
                   </ul>
 
                   <Link
-                    to="/register"
+                    to={plan.link || "/register"}
                     className={`block text-center py-3 px-6 rounded-lg font-medium transition-all ${
                       plan.popular
                         ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-purple-500/30"

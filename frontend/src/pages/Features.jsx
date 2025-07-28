@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { FaRegSmile, FaRegLaughSquint, FaRegSadTear, FaRegAngry, FaHeart, FaRegMoon, FaRegSun } from 'react-icons/fa';
 import { GiBrain, GiNightSleep, GiPartyPopper } from 'react-icons/gi';
 import { BsLightningCharge, BsMusicNoteBeamed } from 'react-icons/bs';
+import { Link, useNavigate } from 'react-router-dom';
 
 const moodFeatures = [
   {
@@ -50,6 +51,7 @@ const moodFeatures = [
 ];
 
 const Features = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white px-4 py-16 relative overflow-hidden">
       {/* Mood particle background */}
@@ -232,15 +234,16 @@ const Features = () => {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <motion.button
+              onClick={()=>navigate('/register')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-full font-semibold shadow-lg hover:shadow-purple-500/30 transition-all duration-300"
+              className="cursor-pointer px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-full font-semibold shadow-lg hover:shadow-purple-500/30 transition-all duration-300"
             >
               Start Your 7-Day Free Trial
             </motion.button>
-            <button className="px-8 py-4 bg-gray-800/50 border border-gray-700 hover:bg-gray-700/50 rounded-full font-medium shadow-lg transition-all duration-300">
+            <Link to={'/how-it-works'} className="px-8 py-4 bg-gray-800/50 border border-gray-700 hover:bg-gray-700/50 rounded-full font-medium shadow-lg transition-all duration-300">
               Learn How It Works
-            </button>
+            </Link>
           </div>
         </motion.div>
       </div>

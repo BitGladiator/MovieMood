@@ -4,14 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
 import logo from "../images/logo.png";
+import { Crown, Sparkles, Star, Gem, ChevronDown } from "lucide-react";
 
 export default function Navbar() {
-  const [showModal, setShowModal] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [surpriseMovie, setSurpriseMovie] = useState(null);
   const [user, setUser] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const [profileHover, setProfileHover] = useState(false);
+  const [premiumHover, setPremiumHover] = useState(false);
   const menuRef = useRef();
 
   useEffect(() => {
@@ -30,14 +30,6 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("diary") || "[]");
-    if (stored.length) {
-      const random = stored[Math.floor(Math.random() * stored.length)];
-      setSurpriseMovie(random);
-    }
-  }, [showModal]);
-
-  useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMenuOpen(false);
@@ -46,6 +38,9 @@ export default function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Mock premium status - replace with your actual premium check
+  const isPremium = user?.premium || false;
 
   return (
     <motion.nav 
@@ -106,16 +101,16 @@ export default function Navbar() {
       >
         {(user
           ? [
-              { path: "/dashboard", name: "Dashboard"},
-              { path: "/finder", name: "Finder" },
-              { path: "/diary", name: "Diary",},
-              { path: "/stats", name: "Stats", icon: "" },
-              { path: "/watchlater", name: "Watch Later",},
+              { path: "/dashboard", name: "Dashboard", premium: false },
+              { path: "/finder", name: "Finder", premium: false },
+              { path: "/diary", name: "Diary", premium: false },
+              { path: "/stats", name: "Stats", premium: true },
+              { path: "/watchlater", name: "Watch Later", premium: false },
             ]
           : [
-              { path: "/", name: "Home", },
-              { path: "/features", name: "Features", },
-              { path: "/how-it-works", name: "How It Works",},
+              { path: "/", name: "Home", premium: false },
+              { path: "/features", name: "Features", premium: false },
+              { path: "/pricing", name: "Pricing", premium: false },
             ]
         ).map((item) => (
           <NavLink
@@ -123,19 +118,67 @@ export default function Navbar() {
             to={item.path}
             className={({ isActive }) =>
               `flex items-center gap-2 px-4 py-2.5 md:py-1.5 rounded-lg transition-all 
-              duration-300 hover:bg-gray-800/50 hover:shadow-lg text-sm md:text-[0.95rem] 
+              duration-300 hover:bg-gray-800/50 hover:shadow-lg text-sm md:text-[0.95rem] relative
               ${
                 isActive
                   ? "text-white bg-gradient-to-r from-purple-900/30 to-pink-900/30 border-l-4 md:border-l-0 md:border-b-2 border-purple-500 shadow-purple-500/10 font-medium"
                   : "text-gray-300 hover:text-white"
-              }`
+              }
+              ${item.premium && !isPremium ? "pr-8" : ""}`
             }
             onClick={() => setMenuOpen(false)}
           >
-            <span className="text-lg">{item.icon}</span>
             <span>{item.name}</span>
+            {item.premium && !isPremium && (
+              <span className="absolute right-2 top-1/2 -translate-y-1/2">
+                <Gem className="w-4 h-4 text-amber-400" />
+              </span>
+            )}
           </NavLink>
         ))}
+
+        {/* Premium Upgrade Button (Visible when logged in but not premium) */}
+        {user && !isPremium && (
+          <motion.div 
+            className="relative group"
+            onMouseEnter={() => setPremiumHover(true)}
+            onMouseLeave={() => setPremiumHover(false)}
+          >
+            <Link
+              to="/pricing"
+              className="flex items-center gap-2 px-4 py-2.5 md:py-1.5 rounded-lg transition-all duration-300 bg-gradient-to-r from-amber-500/20 to-amber-600/20 text-amber-300 hover:text-white hover:from-amber-600/30 hover:to-amber-700/30 hover:shadow-amber-500/10"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>Upgrade</span>
+            </Link>
+
+            {/* Premium Tooltip */}
+            <AnimatePresence>
+              {premiumHover && (
+                <motion.div 
+                  className="absolute top-full right-0 mt-2 w-64 bg-gray-900/95 backdrop-blur-xl rounded-xl p-4 shadow-2xl border border-amber-500/20 z-50"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="bg-amber-500/10 p-2 rounded-lg">
+                      <Crown className="w-5 h-5 text-amber-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-white">Unlock Premium</h4>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Get access to exclusive features like advanced stats, 
+                        personalized recommendations, and ad-free experience.
+                      </p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        )}
       </div>
 
       {/* User Actions */}
@@ -220,6 +263,15 @@ export default function Navbar() {
                 }}
                 transition={{ type: "spring", stiffness: 500 }}
               >
+                {/* Premium crown badge */}
+                {isPremium && (
+                  <div className="absolute -top-1 -right-1 z-20">
+                    <div className="bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full p-0.5 shadow-lg">
+                      <Crown className="w-3 h-3 text-white fill-white" />
+                    </div>
+                  </div>
+                )}
+
                 {/* Profile image with cinematic border effect */}
                 <div className="absolute inset-0 rounded-full border-2 border-transparent group-hover:border-purple-400/50 transition-all duration-500 z-10 pointer-events-none">
                   <motion.div 
@@ -253,14 +305,6 @@ export default function Navbar() {
                   alt="Profile"
                   className="w-full h-full object-cover relative z-0"
                 />
-                
-                {/* Active status indicator */}
-                {/* <motion.div 
-                  className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 rounded-full border-2 border-gray-900 z-20"
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", stiffness: 500 }}
-                /> */}
               </motion.div>
             </Link>
             
@@ -286,9 +330,23 @@ export default function Navbar() {
                           alt="Profile"
                           className="w-10 h-10 rounded-full border-2 border-purple-500/50"
                         />
+                        {isPremium && (
+                          <div className="absolute -top-1 -right-1 z-20">
+                            <div className="bg-gradient-to-r from-amber-400 to-yellow-500 rounded-full p-0.5 shadow-lg">
+                              <Crown className="w-3 h-3 text-white fill-white" />
+                            </div>
+                          </div>
+                        )}
                       </div>
                       <div>
-                        <h4 className="font-medium text-white truncate">{user.name || "User"}</h4>
+                        <h4 className="font-medium text-white truncate">
+                          {user.displayName || "User"}
+                          {isPremium && (
+                            <span className="ml-1 text-xs bg-gradient-to-r from-amber-400 to-yellow-500 text-transparent bg-clip-text">
+                              PRO
+                            </span>
+                          )}
+                        </h4>
                         <p className="text-xs text-gray-400">{user.email}</p>
                       </div>
                     </div>
@@ -298,49 +356,35 @@ export default function Navbar() {
                   <div className="py-1">
                     <Link
                       to="/profile"
-                      className=" px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2"
+                      className="px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2"
                     >
-                      {/* <span className="text-purple-400">👤</span> */}
                       <span>Profile</span>
                     </Link>
                     <Link
                       to="/settings"
-                      className=" px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2"
+                      className="px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2"
                     >
-                      {/* <span className="text-blue-400">⚙️</span> */}
                       <span>Settings</span>
                     </Link>
+                    {!isPremium && (
+                      <Link
+                        to="/pricing"
+                        className="px-4 py-2.5 text-sm text-amber-300 hover:bg-amber-900/10 transition-colors flex items-center gap-2 border-t border-gray-800/50"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                        <span>Upgrade to Premium</span>
+                      </Link>
+                    )}
                     <Link
                       to="/logout"
-                      className=" px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2 border-t border-gray-800/50"
+                      className="px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2 border-t border-gray-800/50"
                     >
-                      {/* <span className="text-red-400">🚪</span> */}
                       <span>Logout</span>
                     </Link>
                   </div>
                 </motion.div>
               )}
             </AnimatePresence>
-          </div>
-        )}
-
-        {/* Surprise Me Button (Visible only when logged in) */}
-        {user && (
-          <div className="hidden md:block">
-            <motion.button
-              onClick={() => setShowModal(true)}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1.5 rounded-lg text-sm font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-300 hover:shadow-[0_0_15px_rgba(192,38,211,0.4)] flex items-center gap-2 group relative overflow-hidden"
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <span className="relative z-10">🎲 Surprise Me</span>
-              <motion.span 
-                className="absolute inset-0 bg-gradient-to-r from-pink-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100"
-                initial={{ x: -100 }}
-                whileHover={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.4 }}
-              />
-            </motion.button>
           </div>
         )}
       </div>
@@ -374,221 +418,18 @@ export default function Navbar() {
               </Link>
             </>
           )}
-          {user && (
-            <button
-              onClick={() => {
-                setShowModal(true);
-                setMenuOpen(false);
-              }}
-              className="block w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-lg hover:shadow-purple-500/30 flex items-center justify-center gap-2"
+          {user && !isPremium && (
+            <Link
+              to="/pricing"
+              onClick={() => setMenuOpen(false)}
+              className="block w-full bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:from-amber-600 hover:to-yellow-600 transition-all duration-300 shadow-lg hover:shadow-amber-500/30 flex items-center justify-center gap-2"
             >
-              <span>🎲</span>
-              <span>Surprise Me</span>
-            </button>
+              <Sparkles className="w-4 h-4" />
+              <span>Upgrade to Premium</span>
+            </Link>
           )}
         </motion.div>
       )}
-
-      {/* Premium Surprise Modal */}
-      <AnimatePresence>
-        {showModal && surpriseMovie && (
-          <motion.div
-            className="fixed inset-0 bg-black/80 backdrop-blur-2xl flex items-center justify-center z-[999] p-4 mt-[20rem]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setShowModal(false)}
-          >
-            <motion.div
-              className="relative flex flex-col md:flex-row gap-0 bg-gray-900 text-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-gray-800/50"
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Film grain effect for cinematic feel */}
-              <div className="absolute inset-0 opacity-5 pointer-events-none bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPgogIDxmaWx0ZXIgaWQ9Im5vaXNlIj4KICAgIDxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjA1IiBudW1PY3RhdmVzPSIzIiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+CiAgICA8ZmVDb2xvck1hdHJpeCB0eXBlPSJzYXR1cmF0ZSIgdmFsdWVzPSIwIi8+CiAgPC9maWx0ZXI+CiAgPHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI25vaXNlKSIgb3BhY2l0eT0iMC4yIi8+Cjwvc3ZnPg==')]"></div>
-
-              {/* Glowing background effect */}
-              <motion.div 
-                className="absolute inset-0 opacity-20"
-                initial={{ background: "radial-gradient(circle at center, rgba(139, 92, 246, 0.2) 0%, transparent 70%)" }}
-                animate={{
-                  background: [
-                    "radial-gradient(circle at center, rgba(139, 92, 246, 0.2) 0%, transparent 70%)",
-                    "radial-gradient(circle at center, rgba(236, 72, 153, 0.2) 0%, transparent 70%)",
-                    "radial-gradient(circle at center, rgba(139, 92, 246, 0.2) 0%, transparent 70%)"
-                  ]
-                }}
-                transition={{ duration: 8, repeat: Infinity, repeatType: "reverse" }}
-              />
-
-              {/* Close button */}
-              <button
-                onClick={() => setShowModal(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl cursor-pointer transition-colors duration-300 z-10 bg-gray-800/80 rounded-full w-8 h-8 flex items-center justify-center border border-gray-700/50 hover:border-pink-500/50 hover:bg-pink-500/10 hover:shadow-[0_0_10px_rgba(236,72,153,0.3)]"
-              >
-                &times;
-              </button>
-
-              {/* Movie Poster - Cinematic style */}
-              <div className="w-full md:w-2/5 h-64 md:h-auto min-h-[300px] bg-gray-800 relative overflow-hidden">
-                {/* Poster overlay effects */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent z-10" />
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-black/10 to-black/30 z-10" />
-                
-                {/* Film strip effect */}
-                <div className="absolute top-0 left-0 w-full h-2 bg-black/50 z-20"></div>
-                <div className="absolute bottom-0 left-0 w-full h-2 bg-black/50 z-20"></div>
-                <div className="absolute top-0 left-0 h-full w-2 bg-black/50 z-20"></div>
-                
-                <img
-                  src={
-                    surpriseMovie?.Poster !== "N/A"
-                      ? surpriseMovie?.Poster
-                      : "/no-poster.png"
-                  }
-                  alt={surpriseMovie?.Title}
-                  className="w-full h-full object-cover"
-                />
-                
-                {/* Title with cinematic reveal effect */}
-                <motion.div 
-                  className="absolute bottom-0 left-0 p-6 w-full z-20"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <h3 className="text-2xl font-bold text-white drop-shadow-lg">
-                    {surpriseMovie?.Title}
-                  </h3>
-                  <p className="text-gray-300 text-sm">{surpriseMovie?.Year}</p>
-                  
-                  {/* Rating stars */}
-                  <div className="flex items-center mt-2">
-                    {[...Array(5)].map((_, i) => (
-                      <svg
-                        key={i}
-                        className={`w-4 h-4 ${i < Math.floor(surpriseMovie?.imdbRating / 2) ? 'text-amber-400' : 'text-gray-600'}`}
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
-                    <span className="ml-1 text-xs text-gray-400">
-                      ({surpriseMovie?.imdbRating || "N/A"}/10)
-                    </span>
-                  </div>
-                </motion.div>
-              </div>
-
-              {/* Movie Details */}
-              <div className="w-full md:w-3/5 p-6 md:p-8 flex flex-col overflow-y-auto">
-                <motion.h2 
-                  className="text-2xl font-bold mb-4 bg-gradient-to-r from-amber-300 via-pink-400 to-violet-400 text-transparent bg-clip-text"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  🎉 Your Surprise Pick!
-                </motion.h2>
-
-                <motion.div 
-                  className="flex flex-wrap gap-2 mb-6"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <span className="px-3 py-1 bg-purple-900/50 text-purple-300 rounded-full text-xs font-medium backdrop-blur-sm flex items-center gap-1">
-                    <span className="text-yellow-400">⭐</span> {surpriseMovie?.imdbRating || "N/A"} IMDb
-                  </span>
-                  <span className="px-3 py-1 bg-blue-900/50 text-blue-300 rounded-full text-xs font-medium backdrop-blur-sm flex items-center gap-1">
-                    <span className="text-pink-400">🎭</span> {surpriseMovie?.Genre?.split(",")[0] || "N/A"}
-                  </span>
-                  <span className="px-3 py-1 bg-emerald-900/50 text-emerald-300 rounded-full text-xs font-medium backdrop-blur-sm flex items-center gap-1">
-                    <span className="text-cyan-400">⏱️</span> {surpriseMovie?.Runtime || "N/A"}
-                  </span>
-                </motion.div>
-
-                <motion.div 
-                  className="space-y-4 mb-6"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                >
-                  <div>
-                    <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-2">
-                      <span className="w-4 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent flex-1"></span>
-                      <span>Plot</span>
-                      <span className="w-4 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent flex-1"></span>
-                    </h4>
-                    <p className="text-gray-300 text-sm leading-relaxed">
-                      {surpriseMovie?.Plot || "No plot available."}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                        Director
-                      </h4>
-                      <p className="text-white text-sm">
-                        {surpriseMovie?.Director || "N/A"}
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">
-                        Actors
-                      </h4>
-                      <p className="text-white text-sm">
-                        {surpriseMovie?.Actors?.split(",")
-                          .slice(0, 3)
-                          .join(", ") || "N/A"}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div 
-                  className="flex items-center gap-3 mt-auto pt-4"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <motion.button 
-                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-2.5 rounded-lg font-medium hover:from-purple-700 hover:to-pink-700 transition-all duration-300 flex items-center justify-center gap-2 text-sm relative overflow-hidden"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <span className="relative z-10">➕ Watchlist</span>
-                    <motion.span 
-                      className="absolute inset-0 bg-gradient-to-r from-pink-600/20 to-purple-600/20 opacity-0 hover:opacity-100"
-                      initial={{ x: -100 }}
-                      whileHover={{ x: 0, opacity: 1 }}
-                      transition={{ duration: 0.4 }}
-                    />
-                  </motion.button>
-                  <motion.button 
-                    className="flex-1 bg-gray-800/50 text-white px-4 py-2.5 rounded-lg font-medium hover:bg-gray-700/50 transition-all duration-300 flex items-center justify-center gap-2 text-sm border border-gray-700/50 backdrop-blur-sm relative overflow-hidden"
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <span className="relative z-10">🎬 Similar</span>
-                    <motion.span 
-                      className="absolute inset-0 bg-gradient-to-r from-gray-800/20 to-gray-700/20 opacity-0 hover:opacity-100"
-                      initial={{ x: -100 }}
-                      whileHover={{ x: 0, opacity: 1 }}
-                      transition={{ duration: 0.4 }}
-                    />
-                  </motion.button>
-                </motion.div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.nav>
   );
 }
