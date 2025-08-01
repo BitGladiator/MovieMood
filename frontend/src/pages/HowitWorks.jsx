@@ -1,10 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaRegSmile, FaRegCompass, FaFilm, FaHeart, FaBrain, FaMoon, FaMagic } from 'react-icons/fa';
 import { GiFilmSpool, GiBrain } from 'react-icons/gi';
 import { BsEmojiFrown, BsEmojiSmile, BsLightningCharge } from 'react-icons/bs';
 
 const HowitWorks = () => {
+  const navigate = useNavigate();
   const steps = [
     {
       icon: <FaRegSmile className="text-pink-500 text-3xl" />,
@@ -64,6 +66,7 @@ const HowitWorks = () => {
   ];
 
   return (
+    
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white px-4 py-16 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -235,15 +238,16 @@ const HowitWorks = () => {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <motion.button
+              onClick={() => navigate("/register")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-full font-semibold shadow-lg hover:shadow-purple-500/30 transition-all duration-300"
             >
               Get Started - It's Free
             </motion.button>
-            <button className="px-8 py-4 bg-gray-800/50 border border-gray-700 hover:bg-gray-700/50 rounded-full font-medium shadow-lg transition-all duration-300">
+            {/* <button className="px-8 py-4 bg-gray-800/50 border border-gray-700 hover:bg-gray-700/50 rounded-full font-medium shadow-lg transition-all duration-300">
               How We Analyze Moods
-            </button>
+            </button> */}
           </div>
         </motion.div>
       </div>

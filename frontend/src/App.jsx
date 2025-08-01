@@ -17,6 +17,7 @@ import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
 import Payment from "./components/Payment";
 import Contact from "./pages/Contact";
+import Demo from "./pages/Demo";
 
 export default function App() {
   return (
@@ -58,7 +59,7 @@ export default function App() {
           <Route path="/settings" element={<Settings/>} />
           <Route path="/pricing" element={<Pricing/>}/>
           <Route path="/payment" element={<Payment/>}/>
-          <Route path="/contact" element={<Contact/>}/>
+          <Route path="/demo" element={<Demo/>}/>
         </Routes>
       </div>
     </div>

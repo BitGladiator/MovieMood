@@ -318,7 +318,7 @@ export default function Diary() {
       </div>
 
       {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${isScrolled ? "bg-gray-900/90 backdrop-blur-lg border-b border-gray-800/50" : "bg-transparent"}`}>
+      {/* <header className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${isScrolled ? "bg-gray-900/90 backdrop-blur-lg border-b border-gray-800/50" : "bg-transparent"}`}>
         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -351,7 +351,7 @@ export default function Diary() {
             </Link>
           </motion.div>
         </div>
-      </header>
+      </header> */}
 
       {/* Main content */}
       <main className="pt-24 pb-12 container mx-auto px-4 sm:px-6">

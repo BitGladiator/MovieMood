@@ -471,7 +471,7 @@ const Dashboard = () => {
                     <p className="text-gray-400">Your movie diary is empty</p>
                     <button
                       className="mt-4 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg text-sm font-medium transition-colors hover:from-purple-500 hover:to-indigo-500"
-                      onClick={() => navigate("/add-movie")}
+                      onClick={() => navigate("/finder")}
                     >
                       Add your first movie
                     </button>

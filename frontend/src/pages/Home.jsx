@@ -8,6 +8,7 @@ import {
   Search,
   BarChart2,
   ChevronDown,
+  X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -20,14 +21,27 @@ export default function Home() {
   });
   const [status, setStatus] = useState("");
   const [scrolled, setScrolled] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [modalTriggered, setModalTriggered] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
+
+      // Show auth modal after scrolling 50% of page height if not logged in and not already triggered
+      if (
+        !isLoggedIn &&
+        !modalTriggered &&
+        window.scrollY > window.innerHeight * 0.5
+      ) {
+        setShowAuthModal(true);
+        setModalTriggered(true);
+      }
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isLoggedIn, modalTriggered]);
 
   if (isLoggedIn) {
     return <Navigate to="/dashboard" />;
@@ -139,43 +153,61 @@ export default function Home() {
 
   return (
     <div className="bg-gray-950 text-gray-100 font-sans antialiased">
-      {/* Floating Navigation */}
-      {/* <motion.nav 
-        className={`fixed w-full z-50 transition-all duration-500 ${scrolled ? "py-3 bg-gray-900/90 backdrop-blur-md border-b border-gray-800" : "py-5 bg-transparent"}`}
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="container mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <Film className="w-6 h-6 text-purple-500" />
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-              MovieMood
-            </span>
-          </div>
-          <div className="hidden md:flex items-center space-x-8">
-            <Link to="/features" className="text-gray-300 hover:text-white transition-colors">Features</Link>
-            <Link to="/how-it-works" className="text-gray-300 hover:text-white transition-colors">How It Works</Link>
-            <Link to="/pricing" className="text-gray-300 hover:text-white transition-colors">Pricing</Link>
-            <Link to="/about" className="text-gray-300 hover:text-white transition-colors">About</Link>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Link 
-              to="/login" 
-              className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-700 hover:border-gray-600 transition-colors"
+      {/* AnimatePresence for modal */}
+      <AnimatePresence>
+        {showAuthModal && (
+          <motion.div
+            className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-gray-900 border border-gray-800 rounded-2xl p-8 max-w-md w-full relative"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
             >
-              Sign In
-            </Link>
-            <Link 
-              to="/register" 
-              className="px-4 py-2 text-sm font-medium rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-purple-500/30"
-            >
-              Get Started
-            </Link>
-          </div>
-        </div>
-      </motion.nav> */}
+              <button
+                onClick={() => setShowAuthModal(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              >
+                <X className="w-6 h-6" />
+              </button>
 
+              <div className="text-center mb-6">
+                <Film className="w-12 h-12 mx-auto text-purple-500 mb-4" />
+                <h3 className="text-2xl font-bold mb-2">Join MovieMood</h3>
+                <p className="text-gray-400">
+                  Sign in or register to get personalized movie recommendations
+                  based on your mood.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <Link
+                  to="/register"
+                  className="px-6 py-3 rounded-lg font-medium bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-center"
+                  onClick={() => setShowAuthModal(false)}
+                >
+                  Create Account
+                </Link>
+                <Link
+                  to="/login"
+                  className="px-6 py-3 rounded-lg font-medium bg-gray-800 hover:bg-gray-700 border border-gray-700 text-center"
+                  onClick={() => setShowAuthModal(false)}
+                >
+                  Sign In
+                </Link>
+              </div>
+
+              <p className="text-sm text-gray-500 mt-4 text-center">
+                By continuing, you agree to our Terms and Privacy Policy
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
         {/* Background elements */}
