@@ -373,12 +373,12 @@ export default function Pricing() {
               >
                 Start Free Trial
               </Link>
-              <Link
+              {/* <Link
                 to="/contact"
                 className="px-8 py-4 rounded-xl font-semibold text-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-lg"
               >
                 Contact Sales
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>

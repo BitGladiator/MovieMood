@@ -600,7 +600,7 @@ export default function Stats() {
                   </ResponsiveContainer>
                 </ChartCard>
 
-                <ChartCard title="Top Directors" icon={<FiBarChart2 />}>
+                {/* <ChartCard title="Top Directors" icon={<FiBarChart2 />}>
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart
                       data={topDirectors}
@@ -631,7 +631,7 @@ export default function Stats() {
                       />
                     </BarChart>
                   </ResponsiveContainer>
-                </ChartCard>
+                </ChartCard> */}
               </div>
             )}
 

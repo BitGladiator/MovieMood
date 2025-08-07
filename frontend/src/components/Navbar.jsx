@@ -46,7 +46,7 @@ export default function Navbar() {
     <motion.nav 
       className={`w-full px-6 py-3 backdrop-blur-xl flex items-center justify-between flex-wrap sticky top-0 z-50 transition-all duration-500 ${
         scrolled 
-          ? "bg-gray-900/95 border-b border-gray-800/50 shadow-2xl" 
+          ? "bg-[#12192B]  border-b border-[#12192B]  shadow-2xl" 
           : "bg-transparent border-b border-transparent"
       }`}
       initial={{ y: -100 }}
@@ -54,40 +54,43 @@ export default function Navbar() {
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
       {/* Logo */}
-      <Link to="/" className="flex items-center gap-3 group">
-        <motion.div 
-          className="relative"
-          whileHover={{ rotate: 10 }}
-          transition={{ type: "spring", stiffness: 300 }}
-        >
-          <img
-            src={logo}
-            alt="MovieMood Logo"
-            className="w-10 h-10 rounded-full border-2 border-purple-500/80 shadow-lg shadow-purple-500/30 transition-all duration-500"
-          />
-          <motion.div 
-            className="absolute inset-0 rounded-full border-2 border-transparent group-hover:border-purple-400/50"
-            animate={{
-              scale: [1, 1.1, 1],
-              opacity: [0, 0.5, 0]
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-        </motion.div>
-        <motion.span 
-          className="text-2xl md:text-3xl font-bold tracking-tight uppercase bg-gradient-to-r from-amber-400 via-pink-500 to-violet-500 text-transparent bg-clip-text"
-          whileHover={{ 
-            textShadow: "0 0 10px rgba(236, 72, 153, 0.7)",
-            transition: { duration: 0.3 }
-          }}
-        >
-          MovieMood
-        </motion.span>
-      </Link>
+      <Link 
+  to={user ? "/dashboard" : "/"} 
+  className="flex items-center gap-3 group"
+>
+  <motion.div 
+    className="relative"
+    whileHover={{ rotate: 10 }}
+    transition={{ type: "spring", stiffness: 300 }}
+  >
+    <img
+      src={logo}
+      alt="MovieMood Logo"
+      className="w-10 h-10 rounded-full border-2 border-purple-500/80 shadow-lg shadow-purple-500/30 transition-all duration-500"
+    />
+    <motion.div 
+      className="absolute inset-0 rounded-full border-2 border-transparent group-hover:border-purple-400/50"
+      animate={{
+        scale: [1, 1.1, 1],
+        opacity: [0, 0.5, 0]
+      }}
+      transition={{
+        duration: 1.5,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
+    />
+  </motion.div>
+  <motion.span 
+    className="text-2xl md:text-3xl font-bold tracking-tight uppercase bg-gradient-to-r from-amber-400 via-pink-500 to-violet-500 text-transparent bg-clip-text"
+    whileHover={{ 
+      textShadow: "0 0 10px rgba(236, 72, 153, 0.7)",
+      transition: { duration: 0.3 }
+    }}
+  >
+    MovieMood
+  </motion.span>
+</Link>
 
       {/* Navigation Menu */}
       <div
@@ -95,7 +98,7 @@ export default function Navbar() {
         className={`${menuOpen ? "flex animate-fadeIn" : "hidden"} 
         absolute md:static top-16 left-1/2 -translate-x-1/2 md:translate-x-0 md:flex 
         md:items-center md:gap-4 w-[calc(100%-3rem)] md:w-auto 
-        bg-gray-900/95 md:bg-transparent p-5 md:p-0 rounded-2xl md:rounded-none 
+        bg-[#12192B]  md:bg-transparent p-5 md:p-0 rounded-2xl md:rounded-none 
         border border-gray-800/50 md:border-none shadow-2xl md:shadow-none 
         flex-col md:flex-row transition-all duration-300 z-40`}
       >

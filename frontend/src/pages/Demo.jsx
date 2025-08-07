@@ -88,25 +88,7 @@ const Demo = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-gray-100 font-sans">
-      {/* Navigation */}
-      {/* <nav className="fixed w-full z-50 bg-gray-900/80 backdrop-blur-md border-b border-gray-800">
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <Link to="/" className="flex items-center space-x-2">
-            <Film className="w-6 h-6 text-purple-500" />
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-              MovieMood
-            </span>
-          </Link>
-          <div className="flex items-center space-x-4">
-            <Link to="/login" className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
-              Sign In
-            </Link>
-            <Link to="/register" className="px-4 py-2 text-sm font-medium rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-purple-500/30">
-              Get Started
-            </Link>
-          </div>
-        </div>
-      </nav> */}
+      
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-6">
@@ -315,12 +297,12 @@ const Demo = () => {
                       >
                         Start Your Free Trial
                       </Link>
-                      <button
+                      {/* <button
                         onClick={() => setShowVideo(true)}
                         className="px-8 py-4 rounded-xl font-semibold text-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-gray-600 transition-all duration-300 shadow-lg flex items-center justify-center gap-2"
                       >
                         <Play className="w-5 h-5" /> Watch Demo Video
-                      </button>
+                      </button> */}
                     </div>
                     
                     <div className="flex items-center justify-center space-x-6 text-gray-500">
