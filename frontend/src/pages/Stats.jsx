@@ -42,26 +42,27 @@ export default function Stats() {
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       setUser(u);
       if (!u) return setLoading(false);
-
+  
       try {
         const q = query(collection(db, "diary"), where("uid", "==", u.uid));
         const querySnapshot = await getDocs(q);
-
+  
         const movies = querySnapshot.docs.map((doc) => {
           const data = doc.data();
           return {
             id: doc.id,
-            title: data.title,
+            title: data.title || data.Title || '', // Check both 'title' and 'Title'
             genres: data.Genre?.split(/,\s*/).filter(Boolean),
             cast: data.Actors?.split(/,\s*/).map((a) => a.trim()),
-            director: data.Director?.trim(),
-            year: data.Year,
-            runtime: parseInt(data.Runtime) || 0,
+            director: data.Director?.trim() || data.director?.trim() || '', // Check both 'Director' and 'director'
+            year: data.Year || data.year,
+            runtime: parseInt(data.Runtime || data.runtime) || 0,
             rating: parseFloat(data.rating) || 0,
-            poster: data.Poster,
+            poster: data.Poster || data.poster,
           };
         });
-
+  
+        console.log("Extracted movies data:", movies); // Add this to debug
         setWatched(movies);
       } catch (err) {
         console.error("Error fetching stats:", err);
@@ -69,7 +70,7 @@ export default function Stats() {
         setLoading(false);
       }
     });
-
+  
     return unsubscribe;
   }, []);
 
@@ -168,13 +169,20 @@ export default function Stats() {
 
   const downloadCSV = () => {
     const header = "Title,Year,Genres,Actors,Director,Runtime,Rating\n";
-    const rows = watched.map(
-      (m) =>
-        `${m.title},${m.year},"${(m.genres || []).join(";")}","${(
-          m.cast || []
-        ).join(";")}",${m.director},${m.runtime},${m.rating}`
-    );
-    const blob = new Blob([header + rows.join("\n")], { type: "text/csv" });
+    const rows = watched.map((m) => {
+      return [
+        `"${m.title || 'Unknown'}"`,
+        m.year || 'Unknown',
+        `"${(m.genres || []).join(";")}"`,
+        `"${(m.cast || []).join(";")}"`,
+        `"${m.director || 'Unknown'}"`,
+        m.runtime || 0,
+        m.rating || 0
+      ].join(',');
+    });
+    
+    const csvContent = header + rows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     saveAs(blob, "movie_stats.csv");
   };
 
