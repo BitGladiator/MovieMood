@@ -18,6 +18,8 @@ import Pricing from "./pages/Pricing";
 import Payment from "./components/Payment";
 import Contact from "./pages/Contact";
 import Demo from "./pages/Demo";
+import Privacy from "./components/privacy";
+import Terms from "./components/Terms";
 
 export default function App() {
   return (
@@ -60,6 +62,8 @@ export default function App() {
           <Route path="/pricing" element={<Pricing/>}/>
           <Route path="/payment" element={<Payment/>}/>
           <Route path="/demo" element={<Demo/>}/>
+          <Route path="/privacy" element={<Privacy/>}/>
+          <Route path="/terms" element={<Terms/>}/>
         </Routes>
       </div>
     </div>
