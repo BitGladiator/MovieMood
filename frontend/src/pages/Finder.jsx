@@ -24,7 +24,7 @@ export default function Finder() {
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!search.trim()) return;
-    
+
     setIsLoading(true);
     try {
       const res = await fetch(
@@ -119,24 +119,26 @@ export default function Finder() {
       <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-black">
         {/* Cinematic background elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-black to-gray-950 z-0"></div>
-        
+
         {/* Animated film reel effect */}
         <div className="absolute inset-0 overflow-hidden z-0">
           {[...Array(20)].map((_, i) => (
-            <div 
+            <div
               key={i}
               className="absolute h-1 w-32 bg-yellow-400/10"
               style={{
                 top: `${Math.random() * 100}%`,
                 left: `${Math.random() * 100}%`,
                 transform: `rotate(${Math.random() * 360}deg)`,
-                animation: `filmReel ${15 + Math.random() * 10}s linear infinite`,
-                animationDelay: `${Math.random() * 5}s`
+                animation: `filmReel ${
+                  15 + Math.random() * 10
+                }s linear infinite`,
+                animationDelay: `${Math.random() * 5}s`,
               }}
             />
           ))}
         </div>
-        
+
         {/* Projector light effect */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-48 bg-gradient-to-b from-yellow-500/5 to-transparent pointer-events-none"></div>
 
@@ -150,23 +152,23 @@ export default function Finder() {
           {/* Decorative elements */}
           <div className="absolute -top-10 -right-10 w-32 h-32 bg-purple-500/10 rounded-full filter blur-xl"></div>
           <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/10 rounded-full filter blur-xl"></div>
-          
+
           {/* Animated clapperboard icon */}
           <motion.div
             animate={{
               rotate: [0, 5, -5, 0],
-              scale: [1, 1.05, 1]
+              scale: [1, 1.05, 1],
             }}
             transition={{
               duration: 4,
               repeat: Infinity,
-              repeatType: "reverse"
+              repeatType: "reverse",
             }}
             className="text-6xl md:text-7xl mb-6"
           >
             🎬
           </motion.div>
-          
+
           {/* Main heading with cinematic text effect */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -176,7 +178,7 @@ export default function Finder() {
           >
             Welcome to CineArchive
           </motion.h1>
-          
+
           {/* Subheading */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -184,9 +186,11 @@ export default function Finder() {
             transition={{ delay: 0.3 }}
             className="text-lg md:text-xl text-gray-300 mb-8 max-w-lg mx-auto"
           >
-            Your personal movie diary awaits. Log in to track films you've watched, save ones you want to see, and relive your cinematic journey.
+            Your personal movie diary awaits. Log in to track films you've
+            watched, save ones you want to see, and relive your cinematic
+            journey.
           </motion.p>
-          
+
           {/* Action buttons */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -198,8 +202,18 @@ export default function Finder() {
               to="/login"
               className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-yellow-500 to-red-600 hover:from-yellow-600 hover:to-red-700 text-gray-900 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 group"
             >
-              <svg className="w-5 h-5 group-hover:animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+              <svg
+                className="w-5 h-5 group-hover:animate-pulse"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                />
               </svg>
               Sign In
             </Link>
@@ -207,8 +221,18 @@ export default function Finder() {
               to="/register"
               className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 border border-gray-700 group"
             >
-              <svg className="w-5 h-5 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+              <svg
+                className="w-5 h-5 group-hover:animate-bounce"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                />
               </svg>
               Create Account
             </Link>
@@ -218,8 +242,12 @@ export default function Finder() {
         {/* Animation keyframes */}
         <style jsx global>{`
           @keyframes filmReel {
-            0% { transform: translateX(-100vw) rotate(0deg); }
-            100% { transform: translateX(100vw) rotate(360deg); }
+            0% {
+              transform: translateX(-100vw) rotate(0deg);
+            }
+            100% {
+              transform: translateX(100vw) rotate(360deg);
+            }
           }
         `}</style>
       </div>
@@ -231,11 +259,11 @@ export default function Finder() {
       {/* Cinematic curtain effect */}
       <div className="fixed inset-0 bg-gradient-to-b from-red-900/10 via-transparent to-transparent pointer-events-none z-0"></div>
       <div className="fixed inset-0 bg-gradient-to-t from-blue-900/10 via-transparent to-transparent pointer-events-none z-0"></div>
-      
+
       {/* Film grain overlay for texture */}
       <div className="fixed inset-0 pointer-events-none z-0 opacity-5">
         {[...Array(200)].map((_, i) => (
-          <div 
+          <div
             key={i}
             className="absolute w-1 h-1 bg-white rounded-full"
             style={{
@@ -261,12 +289,12 @@ export default function Finder() {
           <motion.div
             animate={{
               scale: [1, 1.02, 1],
-              opacity: [1, 0.9, 1]
+              opacity: [1, 0.9, 1],
             }}
             transition={{
               duration: 8,
               repeat: Infinity,
-              repeatType: "reverse"
+              repeatType: "reverse",
             }}
             className="inline-block mb-4"
           >
@@ -280,7 +308,7 @@ export default function Finder() {
         </motion.div>
 
         {/* Premium Search Form with cinematic effects */}
-        <motion.form 
+        <motion.form
           onSubmit={handleSearch}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -290,7 +318,7 @@ export default function Finder() {
           <div className="relative flex-1">
             {/* Glow effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-red-500/20 rounded-xl blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-            
+
             {/* Search input */}
             <input
               type="text"
@@ -299,15 +327,25 @@ export default function Finder() {
               placeholder="Search for movies..."
               className="relative w-full px-6 py-4 rounded-xl bg-gray-900/80 backdrop-blur-sm text-white placeholder-gray-500 border border-gray-700 focus:ring-2 focus:ring-yellow-400 focus:outline-none transition-all duration-300 shadow-lg hover:shadow-red-500/20 text-lg font-medium"
             />
-            
+
             {/* Search icon */}
             <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
               </svg>
             </div>
           </div>
-          
+
           {/* Search button */}
           <button
             type="submit"
@@ -317,20 +355,41 @@ export default function Finder() {
             }`}
           >
             {isLoading ? (
-              <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-gray-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <svg
+                className="animate-spin -ml-1 mr-2 h-5 w-5 text-gray-900"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
             ) : (
               <>
                 <span>Search</span>
-                <svg 
-                  className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
+                  fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
                 </svg>
               </>
             )}
@@ -339,7 +398,7 @@ export default function Finder() {
 
         {/* Results section */}
         {results.length > 0 ? (
-          <motion.div 
+          <motion.div
             className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 px-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -355,12 +414,12 @@ export default function Finder() {
               >
                 {/* Glow effect on hover */}
                 <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/10 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl pointer-events-none"></div>
-                
+
                 {/* Poster with cinematic frame */}
                 <div className="relative overflow-hidden rounded-2xl shadow-lg border-2 border-gray-700 group-hover:border-yellow-400/30 transition-all duration-500">
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent z-10 pointer-events-none"></div>
                   <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent z-10 pointer-events-none"></div>
-                  
+
                   {/* Movie poster with loading shimmer */}
                   {movie.Poster !== "N/A" ? (
                     <img
@@ -374,10 +433,12 @@ export default function Finder() {
                       <span className="text-gray-500 text-lg">No Poster</span>
                     </div>
                   )}
-                  
+
                   {/* Title overlay */}
                   <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
-                    <h3 className="text-xl font-bold text-white truncate">{movie.Title}</h3>
+                    <h3 className="text-xl font-bold text-white truncate">
+                      {movie.Title}
+                    </h3>
                     <p className="text-sm text-gray-300">{movie.Year}</p>
                   </div>
                 </div>
@@ -410,9 +471,13 @@ export default function Finder() {
             className="text-center py-20"
           >
             <div className="text-5xl mb-4">🍿</div>
-            <h3 className="text-2xl font-bold text-gray-300 mb-2">Start Your Search</h3>
+            <h3 className="text-2xl font-bold text-gray-300 mb-2">
+              Start Your Search
+            </h3>
             <p className="text-gray-500 max-w-md mx-auto">
-              {isLoading ? "Searching for movies..." : "Find your favorite movies by searching above"}
+              {isLoading
+                ? "Searching for movies..."
+                : "Find your favorite movies by searching above"}
             </p>
           </motion.div>
         )}
@@ -430,69 +495,86 @@ export default function Finder() {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 20 }}
               transition={{ type: "spring", stiffness: 400, damping: 25 }}
-              className="relative bg-gradient-to-br from-gray-900 to-gray-950 text-white rounded-3xl p-8 max-w-4xl w-full flex flex-col md:flex-row gap-8 border border-gray-800 shadow-2xl overflow-hidden max-h-[90vh]"
+              className="relative bg-gradient-to-br from-gray-900 to-gray-950 text-white rounded-3xl p-6 md:p-8 max-w-4xl w-full flex flex-col md:flex-row gap-6 md:gap-8 border border-gray-800 shadow-2xl overflow-hidden max-h-[90vh]"
             >
               {/* Modal background elements */}
               <div className="absolute -top-20 -right-20 w-40 h-40 bg-yellow-500/10 rounded-full filter blur-xl"></div>
               <div className="absolute -bottom-20 -left-20 w-60 h-60 bg-red-500/10 rounded-full filter blur-xl"></div>
-              
+
               {/* Close button */}
               <button
                 onClick={() => setSelectedMovie(null)}
-                className="absolute top-6 right-6 text-gray-400 hover:text-white text-2xl cursor-pointer transition-colors duration-300 z-10"
+                className="absolute top-4 md:top-6 right-4 md:right-6 text-gray-400 hover:text-white text-2xl cursor-pointer transition-colors duration-300 z-10"
               >
                 &times;
               </button>
 
-              {/* Movie Poster */}
-              <div className="flex-shrink-0 w-full md:w-1/3 relative">
-                <div className="sticky top-8">
-                  <div className="relative overflow-hidden rounded-2xl shadow-xl border-2 border-gray-700">
-                    <img
-                      src={selectedMovie.Poster !== "N/A" ? selectedMovie.Poster : "/fallback.png"}
-                      alt={selectedMovie.Title}
-                      className="w-full h-auto object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none"></div>
-                    <div className="absolute bottom-0 left-0 p-4 w-full">
-                      <h3 className="text-xl font-bold text-white">{selectedMovie.Title}</h3>
-                      <p className="text-gray-300 text-sm">{selectedMovie.Year}</p>
-                    </div>
+              {/* Left Column - Poster and Buttons (hidden on mobile) */}
+              <div className="hidden md:flex flex-col w-1/3 gap-6">
+                {/* Movie Poster */}
+                <div className="relative overflow-hidden rounded-2xl shadow-xl border-2 border-gray-700">
+                  <img
+                    src={
+                      selectedMovie.Poster !== "N/A"
+                        ? selectedMovie.Poster
+                        : "/fallback.png"
+                    }
+                    alt={selectedMovie.Title}
+                    className="w-full h-auto object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none"></div>
+                  <div className="absolute bottom-0 left-0 p-4 w-full">
+                    <h3 className="text-xl font-bold text-white">
+                      {selectedMovie.Title}
+                    </h3>
+                    <p className="text-gray-300 text-sm">
+                      {selectedMovie.Year}
+                    </p>
                   </div>
-                  
-                  {/* Action buttons */}
-                  <div className="flex flex-col gap-3 mt-6">
-                    <button
-                      onClick={handleSaveToDiary}
-                      disabled={!mood}
-                      className={`px-6 py-3 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
-                        mood 
-                          ? "bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-gray-900 shadow-lg hover:shadow-yellow-500/30"
-                          : "bg-gray-800 text-gray-500 cursor-not-allowed"
-                      }`}
-                    >
-                      <span>🎬</span>
-                      <span>Save to Diary</span>
-                    </button>
-                    <button
-                      onClick={() => setSelectedMovie(null)}
-                      className="px-6 py-3 rounded-xl border border-gray-700 bg-gray-900/50 text-gray-300 hover:bg-gray-800/50 hover:text-white transition-all duration-300"
-                    >
-                      Cancel
-                    </button>
-                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={handleSaveToDiary}
+                    disabled={!mood}
+                    className={`px-6 py-3 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
+                      mood
+                        ? "bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-gray-900 shadow-lg hover:shadow-yellow-500/30"
+                        : "bg-gray-800 text-gray-500 cursor-not-allowed"
+                    }`}
+                  >
+                    <span>🎬</span>
+                    <span>Save to Diary</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedMovie(null)}
+                    className="px-6 py-3 rounded-xl border border-gray-700 bg-gray-900/50 text-gray-300 hover:bg-gray-800/50 hover:text-white transition-all duration-300"
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
 
-              {/* Movie Details Form */}
-              <div className="flex-1 flex flex-col space-y-6 overflow-y-auto">
-                <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500">
+              {/* Right Column - Form Content (full width on mobile) */}
+              <div className="w-full md:w-2/3 flex flex-col space-y-6 overflow-y-auto">
+                {/* Show title at top on mobile only */}
+                <div className="md:hidden mb-4">
+                  <h3 className="text-xl font-bold text-white">
+                    {selectedMovie.Title}
+                  </h3>
+                  <p className="text-gray-300 text-sm">{selectedMovie.Year}</p>
+                </div>
+
+                <h2 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500">
                   Add to Your Movie Diary
                 </h2>
 
                 {/* Review section */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-400 tracking-wide">YOUR REVIEW</label>
+                  <label className="text-sm font-medium text-gray-400 tracking-wide">
+                    YOUR REVIEW
+                  </label>
                   <textarea
                     className="w-full p-4 rounded-xl bg-gray-800/50 backdrop-blur-sm border border-gray-700 text-white placeholder-gray-500 focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all duration-300 min-h-[120px]"
                     placeholder="Share your thoughts about this movie..."
@@ -503,34 +585,58 @@ export default function Finder() {
 
                 {/* Mood selector */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-400 tracking-wide">YOUR MOOD</label>
+                  <label className="text-sm font-medium text-gray-400 tracking-wide">
+                    YOUR MOOD
+                  </label>
                   <MoodSelector selected={mood} onSelect={setMood} />
                 </div>
 
-                {/* Additional movie details (fetched when selected) */}
-                {selectedMovie && (
-                  <div className="mt-6 border-t border-gray-800 pt-6">
-                    <h3 className="text-lg font-semibold text-gray-300 mb-3">MOVIE DETAILS</h3>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <p className="text-gray-500">Director</p>
-                        <p className="text-gray-300">{selectedMovie.Director || "N/A"}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Actors</p>
-                        <p className="text-gray-300">{selectedMovie.Actors ? selectedMovie.Actors.split(',').slice(0, 3).join(', ') : "N/A"}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Genre</p>
-                        <p className="text-gray-300">{selectedMovie.Genre || "N/A"}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-500">Runtime</p>
-                        <p className="text-gray-300">{selectedMovie.Runtime || "N/A"}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                {/* Action buttons - show at bottom for mobile only */}
+                <div className="flex flex-col gap-3 md:hidden mt-6">
+                  <button
+                    onClick={handleSaveToDiary}
+                    disabled={!mood}
+                    className={`px-6 py-3 rounded-xl font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
+                      mood
+                        ? "bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-gray-900 shadow-lg hover:shadow-yellow-500/30"
+                        : "bg-gray-800 text-gray-500 cursor-not-allowed"
+                    }`}
+                  >
+                    <span>🎬</span>
+                    <span>Save to Diary</span>
+                  </button>
+                  <button
+                    onClick={() => setSelectedMovie(null)}
+                    className="px-6 py-3 rounded-xl border border-gray-700 bg-gray-900/50 text-gray-300 hover:bg-gray-800/50 hover:text-white transition-all duration-300"
+                  >
+                    Cancel
+                  </button>
+                </div>
+
+                {/* Additional movie details
+        {selectedMovie && (
+          <div className="mt-6 border-t border-gray-800 pt-6">
+            <h3 className="text-lg font-semibold text-gray-300 mb-3">MOVIE DETAILS</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-gray-500">Director</p>
+                <p className="text-gray-300">{selectedMovie.Director || "N/A"}</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Actors</p>
+                <p className="text-gray-300">{selectedMovie.Actors ? selectedMovie.Actors.split(',').slice(0, 3).join(', ') : "N/A"}</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Genre</p>
+                <p className="text-gray-300">{selectedMovie.Genre || "N/A"}</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Runtime</p>
+                <p className="text-gray-300">{selectedMovie.Runtime || "N/A"}</p>
+              </div>
+            </div>
+          </div>
+        )} */}
               </div>
             </motion.div>
           </motion.div>

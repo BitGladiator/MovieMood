@@ -2,7 +2,7 @@ import { Link, NavLink } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase";
+import { auth } from "../firebase"; 
 import logo from "../images/logo.png";
 import { Crown, Sparkles, Star, Gem, ChevronDown } from "lucide-react";
 
