@@ -399,7 +399,7 @@ export default function Profile() {
           transition={{ delay: 1 }}
           className="flex justify-center gap-4 mt-16"
         >
-          <motion.button
+          {/* <motion.button
             whileHover={{ 
               scale: 1.05,
               boxShadow: "0 0 25px rgba(139, 92, 246, 0.4)"
@@ -411,7 +411,7 @@ export default function Profile() {
             <span className="relative z-10">Upgrade Plan</span>
             <RiVipCrownFill className="relative z-10" />
             <span className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-          </motion.button>
+          </motion.button> */}
 
           <motion.button
             whileHover={{ 

@@ -113,7 +113,7 @@ export default function Navbar() {
           : [
               { path: "/", name: "Home", premium: false },
               { path: "/features", name: "Features", premium: false },
-              { path: "/pricing", name: "Pricing", premium: false },
+              { path: "/how-it-works", name: "How it Works", premium: false },
             ]
         ).map((item) => (
           <NavLink
@@ -141,7 +141,7 @@ export default function Navbar() {
         ))}
 
         {/* Premium Upgrade Button (Visible when logged in but not premium) */}
-        {user && !isPremium && (
+        {/* {user && !isPremium && (
           <motion.div 
             className="relative group"
             onMouseEnter={() => setPremiumHover(true)}
@@ -153,11 +153,11 @@ export default function Navbar() {
             >
               <Sparkles className="w-4 h-4" />
               <span>Upgrade</span>
-            </Link>
+            </Link> */}
 
             {/* Premium Tooltip */}
-            <AnimatePresence>
-              {premiumHover && (
+            {/* <AnimatePresence> */}
+              {/* {premiumHover && (
                 <motion.div 
                   className="absolute top-full right-0 mt-2 w-64 bg-gray-900/95 backdrop-blur-xl rounded-xl p-4 shadow-2xl border border-amber-500/20 z-50"
                   initial={{ opacity: 0, y: 10 }}
@@ -180,8 +180,8 @@ export default function Navbar() {
                 </motion.div>
               )}
             </AnimatePresence>
-          </motion.div>
-        )}
+          </motion.div> */}
+        {/* )} */}
       </div>
 
       {/* User Actions */}
@@ -369,15 +369,15 @@ export default function Navbar() {
                     >
                       <span>Settings</span>
                     </Link>
-                    {!isPremium && (
-                      <Link
-                        to="/pricing"
-                        className="px-4 py-2.5 text-sm text-amber-300 hover:bg-amber-900/10 transition-colors flex items-center gap-2 border-t border-gray-800/50"
-                      >
-                        <Sparkles className="w-4 h-4" />
-                        <span>Upgrade to Premium</span>
-                      </Link>
-                    )}
+                    {/* {!isPremium && (
+                      // <Link
+                      //   to="/pricing"
+                      //   className="px-4 py-2.5 text-sm text-amber-300 hover:bg-amber-900/10 transition-colors flex items-center gap-2 border-t border-gray-800/50"
+                      // >
+                      //   <Sparkles className="w-4 h-4" />
+                      //   <span>Upgrade to Premium</span>
+                      // </Link>
+                    )} */}
                     <Link
                       to="/logout"
                       className="px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors flex items-center gap-2 border-t border-gray-800/50"
