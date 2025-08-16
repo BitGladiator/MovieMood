@@ -18,7 +18,7 @@ import Pricing from "./pages/Pricing";
 import Payment from "./components/Payment";
 import Contact from "./pages/Contact";
 import Demo from "./pages/Demo";
-import Privacy from "./components/privacy";
+import Privacy from "./components/Privacy";
 import Terms from "./components/Terms";
 
 export default function App() {
