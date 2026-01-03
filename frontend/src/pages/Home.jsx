@@ -15,7 +15,8 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
-  const isLoggedIn = localStorage.getItem("token");
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -27,10 +28,19 @@ export default function Home() {
   const [modalTriggered, setModalTriggered] = useState(false);
 
   useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setAuthLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
       if (
-        !isLoggedIn &&
+        !user &&
         !modalTriggered &&
         window.scrollY > window.innerHeight * 0.5
       ) {
@@ -41,9 +51,17 @@ export default function Home() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isLoggedIn, modalTriggered]);
+  }, [user, modalTriggered]);
 
-  if (isLoggedIn) {
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-950">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+      </div>
+    );
+  }
+
+  if (user) {
     return <Navigate to="/dashboard" />;
   }
 
