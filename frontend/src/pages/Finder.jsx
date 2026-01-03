@@ -117,10 +117,8 @@ export default function Finder() {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-black">
-        {/* Cinematic background elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-black to-gray-950 z-0"></div>
 
-        {/* Animated film reel effect */}
         <div className="absolute inset-0 overflow-hidden z-0">
           {[...Array(20)].map((_, i) => (
             <div
@@ -138,18 +136,13 @@ export default function Finder() {
             />
           ))}
         </div>
-
-        {/* Projector light effect */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-48 bg-gradient-to-b from-yellow-500/5 to-transparent pointer-events-none"></div>
-
-        {/* Main content */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative z-10 max-w-2xl w-full mx-auto text-center p-8 md:p-12 backdrop-blur-sm bg-gray-900/80 rounded-3xl border border-gray-800 shadow-2xl"
         >
-          {/* Decorative elements */}
           <div className="absolute -top-10 -right-10 w-32 h-32 bg-purple-500/10 rounded-full filter blur-xl"></div>
           <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/10 rounded-full filter blur-xl"></div>
 
@@ -256,7 +249,6 @@ export default function Finder() {
 
   return (
     <div className="min-h-screen bg-black p-4 pb-12 relative overflow-x-hidden">
-      {/* Cinematic curtain effect */}
       <div className="fixed inset-0 bg-gradient-to-b from-red-900/10 via-transparent to-transparent pointer-events-none z-0"></div>
       <div className="fixed inset-0 bg-gradient-to-t from-blue-900/10 via-transparent to-transparent pointer-events-none z-0"></div>
 

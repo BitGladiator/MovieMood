@@ -5,9 +5,9 @@ metadata:
 spec:
   selector:
     app: moviemood
-  type: LoadBalancer  
+  type: LoadBalancer  # NodePort
   ports:
-    - protocol: TCP
+    - protocol: TCP 
       port: 5173
-      targetPort: 5173
-      nodePort: 30000
+      targetPort: 5173 # the port of frontend
+      nodePort: 30000 # the port of node

@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { updateProfile } from "firebase/auth"; // Add this import
+import { updateProfile } from "firebase/auth"; 
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -19,8 +19,6 @@ import {
 } from "firebase/firestore";
 
 import toast from "react-hot-toast";
-
-// Firebase config from environment
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -30,40 +28,29 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
-
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-
-// Auth Helpers
 const signup = async (username, email, password) => {
   try {
-    // 1. Create user
     const res = await createUserWithEmailAndPassword(auth, email, password);
     const user = res.user;
-
-    // 2. Set displayName in Firebase Auth
     await updateProfile(user, {
       displayName: username,
     });
-
-    // 3. Store additional data in Firestore
     await setDoc(doc(db, "users", user.uid), {
       id: user.uid,
       username: username.toLowerCase(),
       email,
-      name: username, // Set name here too
+      name: username, 
       avatar: "",
       bio: "Hey! there I am using chat app",
       lastSeen: Date.now(),
     });
-
-    // 4. Create chats document
     await setDoc(doc(db, "chats", user.uid), { chatsData: [] });
 
     toast.success("Account created successfully!");
-    return user; // Return user with updated profile
+    return user; 
   } catch (error) {
     console.error(error);
     toast.error(error.code.split("/")[1].split("-").join(" "));
@@ -75,10 +62,10 @@ export const login = async (email, password) => {
   try {
     const res = await signInWithEmailAndPassword(auth, email, password);
     const user = res.user;
-    return user; // Return the full user object (includes displayName)
+    return user; 
   } catch (error) {
     console.error("Login error:", error);
-    throw error; // Re-throw to handle in the UI
+    throw error;
   }
 };
 
@@ -108,8 +95,6 @@ const resetPass = async (email) => {
     toast.error(error.message);
   }
 };
-
-// Export necessary functions/utilities
 export {
   app,
   auth,

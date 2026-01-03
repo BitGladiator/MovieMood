@@ -27,8 +27,6 @@ export default function Home() {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
-
-      // Show auth modal after scrolling 50% of page height if not logged in and not already triggered
       if (
         !isLoggedIn &&
         !modalTriggered &&
@@ -153,7 +151,6 @@ export default function Home() {
 
   return (
     <div className="bg-gray-950 text-gray-100 font-sans antialiased">
-      {/* AnimatePresence for modal */}
       <AnimatePresence>
         {showAuthModal && (
           <motion.div
@@ -208,15 +205,11 @@ export default function Home() {
           </motion.div>
         )}
       </AnimatePresence>
-      {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-        {/* Background elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-950 to-black z-0" />
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-0 left-0 w-full h-full bg-[url('https://assets-global.website-files.com/5f16d3f9836eec5a40b7456/63f5d5b5f5e4e50a1b4a9a0e_hero-grid-pattern.svg')] bg-repeat opacity-50"></div>
         </div>
-
-        {/* Floating movie frames */}
         {[...Array(6)].map((_, i) => (
           <motion.div
             key={i}
@@ -318,8 +311,6 @@ export default function Home() {
             </motion.div>
           </div>
         </div>
-
-        {/* Scrolling indicator */}
         <motion.div
           className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
           animate={{ y: [0, 10, 0] }}
@@ -330,8 +321,6 @@ export default function Home() {
           </div>
         </motion.div>
       </section>
-
-      {/* Logo Cloud */}
       <section className="py-16 bg-gray-900/50 border-y border-gray-800">
         <div className="container mx-auto px-6">
           <p className="text-center text-gray-500 text-sm uppercase tracking-wider mb-10">
@@ -357,8 +346,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Features Section */}
       <section className="py-28 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-900/80 to-gray-950 z-0" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.03)_0%,_transparent_70%)] z-0" />
@@ -409,8 +396,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Mood Explorer */}
       <section className="py-28 relative overflow-hidden bg-gradient-to-b from-gray-950 to-black">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-0 left-0 w-full h-full bg-[url('https://assets-global.website-files.com/5f16d3f9836eec5a40b7456/63f5d5b5f5e4e50a1b4a9a0e_hero-grid-pattern.svg')] bg-repeat opacity-50"></div>
@@ -469,8 +454,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Testimonials */}
       <section className="py-28 relative overflow-hidden bg-gray-900/50">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(168,85,247,0.1)_0%,_transparent_70%)] z-0" />
 
@@ -541,8 +524,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* CTA Section */}
       <section className="py-28 relative overflow-hidden bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950">
         <div className="absolute inset-0 bg-[url('https://assets-global.website-files.com/5f16d3f9836eec5a40b7456/63f5d5b5f5e4e50a1b4a9a0e_hero-grid-pattern.svg')] bg-repeat opacity-10"></div>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(168,85,247,0.15)_0%,_transparent_70%)] z-0"></div>
@@ -594,8 +575,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Contact Section */}
       <section className="py-20 bg-gray-900/50 border-t border-gray-800">
         <div className="container mx-auto px-6">
           <div className="max-w-4xl mx-auto">
@@ -678,8 +657,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
       <footer className="py-12 bg-gray-900 border-t border-gray-800">
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center">

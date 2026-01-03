@@ -38,8 +38,8 @@ export default function App() {
             marginTop: "2.5rem",
           },
           iconTheme: {
-            primary: "#facc15", // yellow
-            secondary: "#1f2937", // dark gray
+            primary: "#facc15",
+            secondary: "#1f2937", 
           },
         }}
       />
