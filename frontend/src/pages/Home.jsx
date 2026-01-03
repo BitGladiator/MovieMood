@@ -74,6 +74,14 @@ export default function Home() {
       ...prev,
       [e.target.name]: e.target.value,
     }));
+
+    // Clear error for this field
+    if (errors[e.target.name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [e.target.name]: "",
+      }));
+    }
   };
   const validateForm = () => {
     const newErrors = {};
@@ -99,6 +107,22 @@ export default function Home() {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    // Check if EmailJS is configured
+    if (
+      !import.meta.env.VITE_EMAILJS_SERVICE_ID ||
+      !import.meta.env.VITE_EMAILJS_TEMPLATE_ID ||
+      !import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+    ) {
+      setStatus("Email service not configured. Please contact support.");
+      return;
+    }
+
+    setIsSubmitting(true);
     setStatus("Sending...");
 
     emailjs
@@ -112,12 +136,18 @@ export default function Home() {
         () => {
           setStatus("Message sent successfully!");
           setFormData({ name: "", email: "", message: "" });
+          setErrors({});
+          setTimeout(() => setStatus(""), 5000);
         },
         (err) => {
           console.error(err);
-          setStatus("Failed to send message. Try again.");
+          setStatus("Failed to send message. Please try again.");
+          setTimeout(() => setStatus(""), 5000);
         }
-      );
+      )
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
   const profileImages = [
     "https://randomuser.me/api/portraits/women/1.jpg",
@@ -650,9 +680,14 @@ export default function Home() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className={`w-full px-4 py-3 bg-gray-800 border ${
+                      errors.name ? "border-red-500" : "border-gray-700"
+                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all`}
                     required
                   />
+                  {errors.name && (
+                    <p className="text-red-400 text-sm mt-1">{errors.name}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-2">
@@ -663,9 +698,14 @@ export default function Home() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    className={`w-full px-4 py-3 bg-gray-800 border ${
+                      errors.email ? "border-red-500" : "border-gray-700"
+                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all`}
                     required
                   />
+                  {errors.email && (
+                    <p className="text-red-400 text-sm mt-1">{errors.email}</p>
+                  )}
                 </div>
               </div>
               <div className="mb-6">
@@ -677,15 +717,54 @@ export default function Home() {
                   rows="5"
                   value={formData.message}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  className={`w-full px-4 py-3 bg-gray-800 border ${
+                    errors.message ? "border-red-500" : "border-gray-700"
+                  } rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all`}
                   required
-                ></textarea>
+                >
+                  {errors.message && (
+                    <p className="text-red-400 text-sm mt-1">
+                      {errors.message}
+                    </p>
+                  )}
+                </textarea>
               </div>
               <button
                 type="submit"
-                className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg font-semibold text-white transition-all duration-300 shadow-md hover:shadow-purple-500/30"
+                disabled={isSubmitting}
+                className={`w-full py-3 ${
+                  isSubmitting
+                    ? "bg-gray-700 cursor-not-allowed"
+                    : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                } rounded-lg font-semibold text-white transition-all duration-300 shadow-md hover:shadow-purple-500/30 disabled:opacity-50 flex items-center justify-center`}
               >
-                Send Message
+                {isSubmitting ? (
+                  <>
+                    <svg
+                      className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Sending...
+                  </>
+                ) : (
+                  "Send Message"
+                )}
               </button>
               {status && (
                 <p
