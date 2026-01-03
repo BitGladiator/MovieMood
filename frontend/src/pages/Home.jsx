@@ -26,7 +26,9 @@ export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [modalTriggered, setModalTriggered] = useState(false);
-
+  const [modalDismissed, setModalDismissed] = useState(
+    localStorage.getItem("authModalDismissed") === "true"
+  );
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -42,6 +44,7 @@ export default function Home() {
       if (
         !user &&
         !modalTriggered &&
+        !modalDismissed &&
         window.scrollY > window.innerHeight * 0.5
       ) {
         setShowAuthModal(true);
