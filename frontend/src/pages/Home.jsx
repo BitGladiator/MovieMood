@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
+import { auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 import emailjs from "emailjs-com";
 import {
   StarIcon,
