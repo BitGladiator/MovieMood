@@ -13,6 +13,7 @@ import DashBoard from "./pages/DashBoard";
 import Features from "./pages/Features";
 import HowitWorks from "./pages/HowitWorks";
 import Logout from "./pages/Logout";
+
 import Settings from "./pages/Settings";
 import Pricing from "./pages/Pricing";
 import Payment from "./components/Payment";
@@ -20,6 +21,7 @@ import Contact from "./pages/Contact";
 import Demo from "./pages/Demo";
 import Privacy from "./components/Privacy";
 import Terms from "./components/Terms";
+import MoodCheck from "./pages/MoodCheck";
 
 export default function App() {
   return (
@@ -58,6 +60,7 @@ export default function App() {
           <Route path="/features" element={<Features/>} />
           <Route path="/how-it-works" element={<HowitWorks/>} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/mood-check" element={<MoodCheck/>}/>
           <Route path="/settings" element={<Settings/>} />
           <Route path="/pricing" element={<Pricing/>}/>
           <Route path="/payment" element={<Payment/>}/>
