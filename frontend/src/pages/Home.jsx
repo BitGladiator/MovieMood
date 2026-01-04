@@ -804,22 +804,10 @@ export default function Home() {
                 Terms of Service
               </Link>
               <Link
-                to="/faq"
+                to="/contact"
                 className="text-gray-400 hover:text-white transition-colors"
               >
-                FAQ
-              </Link>
-              <Link
-                to="/blog"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                Blog
-              </Link>
-              <Link
-                to="/careers"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                Careers
+                Contact
               </Link>
             </div>
           </div>
@@ -828,18 +816,26 @@ export default function Home() {
               © {new Date().getFullYear()} MovieMood. All rights reserved.
             </p>
             <div className="flex space-x-6">
-              {["Twitter", "Instagram", "Facebook", "LinkedIn"].map(
-                (social, i) => (
-                  <a
-                    key={i}
-                    href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
-                    aria-label={social}
-                  >
-                    {social}
-                  </a>
-                )
-              )}
+              {[
+                { name: "Twitter", url: "https://twitter.com/moviemood" },
+                { name: "Instagram", url: "https://instagram.com/moviemood" },
+                { name: "Facebook", url: "https://facebook.com/moviemood" },
+                {
+                  name: "LinkedIn",
+                  url: "https://linkedin.com/company/moviemood",
+                },
+              ].map((social, i) => (
+                <a
+                  key={i}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-white transition-colors"
+                  aria-label={social.name}
+                >
+                  {social.name}
+                </a>
+              ))}
             </div>
           </div>
         </div>
