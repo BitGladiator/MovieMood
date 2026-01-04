@@ -6,8 +6,5 @@ export default defineConfig({
   plugins: [tailwindcss(),react()],
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'] 
-  },
-  optimizeDeps: {
-    include: ['react-is']
   }
 })
