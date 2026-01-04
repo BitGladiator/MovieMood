@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+
 import emailjs from "emailjs-com";
 import {
   StarIcon,
@@ -56,7 +57,18 @@ export default function Home() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [user, modalTriggered]);
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === "Escape" && showAuthModal) {
+        setShowAuthModal(false);
+        setModalDismissed(true);
+        localStorage.setItem("authModalDismissed", "true");
+      }
+    };
 
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [showAuthModal]);
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-950">
@@ -225,11 +237,23 @@ export default function Home() {
   ];
 
   return (
+    <>
+   
     <div className="bg-gray-950 text-gray-100 font-sans antialiased">
       <AnimatePresence>
         {showAuthModal && (
           <motion.div
             className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowAuthModal(false);
+                setModalDismissed(true);
+                localStorage.setItem("authModalDismissed", "true");
+              }
+            }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -249,7 +273,9 @@ export default function Home() {
 
               <div className="text-center mb-6">
                 <Film className="w-12 h-12 mx-auto text-purple-500 mb-4" />
-                <h3 className="text-2xl font-bold mb-2">Join MovieMood</h3>
+                <h3 className="text-2xl font-bold mb-2" id="modal-title">
+                  Join MovieMood
+                </h3>
                 <p className="text-gray-400">
                   Sign in or register to get personalized movie recommendations
                   based on your mood.
@@ -367,7 +393,8 @@ export default function Home() {
                   <img
                     key={i}
                     src={src}
-                    alt={`User ${i + 1}`}
+                    alt={`User testimonial ${i + 1}`}
+                    loading="lazy"
                     className="w-10 h-10 rounded-full border-2 border-gray-800 object-cover"
                   />
                 ))}
@@ -515,7 +542,8 @@ export default function Home() {
                 <div className="absolute inset-0 bg-gradient-to-br via-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20" />
                 <img
                   src={mood.image}
-                  alt={mood.name}
+                  alt={`${mood.name} mood collection`}
+                  loading="lazy"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute bottom-0 left-0 p-6 z-30">
@@ -584,7 +612,8 @@ export default function Home() {
                   <div className="w-10 h-10 rounded-full bg-gray-700 overflow-hidden mr-4">
                     <img
                       src="https://media.istockphoto.com/id/1437816897/photo/business-woman-manager-or-human-resources-portrait-for-career-success-company-we-are-hiring.jpg?s=612x612&w=0&k=20&c=tyLvtzutRh22j9GqSGI33Z4HpIwv9vL_MZw_xOE19NQ="
-                      alt="Profile"
+                      alt="Sarah J., Film Critic"
+                      loading="lazy"
                       className="h-full w-full object-cover object-center"
                     />
                   </div>
@@ -841,5 +870,6 @@ export default function Home() {
         </div>
       </footer>
     </div>
+    </>
   );
 }
