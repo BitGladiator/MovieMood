@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { login } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import logo from "../images/logo.png";
+import { motion } from "framer-motion";
 import {
   Film,
   Lock,
@@ -13,10 +14,12 @@ import {
   Camera,
   Shield,
   Zap,
-  Crown,
   ChevronRight,
   User,
   Smartphone,
+  Globe,
+  Headphones,
+  Download,
 } from "lucide-react";
 
 export default function PremiumLogin() {
@@ -24,13 +27,10 @@ export default function PremiumLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [activeMovieIndex, setActiveMovieIndex] = useState(0);
-  const [floatingStars, setFloatingStars] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
-  const [imagesLoaded, setImagesLoaded] = useState({});
   const navigate = useNavigate();
 
-  // Check screen size for responsive design
+  // Check screen size
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
@@ -38,63 +38,6 @@ export default function PremiumLogin() {
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
-  }, []);
-
-  // Premium movie backdrops with local fallbacks
-  const movieBackdrops = [
-    {
-      url: "https://prolight-sound-blog.de/wp-content/uploads/Philips-Light-Vibes-feiert-Weltpremiere.jpg",
-      title: "Cinematic Experience",
-      year: "2024",
-      rating: "9.0",
-    },
-    {
-      url: "https://images.unsplash.com/photo-1535016120720-40c646be5580?q=80&w=2070",
-      title: "Premium Cinema",
-      year: "2024",
-      rating: "8.8",
-    },
-    {
-      url: "https://images.unsplash.com/photo-1489599809516-9827b6d1cf13?q=80&w=2070",
-      title: "Movie Magic",
-      year: "2024",
-      rating: "9.2",
-    },
-  ];
-  // Preload images
-  useEffect(() => {
-    movieBackdrops.forEach((movie, index) => {
-      const img = new Image();
-      img.src = movie.url;
-      img.onload = () => {
-        setImagesLoaded((prev) => ({ ...prev, [index]: true }));
-      };
-      img.onerror = () => {
-        console.warn(`Failed to load image: ${movie.url}`);
-        // Use fallback gradients if images fail
-      };
-    });
-  }, []);
-
-  // Floating stars for background
-  useEffect(() => {
-    const stars = Array.from({ length: 15 }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 2 + 1,
-      delay: Math.random() * 2,
-      duration: Math.random() * 3 + 2,
-    }));
-    setFloatingStars(stars);
-  }, []);
-
-  // Cycle through movie backdrops
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveMovieIndex((prev) => (prev + 1) % movieBackdrops.length);
-    }, 6000);
-    return () => clearInterval(interval);
   }, []);
 
   const handleSubmit = async (e) => {
@@ -130,166 +73,49 @@ export default function PremiumLogin() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black p-4 md:p-6 lg:p-8 relative overflow-hidden">
-      {/* Premium Animated Background - Fixed */}
+      {/* Premium Animated Background */}
       <div className="absolute inset-0 z-0">
-        {/* Fallback Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-black to-blue-900/20"></div>
+        {/* Base Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900"></div>
 
-        {/* Animated Movie Backdrops */}
-        <AnimatePresence mode="wait">
-  {movieBackdrops.map(
-    (movie, index) =>
-      index === activeMovieIndex && (
-        <motion.div
-          key={index}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: imagesLoaded[index] ? 0.7 : 0 }} 
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.5 }}
-          className="absolute inset-0"
-        >
-          {/* Image with fallback */}
-          {imagesLoaded[index] ? (
-            <img
-              src={movie.url}
-              alt={movie.title}
-              className="w-full h-full object-cover"
-              loading="eager"
-              onError={(e) => {
-                console.log("Image failed to load:", movie.url);
-                e.target.style.display = "none";
-              }}
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-purple-900/50 via-black/80 to-blue-900/50"></div>
-          )}
-
-          {/* Reduce overlay darkness */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-transparent"></div>
-        </motion.div>
-      )
-  )}
-</AnimatePresence>
-
-        {/* Animated Gradient Overlay */}
-        <div className="absolute inset-0">
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-transparent to-blue-900/10"
-            animate={{
-              background: [
-                "linear-gradient(135deg, rgba(147, 51, 234, 0.1) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(59, 130, 246, 0.1) 100%)",
-                "linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(147, 51, 234, 0.1) 100%)",
-              ],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              repeatType: "reverse",
-            }}
-          />
+        {/* Animated Gradient Mesh */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-r from-purple-500/10 via-transparent to-blue-500/10 animate-spin-slow"></div>
+          <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-r from-blue-500/10 via-transparent to-purple-500/10 animate-spin-slow-reverse"></div>
         </div>
 
-        {/* Floating Stars */}
-        {floatingStars.map((star) => (
-          <motion.div
-            key={star.id}
-            className="absolute w-[2px] h-[2px] bg-white/50 rounded-full"
-            style={{
-              left: `${star.x}vw`,
-              top: `${star.y}vh`,
-              width: `${star.size}px`,
-              height: `${star.size}px`,
-            }}
-            animate={{
-              opacity: [0.1, 0.8, 0.1],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: star.duration,
-              repeat: Infinity,
-              delay: star.delay,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-
-        {/* Animated Grid Lines */}
-        <div className="absolute inset-0 opacity-10">
+        {/* Geometric Patterns */}
+        <div className="absolute inset-0 opacity-5">
           <div
             className="absolute inset-0"
             style={{
-              backgroundImage: `
-              linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)
-            `,
+              backgroundImage: `radial-gradient(circle at 25% 25%, rgba(255,255,255,0.1) 2px, transparent 2px)`,
               backgroundSize: "50px 50px",
             }}
           ></div>
         </div>
 
-        {/* Light Beams */}
-        <div className="absolute inset-0 overflow-hidden">
-          {[0, 120, 240].map((angle) => (
-            <motion.div
-              key={angle}
-              className="absolute top-0 left-0 w-full h-full"
-              style={{
-                background: `linear-gradient(${angle}deg, transparent, rgba(255,255,255,0.05), transparent)`,
-              }}
-              animate={{
-                transform: ["translateX(-100%)", "translateX(100%)"],
-              }}
-              transition={{
-                duration: 15,
-                repeat: Infinity,
-                delay: angle / 120,
-                ease: "linear",
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Current Movie Info (Desktop Only) */}
-      {!isMobile && (
-        <div className="absolute top-6 left-6 z-10">
+        {/* Floating Particles */}
+        {Array.from({ length: 20 }).map((_, i) => (
           <motion.div
-            key={activeMovieIndex}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="flex items-center gap-3 backdrop-blur-sm bg-black/30 rounded-xl p-3 border border-white/10"
-          >
-            <div className="w-12 h-12 rounded-lg overflow-hidden bg-gradient-to-br from-purple-600 to-blue-600">
-              {imagesLoaded[activeMovieIndex] ? (
-                <img
-                  src={movieBackdrops[activeMovieIndex].url}
-                  alt=""
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <Film className="w-6 h-6 text-white/50" />
-                </div>
-              )}
-            </div>
-            <div>
-              <h3 className="text-white font-medium text-sm">
-                {movieBackdrops[activeMovieIndex].title}
-              </h3>
-              <div className="flex items-center gap-2 text-xs text-white/60">
-                <span>{movieBackdrops[activeMovieIndex].year}</span>
-                <span>•</span>
-                <span className="flex items-center gap-1">
-                  <Star className="w-3 h-3 fill-yellow-500 text-yellow-500" />
-                  {movieBackdrops[activeMovieIndex].rating}
-                </span>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      )}
+            key={i}
+            className="absolute w-[1px] h-[1px] bg-white/30 rounded-full"
+            initial={{
+              x: Math.random() * 100 + "vw",
+              y: Math.random() * 100 + "vh",
+            }}
+            animate={{
+              y: [null, "-20px", "0px"],
+              opacity: [0.2, 0.8, 0.2],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </div>
 
       {/* Main Login Container */}
       <motion.div
@@ -312,7 +138,7 @@ export default function PremiumLogin() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className={`${isMobile ? "w-full" : "col-span-1"}`}
           >
-            <div className="backdrop-blur-xl bg-black/40 rounded-2xl lg:rounded-3xl border border-white/10 p-6 lg:p-8 h-full">
+            <div className="backdrop-blur-xl bg-gradient-to-br from-gray-900/90 to-black/90 rounded-2xl lg:rounded-3xl border border-white/10 p-6 lg:p-8 h-full shadow-2xl">
               {/* Logo */}
               <div className="flex flex-col items-center lg:items-start mb-8">
                 <motion.div
@@ -320,9 +146,9 @@ export default function PremiumLogin() {
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >
-                  <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full bg-gradient-to-br from-purple-600 via-blue-500 to-purple-600 p-0.5">
+                  <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-full ">
                     <div className="w-full h-full rounded-full bg-black flex items-center justify-center">
-                      <Film className="w-8 h-8 lg:w-10 lg:h-10 text-white" />
+                      <img src={logo} alt="MovieMood Logo" />
                     </div>
                   </div>
                   <motion.div
@@ -359,17 +185,32 @@ export default function PremiumLogin() {
               {isMobile && (
                 <div className="grid grid-cols-3 gap-4 mb-6">
                   {[
-                    { value: "50K+", label: "Movies" },
-                    { value: "4.9★", label: "Rating" },
-                    { value: "99%", label: "Uptime" },
+                    {
+                      value: "50K+",
+                      label: "Movies",
+                      icon: <Film className="w-4 h-4" />,
+                    },
+                    {
+                      value: "4.9★",
+                      label: "Rating",
+                      icon: <Star className="w-4 h-4" />,
+                    },
+                    {
+                      value: "99%",
+                      label: "Uptime",
+                      icon: <Shield className="w-4 h-4" />,
+                    },
                   ].map((stat, idx) => (
                     <motion.div
                       key={idx}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 * idx }}
-                      className="text-center p-3 bg-white/5 rounded-xl backdrop-blur-sm"
+                      className="text-center p-3 bg-white/5 rounded-xl backdrop-blur-sm border border-white/10"
                     >
+                      <div className="flex justify-center mb-1">
+                        {stat.icon}
+                      </div>
                       <div className="text-lg font-bold text-white">
                         {stat.value}
                       </div>
@@ -388,23 +229,33 @@ export default function PremiumLogin() {
                 {[
                   {
                     icon: <Camera />,
-                    text: "4K Streaming",
+                    text: "4K Ultra HD",
                     color: "text-blue-400",
                   },
                   {
                     icon: <Zap />,
-                    text: "Offline Viewing",
+                    text: "Instant Play",
                     color: "text-yellow-400",
                   },
                   {
                     icon: <Shield />,
-                    text: "Ad-Free",
+                    text: "Ad-Free Experience",
                     color: "text-green-400",
                   },
                   {
                     icon: <User />,
-                    text: "5 Profiles",
+                    text: "Multi-Profile",
                     color: "text-pink-400",
+                  },
+                  {
+                    icon: <Globe />,
+                    text: "Global Content",
+                    color: "text-cyan-400",
+                  },
+                  {
+                    icon: <Headphones />,
+                    text: "Dolby Atmos",
+                    color: "text-orange-400",
                   },
                 ].map((feature, index) => (
                   <motion.div
@@ -415,7 +266,7 @@ export default function PremiumLogin() {
                     className="flex items-center gap-3 text-white/70 hover:text-white transition-colors group cursor-default"
                   >
                     <div
-                      className={`w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center ${feature.color} group-hover:scale-110 transition-transform`}
+                      className={`w-10 h-10 rounded-lg bg-gradient-to-br from-white/5 to-transparent flex items-center justify-center ${feature.color} group-hover:scale-110 transition-transform border border-white/10`}
                     >
                       {feature.icon}
                     </div>
@@ -428,11 +279,11 @@ export default function PremiumLogin() {
               {!isMobile && (
                 <div className="mt-8 pt-6 border-t border-white/10">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-3 bg-white/5 rounded-xl">
+                    <div className="text-center p-3 bg-white/5 rounded-xl border border-white/10">
                       <div className="text-2xl font-bold text-white">50K+</div>
                       <div className="text-xs text-white/60">Movies</div>
                     </div>
-                    <div className="text-center p-3 bg-white/5 rounded-xl">
+                    <div className="text-center p-3 bg-white/5 rounded-xl border border-white/10">
                       <div className="text-2xl font-bold text-white">4.9★</div>
                       <div className="text-xs text-white/60">Rating</div>
                     </div>
@@ -449,12 +300,12 @@ export default function PremiumLogin() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className={`${isMobile ? "w-full" : "col-span-2"}`}
           >
-            <div className="backdrop-blur-2xl bg-black/30 rounded-2xl lg:rounded-3xl border border-white/20 p-6 md:p-8 lg:p-10 shadow-2xl relative overflow-hidden">
-              {/* Glowing Effect Behind */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-purple-600/20 to-blue-600/20 blur-xl opacity-50"></div>
+            <div className="backdrop-blur-2xl bg-gradient-to-br from-gray-900/40 to-black/40 rounded-2xl lg:rounded-3xl border border-white/20 p-6 md:p-8 lg:p-10 shadow-2xl relative overflow-hidden">
+              {/* Glowing Border Effect */}
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600/30 via-blue-600/30 to-purple-600/30 rounded-2xl lg:rounded-3xl blur-sm"></div>
 
               {/* Content */}
-              <div className="relative z-10">
+              <div className="relative z-10 bg-gradient-to-br from-gray-900/80 to-black/80 rounded-2xl lg:rounded-3xl p-6 md:p-8 lg:p-10">
                 {/* Form Header */}
                 <div className="mb-8 text-center lg:text-left">
                   <motion.div
@@ -724,7 +575,8 @@ export default function PremiumLogin() {
                   Download for better experience
                 </p>
               </div>
-              <button className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white text-sm transition-colors">
+              <button className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white text-sm transition-colors flex items-center gap-2">
+                <Download className="w-4 h-4" />
                 Download
               </button>
             </div>
@@ -732,17 +584,6 @@ export default function PremiumLogin() {
         )}
       </motion.div>
 
-      {/* Bottom Watermark */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="absolute bottom-4 left-0 right-0 text-center z-10"
-      >
-        <p className="text-white/30 text-sm">
-          © 2024 MovieMood Premium. All cinematic rights reserved.
-        </p>
-      </motion.div>
       {/* CSS Animations */}
       <style jsx="true" global="true">{`
         @keyframes shake {
@@ -765,10 +606,6 @@ export default function PremiumLogin() {
           }
         }
 
-        .shake {
-          animation: shake 0.5s ease-in-out;
-        }
-
         @keyframes float {
           0%,
           100% {
@@ -777,6 +614,36 @@ export default function PremiumLogin() {
           50% {
             transform: translateY(-10px);
           }
+        }
+
+        @keyframes spin-slow {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+
+        @keyframes spin-slow-reverse {
+          0% {
+            transform: rotate(360deg);
+          }
+          100% {
+            transform: rotate(0deg);
+          }
+        }
+
+        .animate-spin-slow {
+          animation: spin-slow 20s linear infinite;
+        }
+
+        .animate-spin-slow-reverse {
+          animation: spin-slow-reverse 25s linear infinite;
+        }
+
+        .shake {
+          animation: shake 0.5s ease-in-out;
         }
 
         .floating {
@@ -829,7 +696,7 @@ export default function PremiumLogin() {
           input,
           button,
           textarea {
-            font-size: 16px; /* Prevents zoom on iOS */
+            font-size: 16px;
           }
         }
       `}</style>
