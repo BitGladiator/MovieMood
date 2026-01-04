@@ -2,195 +2,436 @@ import React, { useState } from "react";
 import { signup } from "../firebase"; 
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { 
+  Film, 
+  User, 
+  Mail, 
+  Lock, 
+  Sparkles, 
+  ChevronRight,
+  Shield,
+  Star,
+  Camera,
+  Headphones, 
+   Eye,
+  EyeOff 
+} from "lucide-react";
+import logo from "../images/logo.png";
 export default function Register() {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await signup(formData.username, formData.email, formData.password);
-    navigate("/login");
+    setIsLoading(true);
+    try {
+      await signup(formData.username, formData.email, formData.password);
+      navigate("/login");
+    } catch (error) {
+      console.error("Registration error:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-neutral-950 overflow-hidden p-4">
-    {/* Premium Cinematic Background */}
-    <div className="absolute inset-0 z-0">
-      {/* Movie Backdrop Grid */}
-      <div className="absolute inset-0 grid grid-cols-3 opacity-15">
-        {[
-          "https://image.tmdb.org/t/p/original/5gzzkR7y3hnY8AD1wXjCnVlHba5.jpg", // Blade Runner
-          "https://image.tmdb.org/t/p/original/8uO0gUM8aNqYLs1OsTBQiXu0fEv.jpg", // Grand Budapest Hotel
-          "https://image.tmdb.org/t/p/original/6FfCtAuVAW8XJjZ7eWeLibRLWTw.jpg", // Interstellar
-        ].map((backdrop, index) => (
-          <motion.div 
-            key={index}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.15 }}
-            transition={{ duration: 1.5, delay: index * 0.4 }}
-            className="relative h-full w-full overflow-hidden"
-          >
-            <img
-              src={backdrop}
-              alt=""
-              className="w-full h-full object-cover grayscale-[80%] brightness-50"
-              loading="lazy"
-            />
-            {/* Directional Gradient */}
-            <div className={`absolute inset-0 bg-gradient-to-${
-              index === 0 ? 'r' : index === 1 ? 'b' : 'l'
-            } from-black/90 via-black/20 to-black/90 pointer-events-none`}></div>
-          </motion.div>
-        ))}
-      </div>
-  
-      {/* Animated Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] animate-grid-pan"></div>
-      
-      {/* Floating Light Orbs */}
-      <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-purple-900/30 blur-[80px] animate-float-orb-1"></div>
-      <div className="absolute bottom-1/3 right-1/4 w-72 h-72 rounded-full bg-blue-900/20 blur-[90px] animate-float-orb-2"></div>
-      
-      {/* Floating Film Strips */}
-      <div className="absolute inset-0 opacity-5">
-        {[1, 2, 3].map((i) => (
-          <div 
+    <div className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden p-4">
+      {/* Premium Animated Background */}
+      <div className="absolute inset-0 z-0">
+        {/* Base Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-900"></div>
+        
+        {/* Animated Mesh Gradient */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-purple-900/20 via-transparent to-blue-900/20 animate-gradient-rotate"></div>
+          <div className="absolute bottom-0 right-0 w-full h-full bg-gradient-to-tl from-blue-900/15 via-transparent to-purple-900/15 animate-gradient-rotate-reverse"></div>
+        </div>
+
+        {/* Geometric Grid */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `linear-gradient(to right, rgba(255,255,255,0.1) 1px, transparent 1px),
+                            linear-gradient(to bottom, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+            backgroundSize: '40px 40px',
+          }}></div>
+        </div>
+
+        {/* Floating Elements */}
+        {Array.from({ length: 8 }).map((_, i) => (
+          <motion.div
             key={i}
-            className="absolute w-64 h-1 bg-gradient-to-r from-transparent via-white/50 to-transparent"
+            className="absolute w-32 h-32 rounded-full bg-gradient-to-br from-purple-500/10 to-blue-500/10 blur-3xl"
+            animate={{
+              x: [0, 100, 0],
+              y: [0, 50, 0],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 15 + i * 2,
+              repeat: Infinity,
+              ease: "linear",
+              delay: i * 0.5,
+            }}
             style={{
-              top: `${15 + i * 25}%`,
-              animation: `float-horizontal ${30 + i * 10}s linear infinite`,
-              animationDelay: `${i * 3}s`
+              left: `${(i * 15) % 100}%`,
+              top: `${(i * 20) % 100}%`,
             }}
           />
         ))}
       </div>
-    </div>
-  
-    {/* Premium Glass Form */}
-    <motion.form 
-      onSubmit={handleSubmit}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-      className="relative z-10 w-full max-w-md bg-neutral-900/80 backdrop-blur-3xl rounded-xl overflow-hidden border border-neutral-800/50 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.3)]"
-    >
-      {/* Metallic Top Bar */}
-      <div className="h-0.5 bg-gradient-to-r from-transparent via-purple-600 to-transparent"></div>
-      
-      <div className="p-10">
-        {/* Minimal Header */}
-        <div className="mb-12 text-center">
-          <div className="flex justify-center mb-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center shadow-lg">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
-              </svg>
-            </div>
-          </div>
-          <h1 className="text-3xl font-light text-neutral-100 mb-3 tracking-wider">JOIN MOVIEMOOD</h1>
-          <div className="w-20 h-px bg-gradient-to-r from-transparent via-purple-500 to-transparent mx-auto"></div>
-        </div>
-  
-        {/* Luxury Input Fields */}
-        <div className="space-y-8">
-          <div className="group relative">
-            <input
-              type="text"
-              className="peer w-full bg-transparent border-b border-neutral-700 px-0 pt-5 pb-2 text-neutral-100 placeholder-transparent focus:border-purple-500 focus:outline-none transition-all"
-              placeholder=" "
-              value={formData.username}
-              onChange={(e) => setFormData({...formData, username: e.target.value})}
-              required
-            />
-            <label className="absolute left-0 top-1 text-neutral-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm">
-              Username
-            </label>
-            <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-500 transition-all duration-500 group-hover:w-full"></div>
-          </div>
-  
-          <div className="group relative">
-            <input
-              type="email"
-              className="peer w-full bg-transparent border-b border-neutral-700 px-0 pt-5 pb-2 text-neutral-100 placeholder-transparent focus:border-purple-500 focus:outline-none transition-all"
-              placeholder=" "
-              value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
-              required
-            />
-            <label className="absolute left-0 top-1 text-neutral-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm">
-              Email Address
-            </label>
-            <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-500 transition-all duration-500 group-hover:w-full"></div>
-          </div>
-  
-          <div className="group relative">
-            <input
-              type="password"
-              className="peer w-full bg-transparent border-b border-neutral-700 px-0 pt-5 pb-2 text-neutral-100 placeholder-transparent focus:border-purple-500 focus:outline-none transition-all"
-              placeholder=" "
-              value={formData.password}
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
-              required
-            />
-            <label className="absolute left-0 top-1 text-neutral-400 text-sm transition-all peer-placeholder-shown:top-5 peer-placeholder-shown:text-base peer-focus:top-1 peer-focus:text-sm">
-              Password
-            </label>
-            <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-purple-500 transition-all duration-500 group-hover:w-full"></div>
-          </div>
-        </div>
-  
-        {/* Cinematic Submit Button */}
-        <button 
-          type="submit" 
-          className="w-full mt-12 py-4 px-6 bg-gradient-to-br from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium rounded-lg transition-all duration-300 hover:shadow-[0_0_20px_-5px_rgba(139,92,246,0.4)] relative overflow-hidden group"
-        >
-          <span className="relative z-10 flex items-center justify-center gap-3">
-            <span className="opacity-70 group-hover:opacity-100 transition-opacity">✨</span>
-            <span>Create Account</span>
-          </span>
-          <span className="absolute inset-0 bg-gradient-to-r from-purple-700/30 to-blue-700/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-        </button>
-  
-        {/* Subtle Footer */}
-        <div className="mt-8 text-center text-sm text-neutral-500">
-          <span>Already have an account?</span>
-          <Link
-            to="/login" 
-            className="ml-2 text-purple-400 hover:text-purple-300 transition-colors border-b border-transparent hover:border-purple-400/30 pb-0.5"
+
+      {/* Main Container */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6 }}
+        className="relative z-10 w-full max-w-6xl"
+      >
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
+          {/* Left: Brand & Features */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="backdrop-blur-xl bg-gradient-to-br from-gray-900/90 to-black/90 rounded-3xl border border-white/10 p-8 lg:p-10 shadow-2xl"
           >
-            Sign in
-          </Link>
+            {/* Logo */}
+            <div className="flex flex-col items-center lg:items-start mb-10">
+              <motion.div
+                className="relative mb-6"
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <div className="w-20 h-20 rounded-full">
+                  <div className="w-full h-full rounded-full flex items-center justify-center">
+                  <img src={logo} alt="MovieMood Logo" />
+                  </div>
+                </div>
+                <motion.div
+                  className="absolute inset-0 rounded-full border-2 border-transparent"
+                  animate={{
+                    rotate: 360,
+                    borderColor: [
+                      "rgba(139, 92, 246, 0)",
+                      "rgba(139, 92, 246, 0.3)",
+                      "rgba(139, 92, 246, 0)",
+                    ],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                />
+              </motion.div>
+              <div className="text-center lg:text-left">
+                <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-purple-400 via-blue-400 to-purple-400 text-transparent bg-clip-text">
+                  MovieMood
+                </h1>
+                <p className="text-sm text-white/60 tracking-wider mt-2">
+                  PREMIUM CINEMA EXPERIENCE
+                </p>
+                <p className="text-white/70 mt-4 text-lg">
+                  Join the ultimate cinematic community
+                </p>
+              </div>
+            </div>
+
+            {/* Features */}
+            <div className="space-y-6">
+              <h3 className="text-xl font-semibold text-white flex items-center gap-3">
+                <Sparkles className="w-6 h-6 text-purple-400" />
+                Premium Benefits
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { icon: <Camera />, text: "4K Streaming", color: "from-blue-500/20 to-blue-500/10" },
+                  { icon: <Headphones />, text: "Dolby Atmos", color: "from-green-500/20 to-green-500/10" },
+                  { icon: <Shield />, text: "Ad-Free", color: "from-purple-500/20 to-purple-500/10" },
+                  { icon: <Star />, text: "Exclusive Content", color: "from-yellow-500/20 to-yellow-500/10" },
+                ].map((feature, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className={`bg-gradient-to-br ${feature.color} border border-white/10 rounded-xl p-4 backdrop-blur-sm`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-white">
+                        {feature.icon}
+                      </div>
+                      <span className="text-sm font-medium text-white">{feature.text}</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* Stats */}
+            <div className="mt-10 pt-8 border-t border-white/10">
+              <div className="grid grid-cols-3 gap-4">
+                {[
+                  { value: "50K+", label: "Movies" },
+                  { value: "10K+", label: "Users" },
+                  { value: "24/7", label: "Support" },
+                ].map((stat, index) => (
+                  <div key={index} className="text-center">
+                    <div className="text-2xl font-bold text-white">{stat.value}</div>
+                    <div className="text-xs text-white/60 mt-1">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right: Registration Form */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="backdrop-blur-2xl bg-gradient-to-br from-gray-900/40 to-black/40 rounded-3xl border border-white/20 p-8 lg:p-10 shadow-2xl relative overflow-hidden"
+          >
+            {/* Glowing Border */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600/20 via-blue-600/20 to-purple-600/20 rounded-3xl blur-sm"></div>
+            
+            <div className="relative z-10">
+              {/* Form Header */}
+              <div className="mb-10 text-center">
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 mb-6"
+                >
+                  <Sparkles className="w-4 h-4 text-purple-400" />
+                  <span className="text-sm text-purple-300">Premium Registration</span>
+                </motion.div>
+                <h2 className="text-3xl font-bold text-white mb-3">
+                  Create Account
+                </h2>
+                <p className="text-white/60">
+                  Join our exclusive cinematic community
+                </p>
+              </div>
+
+              {/* Registration Form */}
+              <form onSubmit={handleSubmit} className="space-y-8">
+                {/* Username Input */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
+                  className="group"
+                >
+                  <label className="block text-sm font-medium text-white/80 mb-3">
+                    <User className="inline w-4 h-4 mr-2" />
+                    Username
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={formData.username}
+                      onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                      className="w-full bg-white/10 border border-white/20 rounded-xl px-5 py-4 text-white placeholder-white/30 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all backdrop-blur-sm"
+                      placeholder="Enter your username"
+                      required
+                    />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  </div>
+                </motion.div>
+
+                {/* Email Input */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="group"
+                >
+                  <label className="block text-sm font-medium text-white/80 mb-3">
+                    <Mail className="inline w-4 h-4 mr-2" />
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full bg-white/10 border border-white/20 rounded-xl px-5 py-4 text-white placeholder-white/30 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all backdrop-blur-sm"
+                      placeholder="you@example.com"
+                      required
+                    />
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  </div>
+                </motion.div>
+
+                {/* Password Input */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="group"
+                >
+                  <label className="block text-sm font-medium text-white/80 mb-3">
+                    <Lock className="inline w-4 h-4 mr-2" />
+                    Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      className="w-full bg-white/10 border border-white/20 rounded-xl px-5 py-4 text-white placeholder-white/30 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 transition-all backdrop-blur-sm pr-12"
+                      placeholder="••••••••"
+                      required
+                      minLength={6}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/40 hover:text-white transition-colors p-2"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                  <p className="text-xs text-white/50 mt-2">
+                    Password must be at least 6 characters long
+                  </p>
+                </motion.div>
+
+                {/* Terms & Conditions */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="flex items-start gap-3"
+                >
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    className="mt-1 w-4 h-4 rounded border-white/20 bg-white/10 focus:ring-2 focus:ring-purple-500/30"
+                    required
+                  />
+                  <label htmlFor="terms" className="text-sm text-white/70">
+                    I agree to the{" "}
+                    <Link to="/terms" className="text-purple-400 hover:text-purple-300">
+                      Terms & Conditions
+                    </Link>{" "}
+                    and{" "}
+                    <Link to="/privacy" className="text-purple-400 hover:text-purple-300">
+                      Privacy Policy
+                    </Link>
+                  </label>
+                </motion.div>
+
+                {/* Submit Button */}
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full relative overflow-hidden group mt-4"
+                  >
+                    <div className="relative z-10 w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-5 px-6 rounded-xl transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-[0_0_40px_-10px_rgba(139,92,246,0.5)] flex items-center justify-center gap-3">
+                      {isLoading ? (
+                        <>
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Creating Account...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Create Premium Account</span>
+                          <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                        </>
+                      )}
+                    </div>
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                  </button>
+                </motion.div>
+
+                {/* Login Link */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                  className="text-center pt-6 border-t border-white/10"
+                >
+                  <p className="text-white/60">
+                    Already have an account?{" "}
+                    <Link
+                      to="/login"
+                      className="text-white hover:text-purple-300 font-semibold transition-colors group inline-flex items-center gap-1"
+                    >
+                      Sign in here
+                      <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  </p>
+                </motion.div>
+              </form>
+            </div>
+          </motion.div>
         </div>
-      </div>
-  
-      {/* Bottom Glow */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent"></div>
-    </motion.form>
-  
-    {/* Animation keyframes */}
-    <style jsx global>{`
-      @keyframes grid-pan {
-        0% { background-position: 0% 0%; }
-        100% { background-position: 100% 100%; }
-      }
-      @keyframes float-orb-1 {
-        0%, 100% { transform: translate(0, 0); }
-        50% { transform: translate(20px, 20px); }
-      }
-      @keyframes float-orb-2 {
-        0%, 100% { transform: translate(0, 0); }
-        50% { transform: translate(-15px, -15px); }
-      }
-      @keyframes float-horizontal {
-        0% { transform: translateX(-100vw); }
-        100% { transform: translateX(100vw); }
-      }
-    `}</style>
-  </div>
+      </motion.div>
+
+      {/* CSS Animations */}
+      <style jsx="true" global="true">{`
+        @keyframes gradient-rotate {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes gradient-rotate-reverse {
+          0% { transform: rotate(360deg); }
+          100% { transform: rotate(0deg); }
+        }
+
+        .animate-gradient-rotate {
+          animation: gradient-rotate 20s linear infinite;
+        }
+
+        .animate-gradient-rotate-reverse {
+          animation: gradient-rotate-reverse 25s linear infinite;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.05);
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+          border-radius: 4px;
+        }
+
+        ::selection {
+          background: rgba(139, 92, 246, 0.3);
+          color: white;
+        }
+
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+          -webkit-text-fill-color: white;
+          -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.05) inset;
+          transition: background-color 5000s ease-in-out 0s;
+        }
+      `}</style>
+    </div>
   );
 }
