@@ -454,26 +454,11 @@ const StatsCounter = () => {
 
 const Features = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
   
-  useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => setIsLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
   
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-        >
-          <FaSpinner className="text-4xl text-purple-500" />
-        </motion.div>
-      </div>
-    );
-  }
+  
+  
+ 
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white px-4 py-16 relative overflow-hidden">
