@@ -9,7 +9,7 @@ import {
 } from 'react-icons/fa';
 import { 
   GiFilmSpool, GiBrain, GiFilmProjector, GiFilmStrip,
-  GiTearTracks, GiLaughing, GiSpinningSword, GiSleepingBag
+  GiTearTracks, GiSpinningSword, GiSleepingBag
 } from 'react-icons/gi';
 import { 
   BsEmojiFrown, BsEmojiSmile, BsLightningCharge, BsStars,
@@ -477,17 +477,7 @@ const HowitWorks = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-20"
         >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            whileHover={{ scale: 1.05, rotate: [-1, 1, -1] }}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600/20 to-pink-600/20 text-white px-6 py-3 rounded-full text-sm font-medium mb-8 border border-purple-500/20 shadow-lg backdrop-blur-sm"
-          >
-            <HiSparkles className="text-amber-400 animate-pulse" />
-            <span>HOW MOVIEMOOD WORKS</span>
-            <HiSparkles className="text-amber-400 animate-pulse" />
-          </motion.div>
+        
           
           <motion.h1 
             className="text-5xl md:text-7xl font-bold mb-8"
