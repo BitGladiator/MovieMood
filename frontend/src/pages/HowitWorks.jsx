@@ -434,39 +434,86 @@ const HowitWorks = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-white px-4 py-16 relative overflow-hidden">
-      {/* Animated background elements */}
+      {/* Fixed Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute w-[800px] h-[800px] bg-purple-900/10 rounded-full blur-3xl -top-1/2 -left-1/4 animate-pulse"></div>
-        <div className="absolute w-[600px] h-[600px] bg-pink-900/10 rounded-full blur-3xl -bottom-1/4 -right-1/4 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        {/* Large gradient orbs */}
+        <motion.div
+          className="absolute w-[800px] h-[800px] bg-gradient-to-r from-purple-900/10 to-pink-900/10 rounded-full blur-3xl -top-1/2 -left-1/4"
+          animate={{
+            scale: [1, 1.1, 1],
+            opacity: [0.1, 0.15, 0.1],
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
         
-        {[...Array(20)].map((_, i) => {
-          const size = 20 + Math.random() * 40;
+        <motion.div
+          className="absolute w-[600px] h-[600px] bg-gradient-to-r from-amber-900/5 to-rose-900/10 rounded-full blur-3xl -bottom-1/4 -right-1/4"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.08, 0.12, 0.08],
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 0.5
+          }}
+        />
+        
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/5 via-transparent to-pink-900/5"></div>
+        
+        {/* Film reel particles - reduced opacity for less distraction */}
+        {/* {[...Array(15)].map((_, i) => {
+          const size = 20 + Math.random() * 30;
           const duration = 20 + Math.random() * 40;
+          const delay = Math.random() * 5;
+          
           return (
             <motion.div
               key={i}
-              className="absolute text-3xl opacity-5"
+              className="absolute text-2xl opacity-[0.03]"
               style={{
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
-                fontSize: `${size}px`
+                fontSize: `${size}px`,
               }}
               animate={{
-                y: [0, Math.random() > 0.5 ? 100 : -100],
-                x: [0, Math.random() > 0.5 ? 50 : -50],
-                rotate: Math.random() > 0.5 ? [0, 360] : [0, -360]
+                y: [0, Math.random() > 0.5 ? 50 : -50],
+                x: [0, Math.random() > 0.5 ? 30 : -30],
+                rotate: [0, 360],
               }}
               transition={{
                 duration: duration,
                 repeat: Infinity,
                 repeatType: "loop",
-                ease: "linear"
+                ease: "linear",
+                delay: delay,
               }}
             >
               <GiFilmSpool />
             </motion.div>
           );
-        })}
+        })} */}
+        
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+        
+        {/* Animated gradient lines */}
+        <motion.div
+          className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/10 to-transparent"
+          animate={{ x: ['-100%', '100%'] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+        />
+        <motion.div
+          className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-pink-500/10 to-transparent"
+          animate={{ x: ['100%', '-100%'] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "linear", delay: 2 }}
+        />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
@@ -477,7 +524,17 @@ const HowitWorks = () => {
           transition={{ duration: 0.8 }}
           className="text-center mb-20"
         >
-        
+          {/* <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            whileHover={{ scale: 1.05 }}
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600/20 to-pink-600/20 text-white px-6 py-3 rounded-full text-sm font-medium mb-8 border border-purple-500/20 shadow-lg backdrop-blur-sm"
+          >
+            <HiSparkles className="text-amber-400" />
+            <span>HOW MOVIEMOOD WORKS</span>
+            <HiSparkles className="text-amber-400" />
+          </motion.div> */}
           
           <motion.h1 
             className="text-5xl md:text-7xl font-bold mb-8"
@@ -531,7 +588,7 @@ const HowitWorks = () => {
           </motion.div>
         </motion.div>
 
-        {/* Interactive Demo */}
+        {/* Interactive Demo - Keep the same as before */}
         <AnimatePresence>
           {showDemo && (
             <motion.div
@@ -540,12 +597,60 @@ const HowitWorks = () => {
               exit={{ opacity: 0, y: -20 }}
               className="mb-16"
             >
-              <InteractiveDemo />
+              <div className="bg-gray-900/60 border border-gray-700/50 rounded-2xl p-6 backdrop-blur-sm">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-xl font-bold flex items-center gap-2">
+                    <FaPlay className="text-purple-400" />
+                    Interactive Demo
+                  </h3>
+                  <button
+                    onClick={() => setShowDemo(false)}
+                    className="text-gray-400 hover:text-white"
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-purple-600 via-pink-600 to-red-600"
+                      initial={{ width: 0 }}
+                      animate={{ width: "50%" }}
+                      transition={{ duration: 0.5 }}
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-3 p-4 bg-gray-800/30 rounded-lg border border-gray-700/50">
+                    <div className="p-2 rounded-lg bg-black/30">
+                      <FaKeyboard className="text-blue-400" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold mb-1">Describe your mood</h4>
+                      <input
+                        type="text"
+                        placeholder="E.g., 'Feeling stressed after work...'"
+                        className="w-full bg-transparent border-b border-gray-600 focus:border-purple-500 focus:outline-none py-1"
+                      />
+                    </div>
+                  </div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => navigate('/mood-check')}
+                    className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    Continue
+                    <FaArrowRight />
+                  </motion.button>
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Process Steps */}
+        {/* Process Steps - Keep the same as before */}
         <div className="mb-24">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
