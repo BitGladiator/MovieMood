@@ -204,14 +204,7 @@ export default function Register() {
             <div className="relative z-10">
               {/* Form Header */}
               <div className="mb-10 text-center">
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 mb-6"
-                >
-                  <Sparkles className="w-4 h-4 text-purple-400" />
-                  <span className="text-sm text-purple-300">Premium Registration</span>
-                </motion.div>
+               
                 <h2 className="text-3xl font-bold text-white mb-3">
                   Create Account
                 </h2>

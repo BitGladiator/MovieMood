@@ -287,13 +287,13 @@ const FeatureCard = ({ feature, index }) => {
               {feature.icon}
             </div>
             <span className="inline-flex items-center gap-1 text-xs font-medium px-3 py-1 rounded-full bg-black/30 border border-gray-700/50">
-              <BsStars className="text-amber-400" />
+             
               {feature.stats}
             </span>
           </div>
           
           <div className="inline-flex items-center gap-2 bg-black/40 text-xs px-3 py-1.5 rounded-full border border-gray-700/50 mb-3">
-            <GiFilmProjector className="text-gray-400" />
+           
             <span>{feature.mood}</span>
           </div>
         </div>
@@ -684,7 +684,7 @@ const Features = () => {
             transition={{ duration: 4, repeat: Infinity }}
             className="inline-block mb-6"
           >
-            <div className="text-6xl">🎬</div>
+         
           </motion.div>
           
           <h2 className="text-4xl md:text-5xl font-bold mb-8">
@@ -719,7 +719,7 @@ const Features = () => {
               className="px-8 py-4 bg-gray-800/50 border border-gray-700 hover:bg-gray-700/50 rounded-full font-medium shadow-lg hover:shadow-xl transition-all duration-300 group flex items-center gap-3"
             >
               <span>See How It Works</span>
-              <HiSparkles className="text-amber-400 group-hover:rotate-180 transition-transform" />
+            
             </Link>
           </div>
           

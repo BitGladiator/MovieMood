@@ -308,16 +308,8 @@ export default function PremiumLogin() {
               <div className="relative z-10 bg-gradient-to-br from-gray-900/80 to-black/80 rounded-2xl lg:rounded-3xl p-6 md:p-8 lg:p-10">
                 {/* Form Header */}
                 <div className="mb-8 text-center lg:text-left">
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/20 mb-4"
-                  >
-                    <Shield className="w-4 h-4 text-purple-400" />
-                    <span className="text-sm text-purple-300">
-                      Secure Login
-                    </span>
-                  </motion.div>
+                
+                 
                   <h2 className="text-2xl lg:text-3xl font-bold text-white mb-2">
                     Welcome Back
                   </h2>
