@@ -50,6 +50,7 @@ export default function PremiumNavbar() {
       { path: "/dashboard", name: "Dashboard", hasDropdown: false },
       { path: "/finder", name: "Finder", hasDropdown: false },
       { path: "/diary", name: "Diary", hasDropdown: false },
+      { path: "/watchlater", name: "Watchlist", hasDropdown: false },
       { path: "/pricing", name: "Pricing", hasDropdown: false },
     ]
     : [

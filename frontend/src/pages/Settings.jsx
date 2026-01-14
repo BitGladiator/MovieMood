@@ -1,30 +1,459 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ThemeContext } from "../context/ThemeContext";
 import { Link } from "react-router-dom";
+import { FiSettings, FiArrowLeft, FiSun, FiMoon, FiBell, FiUser, FiLock, FiMail, FiSmartphone, FiLogOut } from "react-icons/fi";
+import { useTheme } from "../context/ThemeContext";
+import toast from "react-hot-toast";
+
+const settingsStyles = `
+  .settings-page {
+    min-height: 100vh;
+    padding-top: 100px;
+    padding-bottom: 60px;
+    transition: background 0.3s ease;
+  }
+
+  .settings-page.light {
+    background: linear-gradient(180deg, #fdfbf9 0%, #fef5f0 50%, #faf5ff 100%);
+  }
+
+  .settings-page.dark {
+    background: radial-gradient(ellipse at top, #1e1b4b 0%, #0a0118 50%, #000000 100%);
+  }
+
+  .settings-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* Header */
+  .settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .header-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .settings-page.light .header-icon {
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+    color: #7c3aed;
+  }
+
+  .settings-page.dark .header-icon {
+    background: rgba(124, 58, 237, 0.2);
+    color: #a78bfa;
+  }
+
+  .header-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .settings-page.light .header-title {
+    color: #1a1a2e;
+  }
+
+  .settings-page.dark .header-title {
+    color: #f8f9ff;
+  }
+
+  .header-subtitle {
+    font-size: 0.875rem;
+  }
+
+  .settings-page.light .header-subtitle {
+    color: #64748b;
+  }
+
+  .settings-page.dark .header-subtitle {
+    color: #a5b4fc;
+  }
+
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .settings-page.light .back-btn {
+    color: #7c3aed;
+    background: transparent;
+  }
+
+  .settings-page.light .back-btn:hover {
+    background: #faf5ff;
+  }
+
+  .settings-page.dark .back-btn {
+    color: #a78bfa;
+    background: transparent;
+  }
+
+  .settings-page.dark .back-btn:hover {
+    background: rgba(124, 58, 237, 0.15);
+  }
+
+  /* Settings Grid */
+  .settings-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .settings-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Settings Card */
+  .settings-card {
+    padding: 1.5rem;
+    border-radius: 16px;
+    transition: all 0.3s ease;
+  }
+
+  .settings-page.light .settings-card {
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+  }
+
+  .settings-page.dark .settings-card {
+    background: rgba(30, 27, 75, 0.5);
+    border: 1px solid rgba(167, 139, 250, 0.2);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .card-icon {
+    color: #7c3aed;
+  }
+
+  .settings-page.dark .card-icon {
+    color: #a78bfa;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .settings-page.light .card-title {
+    color: #1a1a2e;
+  }
+
+  .settings-page.dark .card-title {
+    color: #f8f9ff;
+  }
+
+  /* Setting Item */
+  .setting-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 0;
+  }
+
+  .setting-item:not(:last-child) {
+    border-bottom: 1px solid;
+  }
+
+  .settings-page.light .setting-item:not(:last-child) {
+    border-color: #f3f4f6;
+  }
+
+  .settings-page.dark .setting-item:not(:last-child) {
+    border-color: rgba(167, 139, 250, 0.1);
+  }
+
+  .setting-info {
+    flex: 1;
+  }
+
+  .setting-label {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    margin-bottom: 0.125rem;
+  }
+
+  .settings-page.light .setting-label {
+    color: #1a1a2e;
+  }
+
+  .settings-page.dark .setting-label {
+    color: #f8f9ff;
+  }
+
+  .setting-desc {
+    font-size: 0.8125rem;
+  }
+
+  .settings-page.light .setting-desc {
+    color: #64748b;
+  }
+
+  .settings-page.dark .setting-desc {
+    color: #a5b4fc;
+  }
+
+  /* Toggle Switch */
+  .toggle-switch {
+    position: relative;
+    width: 48px;
+    height: 26px;
+    border-radius: 13px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .toggle-switch.off {
+    background: #e5e7eb;
+  }
+
+  .settings-page.dark .toggle-switch.off {
+    background: rgba(88, 28, 135, 0.4);
+  }
+
+  .toggle-switch.on {
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  }
+
+  .toggle-knob {
+    position: absolute;
+    top: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+  }
+
+  .toggle-switch.off .toggle-knob {
+    transform: translateX(3px);
+  }
+
+  .toggle-switch.on .toggle-knob {
+    transform: translateX(25px);
+  }
+
+  /* Theme Toggle */
+  .theme-toggle {
+    display: flex;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .settings-page.light .theme-toggle {
+    background: #f3f4f6;
+  }
+
+  .settings-page.dark .theme-toggle {
+    background: rgba(88, 28, 135, 0.3);
+  }
+
+  .theme-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.625rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .theme-btn.inactive {
+    background: transparent;
+  }
+
+  .settings-page.light .theme-btn.inactive {
+    color: #64748b;
+  }
+
+  .settings-page.dark .theme-btn.inactive {
+    color: #a5b4fc;
+  }
+
+  .theme-btn.active {
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    color: white;
+    border-radius: 10px;
+  }
+
+  /* Account Links */
+  .account-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    width: 100%;
+    text-align: left;
+  }
+
+  .settings-page.light .account-link {
+    background: #f9fafb;
+    color: #374151;
+  }
+
+  .settings-page.light .account-link:hover {
+    background: #f3f4f6;
+  }
+
+  .settings-page.dark .account-link {
+    background: rgba(88, 28, 135, 0.2);
+    color: #e0e7ff;
+  }
+
+  .settings-page.dark .account-link:hover {
+    background: rgba(124, 58, 237, 0.3);
+  }
+
+  .account-link.danger {
+    margin-top: 0.5rem;
+  }
+
+  .settings-page.light .account-link.danger {
+    background: #fef2f2;
+    color: #dc2626;
+  }
+
+  .settings-page.light .account-link.danger:hover {
+    background: #fee2e2;
+  }
+
+  .settings-page.dark .account-link.danger {
+    background: rgba(220, 38, 38, 0.15);
+    color: #fca5a5;
+  }
+
+  .settings-page.dark .account-link.danger:hover {
+    background: rgba(220, 38, 38, 0.25);
+  }
+
+  /* Checkbox */
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    cursor: pointer;
+  }
+
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+
+  .checkbox.unchecked {
+    border: 2px solid;
+  }
+
+  .settings-page.light .checkbox.unchecked {
+    border-color: #d1d5db;
+    background: white;
+  }
+
+  .settings-page.dark .checkbox.unchecked {
+    border-color: rgba(167, 139, 250, 0.3);
+    background: rgba(30, 27, 75, 0.5);
+  }
+
+  .checkbox.checked {
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    color: white;
+  }
+
+  .checkbox-label {
+    font-size: 0.9375rem;
+  }
+
+  .settings-page.light .checkbox-label {
+    color: #374151;
+  }
+
+  .settings-page.dark .checkbox-label {
+    color: #e0e7ff;
+  }
+
+  /* Save Button */
+  .save-section {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .save-btn {
+    padding: 0.875rem 2rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+  }
+
+  .save-btn:hover {
+    background: linear-gradient(135deg, #6d28d9 0%, #9333ea 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+  }
+`;
 
 export default function Settings() {
-  const { theme, changeTheme } = useContext(ThemeContext);
-  const [darkMode, setDarkMode] = useState(true);
+  const { theme, toggleTheme } = useTheme();
   const [notifications, setNotifications] = useState(true);
   const [autoPlay, setAutoPlay] = useState(false);
-  const [volume, setVolume] = useState(80);
   const [notificationTypes, setNotificationTypes] = useState({
     newReleases: true,
     watchlistUpdates: true,
     promotionalOffers: false
   });
-
-  const themes = [
-    { name: "Purple", value: "purple", gradient: "from-purple-600 to-blue-600" },
-    { name: "Crimson", value: "crimson", gradient: "from-rose-600 to-pink-600" },
-    { name: "Emerald", value: "emerald", gradient: "from-emerald-600 to-cyan-600" },
-    { name: "Amber", value: "amber", gradient: "from-amber-600 to-orange-600" },
-  ];
-
-  const handleThemeChange = (themeValue) => {
-    changeTheme(themeValue);
-  };
 
   const handleNotificationToggle = (type) => {
     setNotificationTypes(prev => ({
@@ -34,28 +463,23 @@ export default function Settings() {
   };
 
   const handleSave = () => {
-    // Here you would typically send these settings to your backend
-    console.log("Settings saved:", {
-      darkMode,
+    const settings = {
       theme,
       notifications,
       notificationTypes,
       autoPlay,
-      volume
-    });
-    alert("Settings saved successfully!");
+    };
+    localStorage.setItem('movieMoodSettings', JSON.stringify(settings));
+    toast.success("Settings saved!");
   };
 
-  // Load saved settings from localStorage on component mount
   useEffect(() => {
-    const savedSettings = localStorage.getItem('cinematicSettings');
+    const savedSettings = localStorage.getItem('movieMoodSettings');
     if (savedSettings) {
-      const parsedSettings = JSON.parse(savedSettings);
-      setDarkMode(parsedSettings.darkMode ?? true);
-      setNotifications(parsedSettings.notifications ?? true);
-      setAutoPlay(parsedSettings.autoPlay ?? false);
-      setVolume(parsedSettings.volume ?? 80);
-      setNotificationTypes(parsedSettings.notificationTypes ?? {
+      const parsed = JSON.parse(savedSettings);
+      setNotifications(parsed.notifications ?? true);
+      setAutoPlay(parsed.autoPlay ?? false);
+      setNotificationTypes(parsed.notificationTypes ?? {
         newReleases: true,
         watchlistUpdates: true,
         promotionalOffers: false
@@ -63,413 +487,210 @@ export default function Settings() {
     }
   }, []);
 
-  // Save settings to localStorage whenever they change
-  useEffect(() => {
-    const settings = {
-      darkMode,
-      theme,
-      notifications,
-      notificationTypes,
-      autoPlay,
-      volume
-    };
-    localStorage.setItem('cinematicSettings', JSON.stringify(settings));
-  }, [darkMode, theme, notifications, notificationTypes, autoPlay, volume]);
-
   return (
-    <div className={`min-h-screen ${darkMode ? 'bg-gray-900' : 'bg-gray-100'} transition-colors duration-300 p-4 md:p-8`}>
-      {/* Settings Container */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className={`relative max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-xl ${
-          darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
-        }`}
-      >
-        {/* Header */}
-        <div className={`p-6 border-b ${
-          darkMode ? 'border-gray-700' : 'border-gray-200'
-        }`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className={`p-2 rounded-lg ${
-                darkMode ? 'bg-purple-900' : 'bg-purple-100'
-              }`}>
-                <svg
-                  className="w-6 h-6 text-purple-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
+    <>
+      <style>{settingsStyles}</style>
+      <div className={`settings-page ${theme}`}>
+        <div className="settings-container">
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="settings-header"
+          >
+            <div className="header-left">
+              <div className="header-icon">
+                <FiSettings size={24} />
               </div>
               <div>
-                <h1 className="text-xl font-bold">Settings</h1>
-                <p className={`text-sm ${
-                  darkMode ? 'text-gray-400' : 'text-gray-500'
-                }`}>
-                  Customize your experience
-                </p>
+                <h1 className="header-title">Settings</h1>
+                <p className="header-subtitle">Customize your experience</p>
               </div>
             </div>
-            <Link
-              to="/dashboard"
-              className={`flex items-center space-x-1 px-4 py-2 rounded-lg transition-colors ${
-                darkMode 
-                  ? 'text-purple-400 hover:bg-gray-700' 
-                  : 'text-purple-600 hover:bg-gray-100'
-              }`}
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M7 16l-4-4m0 0l4-4m-4 4h18"
-                />
-              </svg>
-              <span>Back</span>
+            <Link to="/dashboard" className="back-btn">
+              <FiArrowLeft size={18} />
+              Back
             </Link>
-          </div>
-        </div>
+          </motion.div>
 
-        {/* Settings Content */}
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Settings Grid */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="settings-grid"
+          >
             {/* Appearance */}
-            <div className={`p-5 rounded-xl ${
-              darkMode ? 'bg-gray-700' : 'bg-gray-50'
-            }`}>
-              <h2 className="flex items-center space-x-2 text-lg font-semibold mb-4">
-                <svg
-                  className="w-5 h-5 text-purple-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                  />
-                </svg>
-                <span>Appearance</span>
-              </h2>
-              
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium">Dark Mode</h3>
-                    <p className={`text-sm ${
-                      darkMode ? 'text-gray-400' : 'text-gray-500'
-                    }`}>
-                      {darkMode ? 'Dark theme enabled' : 'Light theme enabled'}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setDarkMode(!darkMode)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                      darkMode ? 'bg-purple-600' : 'bg-gray-300'
-                    }`}
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        darkMode ? 'translate-x-6' : 'translate-x-1'
-                      }`}
-                    />
-                  </button>
-                </div>
+            <div className="settings-card">
+              <div className="card-header">
+                <FiSun className="card-icon" size={20} />
+                <h2 className="card-title">Appearance</h2>
+              </div>
 
-                <div>
-                  <h3 className="font-medium mb-2">Theme Color</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {themes.map((themeOption) => (
-                      <button
-                        key={themeOption.value}
-                        onClick={() => handleThemeChange(themeOption.value)}
-                        className={`h-8 w-8 rounded-full bg-gradient-to-r ${
-                          themeOption.gradient
-                        } ${
-                          theme === themeOption.value
-                            ? 'ring-2 ring-offset-2 ring-purple-500'
-                            : 'opacity-70 hover:opacity-100'
-                        } transition-all`}
-                        title={themeOption.name}
-                      />
-                    ))}
-                  </div>
+              <div className="setting-item">
+                <div className="setting-info">
+                  <div className="setting-label">Theme</div>
+                  <div className="setting-desc">Choose your preferred theme</div>
+                </div>
+                <div className="theme-toggle">
+                  <button
+                    className={`theme-btn ${theme === 'light' ? 'active' : 'inactive'}`}
+                    onClick={() => theme === 'dark' && toggleTheme()}
+                  >
+                    <FiSun size={14} />
+                    Light
+                  </button>
+                  <button
+                    className={`theme-btn ${theme === 'dark' ? 'active' : 'inactive'}`}
+                    onClick={() => theme === 'light' && toggleTheme()}
+                  >
+                    <FiMoon size={14} />
+                    Dark
+                  </button>
                 </div>
               </div>
-            </div>
 
-            {/* Playback */}
-            <div className={`p-5 rounded-xl ${
-              darkMode ? 'bg-gray-700' : 'bg-gray-50'
-            }`}>
-              <h2 className="flex items-center space-x-2 text-lg font-semibold mb-4">
-                <svg
-                  className="w-5 h-5 text-purple-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15.536a5 5 0 001.414 1.414m2.828-9.9a9 9 0 012.728-2.728"
-                  />
-                </svg>
-                <span>Playback</span>
-              </h2>
-              
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium">Autoplay</h3>
-                    <p className={`text-sm ${
-                      darkMode ? 'text-gray-400' : 'text-gray-500'
-                    }`}>
-                      Automatically play next episode
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setAutoPlay(!autoPlay)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                      autoPlay ? 'bg-purple-600' : 'bg-gray-300'
-                    }`}
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        autoPlay ? 'translate-x-6' : 'translate-x-1'
-                      }`}
-                    />
-                  </button>
+              <div className="setting-item">
+                <div className="setting-info">
+                  <div className="setting-label">Autoplay Previews</div>
+                  <div className="setting-desc">Auto-play movie trailers</div>
                 </div>
-
-                <div>
-                  <h3 className="font-medium mb-2">Default Volume</h3>
-                  <div className="flex items-center space-x-3">
-                    <svg
-                      className={`w-5 h-5 ${
-                        darkMode ? 'text-gray-400' : 'text-gray-500'
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M17 14a2 2 0 100-4 2 2 0 000 4z"
-                      />
-                    </svg>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={volume}
-                      onChange={(e) => setVolume(parseInt(e.target.value))}
-                      className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
-                        darkMode ? 'bg-gray-600' : 'bg-gray-300'
-                      } accent-purple-500`}
-                    />
-                    <span className={`text-sm w-8 ${
-                      darkMode ? 'text-gray-300' : 'text-gray-700'
-                    }`}>
-                      {volume}%
-                    </span>
-                  </div>
+                <div
+                  className={`toggle-switch ${autoPlay ? 'on' : 'off'}`}
+                  onClick={() => setAutoPlay(!autoPlay)}
+                >
+                  <div className="toggle-knob"></div>
                 </div>
               </div>
             </div>
 
             {/* Notifications */}
-            <div className={`p-5 rounded-xl ${
-              darkMode ? 'bg-gray-700' : 'bg-gray-50'
-            }`}>
-              <h2 className="flex items-center space-x-2 text-lg font-semibold mb-4">
-                <svg
-                  className="w-5 h-5 text-purple-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                  />
-                </svg>
-                <span>Notifications</span>
-              </h2>
-              
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium">Enable Notifications</h3>
-                    <p className={`text-sm ${
-                      darkMode ? 'text-gray-400' : 'text-gray-500'
-                    }`}>
-                      Receive important updates
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setNotifications(!notifications)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
-                      notifications ? 'bg-purple-600' : 'bg-gray-300'
-                    }`}
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        notifications ? 'translate-x-6' : 'translate-x-1'
-                      }`}
-                    />
-                  </button>
-                </div>
-
-                {notifications && (
-                  <div className={`pl-2 space-y-3 ${
-                    darkMode ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    <label className="flex items-center space-x-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={notificationTypes.newReleases}
-                        onChange={() => handleNotificationToggle('newReleases')}
-                        className={`rounded h-4 w-4 ${
-                          darkMode 
-                            ? 'bg-gray-600 border-gray-500 text-purple-500 focus:ring-purple-500' 
-                            : 'border-gray-300 text-purple-600 focus:ring-purple-600'
-                        }`}
-                      />
-                      <span>New Releases</span>
-                    </label>
-                    <label className="flex items-center space-x-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={notificationTypes.watchlistUpdates}
-                        onChange={() => handleNotificationToggle('watchlistUpdates')}
-                        className={`rounded h-4 w-4 ${
-                          darkMode 
-                            ? 'bg-gray-600 border-gray-500 text-purple-500 focus:ring-purple-500' 
-                            : 'border-gray-300 text-purple-600 focus:ring-purple-600'
-                        }`}
-                      />
-                      <span>Watchlist Updates</span>
-                    </label>
-                    <label className="flex items-center space-x-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={notificationTypes.promotionalOffers}
-                        onChange={() => handleNotificationToggle('promotionalOffers')}
-                        className={`rounded h-4 w-4 ${
-                          darkMode 
-                            ? 'bg-gray-600 border-gray-500 text-purple-500 focus:ring-purple-500' 
-                            : 'border-gray-300 text-purple-600 focus:ring-purple-600'
-                        }`}
-                      />
-                      <span>Promotional Offers</span>
-                    </label>
-                  </div>
-                )}
+            <div className="settings-card">
+              <div className="card-header">
+                <FiBell className="card-icon" size={20} />
+                <h2 className="card-title">Notifications</h2>
               </div>
+
+              <div className="setting-item">
+                <div className="setting-info">
+                  <div className="setting-label">Push Notifications</div>
+                  <div className="setting-desc">Receive important updates</div>
+                </div>
+                <div
+                  className={`toggle-switch ${notifications ? 'on' : 'off'}`}
+                  onClick={() => setNotifications(!notifications)}
+                >
+                  <div className="toggle-knob"></div>
+                </div>
+              </div>
+
+              {notifications && (
+                <div style={{ paddingTop: '0.5rem' }}>
+                  <div
+                    className="checkbox-item"
+                    onClick={() => handleNotificationToggle('newReleases')}
+                  >
+                    <div className={`checkbox ${notificationTypes.newReleases ? 'checked' : 'unchecked'}`}>
+                      {notificationTypes.newReleases && <span>✓</span>}
+                    </div>
+                    <span className="checkbox-label">New Releases</span>
+                  </div>
+                  <div
+                    className="checkbox-item"
+                    onClick={() => handleNotificationToggle('watchlistUpdates')}
+                  >
+                    <div className={`checkbox ${notificationTypes.watchlistUpdates ? 'checked' : 'unchecked'}`}>
+                      {notificationTypes.watchlistUpdates && <span>✓</span>}
+                    </div>
+                    <span className="checkbox-label">Watchlist Updates</span>
+                  </div>
+                  <div
+                    className="checkbox-item"
+                    onClick={() => handleNotificationToggle('promotionalOffers')}
+                  >
+                    <div className={`checkbox ${notificationTypes.promotionalOffers ? 'checked' : 'unchecked'}`}>
+                      {notificationTypes.promotionalOffers && <span>✓</span>}
+                    </div>
+                    <span className="checkbox-label">Promotional Offers</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Account */}
-            <div className={`p-5 rounded-xl ${
-              darkMode ? 'bg-gray-700' : 'bg-gray-50'
-            }`}>
-              <h2 className="flex items-center space-x-2 text-lg font-semibold mb-4">
-                <svg
-                  className="w-5 h-5 text-purple-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                <span>Account</span>
-              </h2>
-              
-              <div className="space-y-3">
-                <button className={`w-full text-left py-2 px-3 rounded-lg transition-colors ${
-                  darkMode 
-                    ? 'hover:bg-gray-600 text-gray-300' 
-                    : 'hover:bg-gray-200 text-gray-700'
-                }`}>
+            <div className="settings-card" style={{ gridColumn: 'span 1' }}>
+              <div className="card-header">
+                <FiUser className="card-icon" size={20} />
+                <h2 className="card-title">Account</h2>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <button className="account-link">
+                  <FiLock size={18} />
                   Change Password
                 </button>
-                <button className={`w-full text-left py-2 px-3 rounded-lg transition-colors ${
-                  darkMode 
-                    ? 'hover:bg-gray-600 text-gray-300' 
-                    : 'hover:bg-gray-200 text-gray-700'
-                }`}>
+                <button className="account-link">
+                  <FiMail size={18} />
                   Update Email
                 </button>
-                <button className={`w-full text-left py-2 px-3 rounded-lg transition-colors ${
-                  darkMode 
-                    ? 'hover:bg-gray-600 text-gray-300' 
-                    : 'hover:bg-gray-200 text-gray-700'
-                }`}>
+                <button className="account-link">
+                  <FiSmartphone size={18} />
                   Connected Devices
                 </button>
-                <button className={`w-full text-left py-2 px-3 rounded-lg transition-colors ${
-                  darkMode 
-                    ? 'hover:bg-red-900/50 text-red-400' 
-                    : 'hover:bg-red-100 text-red-600'
-                } font-medium`}>
+                <button className="account-link danger">
+                  <FiLogOut size={18} />
                   Logout All Devices
                 </button>
               </div>
             </div>
-          </div>
+
+            {/* Privacy */}
+            <div className="settings-card">
+              <div className="card-header">
+                <FiLock className="card-icon" size={20} />
+                <h2 className="card-title">Privacy</h2>
+              </div>
+
+              <div className="setting-item">
+                <div className="setting-info">
+                  <div className="setting-label">Profile Visibility</div>
+                  <div className="setting-desc">Make your profile public</div>
+                </div>
+                <div className="toggle-switch off">
+                  <div className="toggle-knob"></div>
+                </div>
+              </div>
+
+              <div className="setting-item">
+                <div className="setting-info">
+                  <div className="setting-label">Activity Status</div>
+                  <div className="setting-desc">Show when you're online</div>
+                </div>
+                <div className="toggle-switch on">
+                  <div className="toggle-knob"></div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
 
           {/* Save Button */}
-          <div className="mt-8 flex justify-end">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="save-section"
+          >
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleSave}
-              className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium rounded-lg transition-all hover:shadow-lg"
+              className="save-btn"
             >
               Save Changes
             </motion.button>
-          </div>
+          </motion.div>
         </div>
-      </motion.div>
-    </div>
+      </div>
+    </>
   );
 }

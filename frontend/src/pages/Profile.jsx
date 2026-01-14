@@ -1,41 +1,406 @@
 import React, { useEffect, useState } from "react";
 import { auth, logout, db } from "../firebase";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { motion, AnimatePresence } from "framer-motion";
-import { FaFilm, FaStar, FaSignOutAlt, FaEnvelope, FaCrown } from "react-icons/fa";
-import { GiFilmSpool, GiSparkles } from "react-icons/gi";
-import { IoMdSettings } from "react-icons/io";
-import { RiVipCrownFill } from "react-icons/ri";
+import { motion } from "framer-motion";
+import { FiEdit2, FiShare2, FiLogOut, FiFilm, FiClock, FiPlus } from "react-icons/fi";
+import { useTheme } from "../context/ThemeContext";
+
+const profileStyles = `
+  .profile-page {
+    min-height: 100vh;
+    padding-top: 100px;
+    padding-bottom: 60px;
+    transition: background 0.3s ease;
+  }
+
+  .profile-page.light {
+    background: linear-gradient(180deg, #fdfbf9 0%, #fef5f0 50%, #faf5ff 100%);
+  }
+
+  .profile-page.dark {
+    background: radial-gradient(ellipse at top, #1e1b4b 0%, #0a0118 50%, #000000 100%);
+  }
+
+  .profile-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* Profile Header */
+  .profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-bottom: 2rem;
+  }
+
+  .avatar-wrapper {
+    margin-bottom: 1rem;
+  }
+
+  .avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .profile-page.light .avatar {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .profile-page.dark .avatar {
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+    border: 3px solid rgba(167, 139, 250, 0.3);
+  }
+
+  .profile-name {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .profile-page.light .profile-name {
+    color: #1a1a2e;
+  }
+
+  .profile-page.dark .profile-name {
+    color: #f8f9ff;
+  }
+
+  .profile-username {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .profile-page.light .profile-username {
+    color: #64748b;
+  }
+
+  .profile-page.dark .profile-username {
+    color: #a5b4fc;
+  }
+
+  .profile-stats {
+    font-size: 0.9375rem;
+    margin-bottom: 1rem;
+  }
+
+  .profile-page.light .profile-stats {
+    color: #374151;
+  }
+
+  .profile-page.dark .profile-stats {
+    color: #e0e7ff;
+  }
+
+  .profile-stats strong {
+    font-weight: 600;
+  }
+
+  /* Action Buttons */
+  .profile-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .action-btn {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+  }
+
+  .profile-page.light .action-btn {
+    background: #f1f5f9;
+    color: #1a1a2e;
+    border: none;
+  }
+
+  .profile-page.light .action-btn:hover {
+    background: #e2e8f0;
+  }
+
+  .profile-page.dark .action-btn {
+    background: rgba(88, 28, 135, 0.4);
+    color: #e0e7ff;
+    border: 1px solid rgba(167, 139, 250, 0.3);
+  }
+
+  .profile-page.dark .action-btn:hover {
+    background: rgba(124, 58, 237, 0.5);
+  }
+
+  /* Tabs */
+  .tabs-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .tab-btn {
+    padding: 0.75rem 0;
+    font-size: 1rem;
+    font-weight: 500;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .profile-page.light .tab-btn {
+    color: #9ca3af;
+  }
+
+  .profile-page.light .tab-btn.active {
+    color: #1a1a2e;
+  }
+
+  .profile-page.dark .tab-btn {
+    color: #6b7280;
+  }
+
+  .profile-page.dark .tab-btn.active {
+    color: #f8f9ff;
+  }
+
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #1a1a2e;
+  }
+
+  .profile-page.dark .tab-btn.active::after {
+    background: #a78bfa;
+  }
+
+  /* Boards Section */
+  .boards-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0 0.25rem;
+  }
+
+  .boards-header-icon {
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .profile-page.light .boards-header-icon {
+    color: #374151;
+  }
+
+  .profile-page.dark .boards-header-icon {
+    color: #e0e7ff;
+  }
+
+  /* Pinterest-style Board Cards */
+  .boards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+
+  .board-card {
+    text-decoration: none;
+    display: block;
+  }
+
+  .board-images {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 2px;
+    border-radius: 16px;
+    overflow: hidden;
+    aspect-ratio: 1;
+    margin-bottom: 0.75rem;
+  }
+
+  .board-image-main {
+    grid-row: span 2;
+  }
+
+  .board-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .board-image-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .profile-page.light .board-image-placeholder {
+    background: #f3f4f6;
+    color: #9ca3af;
+  }
+
+  .profile-page.dark .board-image-placeholder {
+    background: rgba(30, 27, 75, 0.8);
+    color: #a78bfa;
+  }
+
+  .board-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.125rem;
+  }
+
+  .profile-page.light .board-title {
+    color: #1a1a2e;
+  }
+
+  .profile-page.dark .board-title {
+    color: #f8f9ff;
+  }
+
+  .board-meta {
+    font-size: 0.8125rem;
+  }
+
+  .profile-page.light .board-meta {
+    color: #6b7280;
+  }
+
+  .profile-page.dark .board-meta {
+    color: #a5b4fc;
+  }
+
+  /* Add Button */
+  .add-btn {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
+    transition: transform 0.2s ease;
+  }
+
+  .profile-page.light .add-btn {
+    background: #1a1a2e;
+    color: white;
+  }
+
+  .profile-page.dark .add-btn {
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    color: white;
+  }
+
+  .add-btn:hover {
+    transform: scale(1.1);
+  }
+
+  /* Logout */
+  .logout-section {
+    margin-top: 3rem;
+    text-align: center;
+  }
+
+  .logout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .profile-page.light .logout-btn {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+  }
+
+  .profile-page.light .logout-btn:hover {
+    background: #fee2e2;
+  }
+
+  .profile-page.dark .logout-btn {
+    background: rgba(220, 38, 38, 0.15);
+    color: #fca5a5;
+    border: 1px solid rgba(220, 38, 38, 0.3);
+  }
+
+  .profile-page.dark .logout-btn:hover {
+    background: rgba(220, 38, 38, 0.25);
+  }
+
+  /* Loading */
+  .loading-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #f3e8ff;
+    border-top-color: #7c3aed;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+`;
 
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [diaryCount, setDiaryCount] = useState(0);
   const [watchLaterCount, setWatchLaterCount] = useState(0);
+  const [diaryMovies, setDiaryMovies] = useState([]);
+  const [watchLaterMovies, setWatchLaterMovies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("profile");
-  const [hoveredCard, setHoveredCard] = useState(null);
+  const [activeTab, setActiveTab] = useState("saved");
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser({
-          name: currentUser.displayName || currentUser.email.split('@')[0] || "Cinephile",
+          name: currentUser.displayName || currentUser.email.split('@')[0] || "Movie Buff",
           email: currentUser.email,
           uid: currentUser.uid,
           avatar:
             currentUser.photoURL ||
             `https://ui-avatars.com/api/?name=${encodeURIComponent(
-              currentUser.displayName || currentUser.email.split('@')[0] || "CF"
-            )}&background=1a1a2e&color=fff&size=256`,
-          joinDate: new Date(currentUser.metadata.creationTime).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          }),
-          premium: true // Assuming premium status
+              currentUser.displayName || currentUser.email.split('@')[0] || "MB"
+            )}&background=7c3aed&color=fff&size=256`,
         });
 
         try {
@@ -43,9 +408,15 @@ export default function Profile() {
             getDocs(query(collection(db, "diary"), where("uid", "==", currentUser.uid))),
             getDocs(query(collection(db, "watchLater"), where("uid", "==", currentUser.uid)))
           ]);
-          
+
           setDiaryCount(diarySnapshot.size);
           setWatchLaterCount(watchSnapshot.size);
+
+          const diaryDocs = diarySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          const watchDocs = watchSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+          setDiaryMovies(diaryDocs.slice(0, 3));
+          setWatchLaterMovies(watchDocs.slice(0, 3));
         } catch (error) {
           console.error("Error fetching counts:", error);
         }
@@ -63,375 +434,175 @@ export default function Profile() {
     navigate("/");
   };
 
+  // Get posters for board display
+  const getBoardImages = (movies, posterField) => {
+    const images = movies.slice(0, 3).map(m => m[posterField] || m.Poster || m.poster);
+    return images.filter(img => img && img !== "N/A");
+  };
+
   if (loading || !user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black text-white">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center"
-        >
-          <div className="relative mx-auto w-32 h-32 mb-8">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full blur-xl opacity-30 animate-pulse"></div>
-            <div className="relative flex items-center justify-center w-full h-full">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 rounded-full border-t-2 border-b-2 border-purple-500/30"
-              ></motion.div>
-              <GiFilmSpool className="w-16 h-16 text-purple-400" />
-            </div>
+      <>
+        <style>{profileStyles}</style>
+        <div className={`profile-page ${theme}`}>
+          <div className="loading-screen">
+            <div className="loading-spinner"></div>
           </div>
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-300 to-pink-300 text-transparent bg-clip-text">
-            Loading Your Profile
-          </h2>
-          <p className="mt-3 text-gray-400 max-w-md mx-auto">
-            Preparing an exclusive cinematic experience just for you...
-          </p>
-          <motion.div 
-            className="mt-6 h-1.5 bg-gray-800 rounded-full overflow-hidden max-w-xs mx-auto"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-          >
-            <motion.div
-              className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
-              initial={{ width: 0 }}
-              animate={{ width: "100%" }}
-              transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
-            ></motion.div>
-          </motion.div>
-        </motion.div>
-      </div>
+        </div>
+      </>
     );
   }
 
+  const diaryImages = getBoardImages(diaryMovies, "Poster");
+  const watchImages = getBoardImages(watchLaterMovies, "poster");
+
   return (
-    <div className="min-h-screen bg-gray-950 text-white relative overflow-hidden">
-      {/* Luxury background elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        {/* Animated gradient mesh */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
-          <div className="absolute w-[1500px] h-[1500px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/30 via-transparent to-transparent -top-1/2 -left-1/2 animate-float-slow"></div>
-          <div className="absolute w-[1200px] h-[1200px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-amber-900/20 via-transparent to-transparent -bottom-1/3 -right-1/3 animate-float-reverse-slow"></div>
-        </div>
-
-        {/* Floating particles */}
-        {[...Array(30)].map((_, i) => (
+    <>
+      <style>{profileStyles}</style>
+      <div className={`profile-page ${theme}`}>
+        <div className="profile-container">
+          {/* Profile Header */}
           <motion.div
-            key={i}
-            className="absolute rounded-full"
-            initial={{
-              opacity: 0,
-              scale: 0.5,
-              x: Math.random() * 100,
-              y: Math.random() * 100
-            }}
-            animate={{
-              opacity: [0, 0.8, 0],
-              scale: [0.5, 1.2, 0.5],
-              x: Math.random() * 100,
-              y: Math.random() * 100
-            }}
-            transition={{
-              duration: 10 + Math.random() * 20,
-              repeat: Infinity,
-              repeatType: "reverse",
-              delay: Math.random() * 5
-            }}
-            style={{
-              width: `${Math.random() * 5 + 2}px`,
-              height: `${Math.random() * 5 + 2}px`,
-              background: `rgba(255, 255, 255, ${Math.random() * 0.5})`,
-              boxShadow: `0 0 ${Math.random() * 15 + 5}px ${Math.random() * 5 + 2}px rgba(255, 255, 255, 0.5)`
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Main content */}
-      <div className="relative z-10 max-w-6xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        {/* Profile header */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="flex flex-col items-center mb-12"
-        >
-          {/* Avatar with floating effect and halo */}
-          <motion.div
-            whileHover={{ y: -8 }}
-            transition={{ type: "spring", stiffness: 300 }}
-            className="relative mb-6 group"
-          >
-            <div className="absolute inset-0 mx-auto w-40 h-40 bg-gradient-to-r from-purple-600 to-pink-600 blur-2xl rounded-full opacity-30 animate-pulse"></div>
-            <div className="relative z-10">
-              <img
-                src={user.avatar}
-                alt="avatar"
-                className="w-32 h-32 rounded-full border-4 border-white/20 shadow-2xl shadow-purple-500/30 z-10 relative object-cover transition-all duration-300 group-hover:border-purple-400/50"
-                onError={(e) => {
-                  e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=1a1a2e&color=fff&size=256`;
-                }}
-              />
-              <motion.div 
-                className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-500 to-yellow-500 text-gray-900 text-xs font-bold px-4 py-1.5 rounded-full shadow-lg z-20 flex items-center gap-2"
-                whileHover={{ scale: 1.05 }}
-                initial={{ y: 10, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                <RiVipCrownFill className="text-yellow-700" />
-                <span>PREMIUM MEMBER</span>
-              </motion.div>
-            </div>
-          </motion.div>
-
-          {/* User Info */}
-          <div className="text-center">
-            <h1 className="text-5xl font-extrabold bg-gradient-to-r from-purple-300 via-pink-300 to-amber-300 text-transparent bg-clip-text mb-4">
-              {user.name}
-            </h1>
-            <div className="flex items-center justify-center gap-3">
-              <div className="flex items-center gap-2 bg-gray-900/50 rounded-full py-2 px-4 border border-gray-800/50 backdrop-blur-sm">
-                <FaEnvelope className="text-gray-400 text-sm" />
-                <p className="text-gray-300 text-sm">{user.email}</p>
-              </div>
-              <div className="flex items-center gap-2 bg-gray-900/50 rounded-full py-2 px-4 border border-gray-800/50 backdrop-blur-sm">
-                <GiSparkles className="text-amber-400 text-sm" />
-                <p className="text-gray-300 text-sm">Member since {user.joinDate}</p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Navigation tabs */}
-        {/* <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex justify-center mb-12"
-        >
-          <div className="inline-flex bg-gray-900/80 backdrop-blur-sm rounded-full p-1.5 border border-gray-800/50 shadow-lg">
-            <button
-              onClick={() => setActiveTab("profile")}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
-                activeTab === "profile"
-                  ? "bg-gradient-to-r from-purple-600/80 to-pink-600/80 text-white shadow-purple-500/20"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              <span>Profile</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("stats")}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
-                activeTab === "stats"
-                  ? "bg-gradient-to-r from-purple-600/80 to-pink-600/80 text-white shadow-purple-500/20"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              <span>Stats</span>
-            </button>
-            <button
-              onClick={() => setActiveTab("settings")}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 flex items-center gap-2 ${
-                activeTab === "settings"
-                  ? "bg-gradient-to-r from-purple-600/80 to-pink-600/80 text-white shadow-purple-500/20"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              <IoMdSettings />
-              <span>Settings</span>
-            </button>
-          </div>
-        </motion.div> */}
-
-        {/* Tab content */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+            className="profile-header"
           >
-            {/* Stats cards */}
-            <motion.div
-              whileHover={{ y: -5 }}
-              onHoverStart={() => setHoveredCard("diary")}
-              onHoverEnd={() => setHoveredCard(null)}
-              className={`relative rounded-2xl overflow-hidden border ${
-                hoveredCard === "diary" ? "border-purple-500/50" : "border-gray-800/50"
-              } transition-all duration-300`}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 to-gray-900/80 backdrop-blur-sm"></div>
-              <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
-              <div className="relative z-10 p-6">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="p-3 bg-purple-600/20 rounded-lg backdrop-blur-sm border border-purple-500/20">
-                    <FaFilm className="text-purple-300 text-xl" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-purple-100">Movie Diary</h3>
-                </div>
-                <div className="mb-4">
-                  <p className="text-purple-200/80 text-sm mb-1">Your cinematic journey</p>
-                  <p className="text-5xl font-bold text-white">
-                    {diaryCount}
-                    <span className="text-xl font-normal text-purple-300/80 ml-2">
-                      {diaryCount === 1 ? "entry" : "entries"}
-                    </span>
-                  </p>
-                </div>
-                <div className="h-1.5 bg-gray-800/50 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min(diaryCount, 100)}%` }}
-                    transition={{ duration: 1.5, delay: 0.5 }}
-                  ></motion.div>
-                </div>
-              </div>
-              {hoveredCard === "diary" && (
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-purple-600/10 to-pink-600/10 pointer-events-none"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                ></motion.div>
-              )}
-            </motion.div>
+            <div className="avatar-wrapper">
+              <img
+                src={user.avatar}
+                alt={user.name}
+                className="avatar"
+                onError={(e) => {
+                  e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=7c3aed&color=fff&size=256`;
+                }}
+              />
+            </div>
 
-            <motion.div
-              whileHover={{ y: -5 }}
-              onHoverStart={() => setHoveredCard("watchlist")}
-              onHoverEnd={() => setHoveredCard(null)}
-              className={`relative rounded-2xl overflow-hidden border ${
-                hoveredCard === "watchlist" ? "border-amber-500/50" : "border-gray-800/50"
-              } transition-all duration-300`}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-900/30 to-gray-900/80 backdrop-blur-sm"></div>
-              <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
-              <div className="relative z-10 p-6">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="p-3 bg-amber-600/20 rounded-lg backdrop-blur-sm border border-amber-500/20">
-                    <FaStar className="text-amber-300 text-xl" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-amber-100">Watchlist</h3>
-                </div>
-                <div className="mb-4">
-                  <p className="text-amber-200/80 text-sm mb-1">Future screenings</p>
-                  <p className="text-5xl font-bold text-white">
-                    {watchLaterCount}
-                    <span className="text-xl font-normal text-amber-300/80 ml-2">
-                      {watchLaterCount === 1 ? "movie" : "movies"}
-                    </span>
-                  </p>
-                </div>
-                <div className="h-1.5 bg-gray-800/50 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-gradient-to-r from-amber-500 to-orange-500"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${Math.min(watchLaterCount, 100)}%` }}
-                    transition={{ duration: 1.5, delay: 0.7 }}
-                  ></motion.div>
-                </div>
-              </div>
-              {hoveredCard === "watchlist" && (
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-amber-600/10 to-orange-600/10 pointer-events-none"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                ></motion.div>
-              )}
-            </motion.div>
+            <h1 className="profile-name">{user.name}</h1>
+            <p className="profile-username">@{user.email.split('@')[0]}</p>
 
-            <motion.div
-              whileHover={{ y: -5 }}
-              onHoverStart={() => setHoveredCard("premium")}
-              onHoverEnd={() => setHoveredCard(null)}
-              className={`relative rounded-2xl overflow-hidden border ${
-                hoveredCard === "premium" ? "border-blue-500/50" : "border-gray-800/50"
-              } transition-all duration-300`}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 to-gray-900/80 backdrop-blur-sm"></div>
-              <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10"></div>
-              <div className="relative z-10 p-6">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="p-3 bg-blue-600/20 rounded-lg backdrop-blur-sm border border-blue-500/20">
-                    <FaCrown className="text-blue-300 text-xl" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-blue-100">Premium Status</h3>
-                </div>
-                <div className="mb-4">
-                  <p className="text-blue-200/80 text-sm mb-1">Exclusive benefits</p>
-                  <p className="text-5xl font-bold text-white">
-                    Active
-                    <span className="text-xl font-normal text-blue-300/80 ml-2">
-                      {user.premium ? "VIP" : "Basic"}
-                    </span>
-                  </p>
-                </div>
-                <div className="h-1.5 bg-gray-800/50 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-gradient-to-r from-blue-500 to-cyan-500"
-                    initial={{ width: 0 }}
-                    animate={{ width: "100%" }}
-                    transition={{ duration: 1.5, delay: 0.9 }}
-                  ></motion.div>
-                </div>
-              </div>
-              {hoveredCard === "premium" && (
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-cyan-600/10 pointer-events-none"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                ></motion.div>
-              )}
-            </motion.div>
+            <p className="profile-stats">
+              <strong>{diaryCount}</strong> movies · <strong>{watchLaterCount}</strong> watchlist
+            </p>
+
+            <div className="profile-actions">
+              <button className="action-btn">Share</button>
+              <button className="action-btn">Edit profile</button>
+            </div>
           </motion.div>
-        </AnimatePresence>
 
-        {/* Action buttons */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          className="flex justify-center gap-4 mt-16"
-        >
-          {/* <motion.button
-            whileHover={{ 
-              scale: 1.05,
-              boxShadow: "0 0 25px rgba(139, 92, 246, 0.4)"
-            }}
-            onClick={()=> navigate('/pricing')}
-            whileTap={{ scale: 0.95 }}
-            className="relative overflow-hidden bg-gradient-to-br from-purple-600 to-pink-600 text-white px-8 py-3.5 rounded-full font-semibold shadow-xl hover:shadow-purple-500/30 transition-all duration-300 group flex items-center gap-2"
-          >
-            <span className="relative z-10">Upgrade Plan</span>
-            <RiVipCrownFill className="relative z-10" />
-            <span className="absolute inset-0 bg-gradient-to-br from-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-          </motion.button> */}
+          {/* Tabs */}
+          <div className="tabs-wrapper">
+            <button
+              className={`tab-btn ${activeTab === "created" ? "active" : ""}`}
+              onClick={() => setActiveTab("created")}
+            >
+              Created
+            </button>
+            <button
+              className={`tab-btn ${activeTab === "saved" ? "active" : ""}`}
+              onClick={() => setActiveTab("saved")}
+            >
+              Saved
+            </button>
+          </div>
 
-          <motion.button
-            whileHover={{ 
-              scale: 1.05,
-              boxShadow: "0 0 25px rgba(239, 68, 68, 0.4)"
-            }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleLogout}
-            className="relative overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 text-white px-8 py-3.5 rounded-full font-semibold shadow-xl hover:shadow-gray-500/20 transition-all duration-300 group flex items-center gap-2 border border-gray-700/50"
+          {/* Boards Grid */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
           >
-            <span className="relative z-10">Logout</span>
-            <FaSignOutAlt className="relative z-10" />
-            <span className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-800 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-          </motion.button>
-        </motion.div>
+            <div className="boards-grid">
+              {/* All Movies Board */}
+              <Link to="/diary" className="board-card">
+                <div className="board-images">
+                  {/* Main large image */}
+                  <div className="board-image-main">
+                    {diaryImages[0] ? (
+                      <img src={diaryImages[0]} alt="" className="board-image" />
+                    ) : (
+                      <div className="board-image board-image-placeholder">
+                        <FiFilm size={32} />
+                      </div>
+                    )}
+                  </div>
+                  {/* Top right small image */}
+                  <div>
+                    {diaryImages[1] ? (
+                      <img src={diaryImages[1]} alt="" className="board-image" />
+                    ) : (
+                      <div className="board-image board-image-placeholder">
+                        <FiFilm size={16} />
+                      </div>
+                    )}
+                  </div>
+                  {/* Bottom right small image */}
+                  <div>
+                    {diaryImages[2] ? (
+                      <img src={diaryImages[2]} alt="" className="board-image" />
+                    ) : (
+                      <div className="board-image board-image-placeholder">
+                        <FiFilm size={16} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <h3 className="board-title">All Movies</h3>
+                <p className="board-meta">{diaryCount} movies</p>
+              </Link>
+
+              {/* Watch Later Board */}
+              <Link to="/watchlater" className="board-card">
+                <div className="board-images">
+                  <div className="board-image-main">
+                    {watchImages[0] ? (
+                      <img src={watchImages[0]} alt="" className="board-image" />
+                    ) : (
+                      <div className="board-image board-image-placeholder">
+                        <FiClock size={32} />
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    {watchImages[1] ? (
+                      <img src={watchImages[1]} alt="" className="board-image" />
+                    ) : (
+                      <div className="board-image board-image-placeholder">
+                        <FiClock size={16} />
+                      </div>
+                    )}
+                  </div>
+                  <div>
+                    {watchImages[2] ? (
+                      <img src={watchImages[2]} alt="" className="board-image" />
+                    ) : (
+                      <div className="board-image board-image-placeholder">
+                        <FiClock size={16} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <h3 className="board-title">Watch Later</h3>
+                <p className="board-meta">{watchLaterCount} movies</p>
+              </Link>
+            </div>
+
+            {/* Logout */}
+            <div className="logout-section">
+              <button onClick={handleLogout} className="logout-btn">
+                <FiLogOut size={16} />
+                Logout
+              </button>
+            </div>
+          </motion.div>
+
+          {/* Add Button */}
+          <Link to="/finder" className="add-btn">
+            <FiPlus size={24} />
+          </Link>
+        </div>
       </div>
-
-      {/* Floating decorative elements */}
-      <div className="fixed top-1/4 left-10 -translate-y-1/2 w-40 h-40 bg-purple-600/10 rounded-full filter blur-3xl opacity-30 animate-float-slow z-0"></div>
-      <div className="fixed bottom-1/3 right-10 translate-y-1/2 w-60 h-60 bg-amber-600/10 rounded-full filter blur-3xl opacity-30 animate-float-reverse-slow z-0"></div>
-    </div>
+    </>
   );
 }

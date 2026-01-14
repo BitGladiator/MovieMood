@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Film,
-  Clock,
-  TrendingUp,
-  Star,
-  Heart,
-  BarChart2,
-  Calendar,
-  ChevronRight
-} from "lucide-react";
+import { FiFilm, FiHeart, FiStar, FiClock, FiTrendingUp, FiChevronRight, FiBarChart2 } from "react-icons/fi";
 import { auth, db, logout } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
@@ -22,13 +13,22 @@ import {
   limit,
 } from "firebase/firestore";
 import { toast } from "react-hot-toast";
+import { useTheme } from "../context/ThemeContext";
 
 const dashboardStyles = `
   .dashboard-page {
     min-height: 100vh;
-    background: linear-gradient(180deg, #fdfbf9 0%, #fef5f0 50%, #faf5ff 100%);
-    padding-top: 80px;
+    padding-top: 100px;
     padding-bottom: 60px;
+    transition: background 0.3s ease;
+  }
+
+  .dashboard-page.light {
+    background: linear-gradient(180deg, #fdfbf9 0%, #fef5f0 50%, #faf5ff 100%);
+  }
+
+  .dashboard-page.dark {
+    background: radial-gradient(ellipse at top, #1e1b4b 0%, #0a0118 50%, #000000 100%);
   }
 
   .dashboard-container {
@@ -38,19 +38,21 @@ const dashboardStyles = `
   }
 
   .dashboard-header {
-    margin-bottom: 3rem;
+    margin-bottom: 2.5rem;
   }
 
   .greeting-title {
     font-size: clamp(2rem, 4vw, 2.75rem);
     font-weight: 700;
-    color: #1a1a2e;
     margin-bottom: 0.5rem;
   }
 
-  .greeting-subtitle {
-    font-size: 1.125rem;
-    color: #64748b;
+  .dashboard-page.light .greeting-title {
+    color: #1a1a2e;
+  }
+
+  .dashboard-page.dark .greeting-title {
+    color: #f8f9ff;
   }
 
   .accent-name {
@@ -60,25 +62,52 @@ const dashboardStyles = `
     background-clip: text;
   }
 
+  .greeting-subtitle {
+    font-size: 1.125rem;
+  }
+
+  .dashboard-page.light .greeting-subtitle {
+    color: #64748b;
+  }
+
+  .dashboard-page.dark .greeting-subtitle {
+    color: #c7d2fe;
+  }
+
+  /* Stats Grid */
   .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.5rem;
     margin-bottom: 3rem;
   }
 
   .stat-card {
-    background: white;
+    padding: 1.75rem;
     border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-    border: 1px solid rgba(0, 0, 0, 0.04);
     transition: all 0.3s ease;
   }
 
-  .stat-card:hover {
+  .dashboard-page.light .stat-card {
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+  }
+
+  .dashboard-page.light .stat-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .dashboard-page.dark .stat-card {
+    background: rgba(30, 27, 75, 0.5);
+    border: 1px solid rgba(167, 139, 250, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .dashboard-page.dark .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(124, 58, 237, 0.3);
   }
 
   .stat-icon {
@@ -113,16 +142,31 @@ const dashboardStyles = `
 
   .stat-label {
     font-size: 0.9375rem;
-    color: #64748b;
     margin-bottom: 0.5rem;
+  }
+
+  .dashboard-page.light .stat-label {
+    color: #64748b;
+  }
+
+  .dashboard-page.dark .stat-label {
+    color: #a5b4fc;
   }
 
   .stat-value {
     font-size: 2.25rem;
     font-weight: 700;
+  }
+
+  .dashboard-page.light .stat-value {
     color: #1a1a2e;
   }
 
+  .dashboard-page.dark .stat-value {
+    color: #f8f9ff;
+  }
+
+  /* Section */
   .section {
     margin-bottom: 3rem;
   }
@@ -137,10 +181,17 @@ const dashboardStyles = `
   .section-title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #1a1a2e;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+  }
+
+  .dashboard-page.light .section-title {
+    color: #1a1a2e;
+  }
+
+  .dashboard-page.dark .section-title {
+    color: #f8f9ff;
   }
 
   .section-title svg {
@@ -164,6 +215,7 @@ const dashboardStyles = `
     gap: 0.5rem;
   }
 
+  /* Movies Grid */
   .movies-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -171,29 +223,50 @@ const dashboardStyles = `
   }
 
   .movie-card {
-    background: white;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-    border: 1px solid rgba(0, 0, 0, 0.04);
     transition: all 0.3s ease;
   }
 
-  .movie-card:hover {
+  .dashboard-page.light .movie-card {
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+  }
+
+  .dashboard-page.light .movie-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  }
+
+  .dashboard-page.dark .movie-card {
+    background: rgba(30, 27, 75, 0.5);
+    border: 1px solid rgba(167, 139, 250, 0.2);
+  }
+
+  .dashboard-page.dark .movie-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(124, 58, 237, 0.3);
   }
 
   .movie-poster {
     width: 100%;
     aspect-ratio: 2/3;
-    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #7c3aed;
     position: relative;
     overflow: hidden;
+  }
+
+  .dashboard-page.light .movie-poster {
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+    color: #7c3aed;
+  }
+
+  .dashboard-page.dark .movie-poster {
+    background: linear-gradient(135deg, #2e1065 0%, #1e1b4b 100%);
+    color: #a78bfa;
   }
 
   .movie-poster img {
@@ -214,11 +287,18 @@ const dashboardStyles = `
   .movie-title {
     font-size: 0.9375rem;
     font-weight: 600;
-    color: #1a1a2e;
     margin-bottom: 0.5rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .dashboard-page.light .movie-title {
+    color: #1a1a2e;
+  }
+
+  .dashboard-page.dark .movie-title {
+    color: #f8f9ff;
   }
 
   .movie-meta {
@@ -240,36 +320,67 @@ const dashboardStyles = `
     font-weight: 600;
   }
 
+  /* Empty State */
   .empty-state {
-    background: white;
-    border-radius: 20px;
     padding: 3rem 2rem;
     text-align: center;
+    border-radius: 20px;
+  }
+
+  .dashboard-page.light .empty-state {
+    background: white;
     border: 2px dashed #e5e7eb;
+  }
+
+  .dashboard-page.dark .empty-state {
+    background: rgba(30, 27, 75, 0.5);
+    border: 2px dashed rgba(167, 139, 250, 0.3);
   }
 
   .empty-state-icon {
     width: 64px;
     height: 64px;
     margin: 0 auto 1rem;
-    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .dashboard-page.light .empty-state-icon {
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
     color: #7c3aed;
+  }
+
+  .dashboard-page.dark .empty-state-icon {
+    background: rgba(124, 58, 237, 0.2);
+    color: #a78bfa;
   }
 
   .empty-state-title {
     font-size: 1.125rem;
     font-weight: 600;
-    color: #1a1a2e;
     margin-bottom: 0.5rem;
   }
 
+  .dashboard-page.light .empty-state-title {
+    color: #1a1a2e;
+  }
+
+  .dashboard-page.dark .empty-state-title {
+    color: #f8f9ff;
+  }
+
   .empty-state-text {
-    color: #64748b;
     margin-bottom: 1.5rem;
+  }
+
+  .dashboard-page.light .empty-state-text {
+    color: #64748b;
+  }
+
+  .dashboard-page.dark .empty-state-text {
+    color: #a5b4fc;
   }
 
   .empty-state-btn {
@@ -277,7 +388,7 @@ const dashboardStyles = `
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
-    background: #7c3aed;
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
     color: white;
     font-weight: 600;
     border-radius: 10px;
@@ -286,15 +397,24 @@ const dashboardStyles = `
   }
 
   .empty-state-btn:hover {
-    background: #6d28d9;
+    background: linear-gradient(135deg, #6d28d9 0%, #9333ea 100%);
     transform: translateY(-2px);
   }
 
+  /* Activity Chart */
   .activity-chart {
-    background: white;
-    border-radius: 20px;
     padding: 2rem;
+    border-radius: 20px;
+  }
+
+  .dashboard-page.light .activity-chart {
+    background: white;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  }
+
+  .dashboard-page.dark .activity-chart {
+    background: rgba(30, 27, 75, 0.5);
+    border: 1px solid rgba(167, 139, 250, 0.2);
   }
 
   .chart-bars {
@@ -307,10 +427,10 @@ const dashboardStyles = `
 
   .chart-bar {
     flex: 1;
-    background: linear-gradient(180deg, #7c3aed 0%, #a855f7 100%);
     border-radius: 6px 6px 0 0;
     position: relative;
     transition: all 0.3s ease;
+    background: linear-gradient(180deg, #7c3aed 0%, #a855f7 100%);
   }
 
   .chart-bar:hover {
@@ -335,21 +455,36 @@ const dashboardStyles = `
     text-align: center;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #1a1a2e;
     opacity: 0;
     transition: opacity 0.3s ease;
+  }
+
+  .dashboard-page.light .chart-value {
+    color: #1a1a2e;
+  }
+
+  .dashboard-page.dark .chart-value {
+    color: #f8f9ff;
   }
 
   .chart-bar:hover .chart-value {
     opacity: 1;
   }
 
+  /* Loading Screen */
   .loading-screen {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .dashboard-page.light .loading-screen {
     background: linear-gradient(180deg, #fdfbf9 0%, #faf5ff 100%);
+  }
+
+  .dashboard-page.dark .loading-screen {
+    background: radial-gradient(ellipse at top, #1e1b4b 0%, #0a0118 50%, #000000 100%);
   }
 
   .loading-content {
@@ -373,8 +508,11 @@ const dashboardStyles = `
   .loading-title {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #1a1a2e;
     margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .loading-text {
@@ -387,7 +525,7 @@ const dashboardStyles = `
     }
 
     .stats-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
     }
 
     .movies-grid {
@@ -412,6 +550,7 @@ const Dashboard = () => {
 
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   function getGreeting() {
     const hour = new Date().getHours();
@@ -444,8 +583,8 @@ const Dashboard = () => {
 
         diarySnapshot.forEach((doc) => {
           const data = doc.data();
-          if (data.dateWatched) {
-            const watchedDate = new Date(data.dateWatched);
+          if (data.dateWatched || data.createdAt) {
+            const watchedDate = new Date(data.dateWatched || data.createdAt?.toDate?.() || data.createdAt);
             const monthDiff =
               (now.getFullYear() - watchedDate.getFullYear()) * 12 +
               now.getMonth() - watchedDate.getMonth();
@@ -462,7 +601,7 @@ const Dashboard = () => {
           const recentQuery = query(
             collection(db, "diary"),
             where("uid", "==", currentUser.uid),
-            orderBy("dateWatched", "desc"),
+            orderBy("createdAt", "desc"),
             limit(4)
           );
           const recentSnapshot = await getDocs(recentQuery);
@@ -475,12 +614,14 @@ const Dashboard = () => {
           const topRatedQuery = query(
             collection(db, "diary"),
             where("uid", "==", currentUser.uid),
-            where("rating", ">=", 4),
-            orderBy("rating", "desc"),
             limit(4)
           );
           const topRatedSnapshot = await getDocs(topRatedQuery);
-          topRatedMovies = topRatedSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+          topRatedMovies = topRatedSnapshot.docs
+            .map((doc) => ({ id: doc.id, ...doc.data() }))
+            .filter(m => m.IMDbRating || m.rating)
+            .sort((a, b) => (parseFloat(b.IMDbRating || b.rating || 0)) - (parseFloat(a.IMDbRating || a.rating || 0)))
+            .slice(0, 4);
         } catch (error) {
           console.warn("Error fetching top-rated movies:", error);
         }
@@ -507,11 +648,13 @@ const Dashboard = () => {
     return (
       <>
         <style>{dashboardStyles}</style>
-        <div className="loading-screen">
-          <div className="loading-content">
-            <div className="loading-spinner"></div>
-            <h2 className="loading-title">Loading Your Dashboard</h2>
-            <p className="loading-text">Preparing your personalized movie experience...</p>
+        <div className={`dashboard-page ${theme}`}>
+          <div className="loading-screen">
+            <div className="loading-content">
+              <div className="loading-spinner"></div>
+              <h2 className="loading-title">Loading Your Dashboard</h2>
+              <p className="loading-text">Preparing your personalized movie experience...</p>
+            </div>
           </div>
         </div>
       </>
@@ -521,7 +664,7 @@ const Dashboard = () => {
   return (
     <>
       <style>{dashboardStyles}</style>
-      <div className="dashboard-page">
+      <div className={`dashboard-page ${theme}`}>
         <div className="dashboard-container">
           {/* Header */}
           <motion.div
@@ -546,7 +689,7 @@ const Dashboard = () => {
           >
             <motion.div className="stat-card" whileHover={{ y: -4 }}>
               <div className="stat-icon purple">
-                <Film size={24} />
+                <FiFilm size={24} />
               </div>
               <div className="stat-label">Movies Watched</div>
               <div className="stat-value">{stats.diaryCount}</div>
@@ -554,7 +697,7 @@ const Dashboard = () => {
 
             <motion.div className="stat-card" whileHover={{ y: -4 }}>
               <div className="stat-icon pink">
-                <Heart size={24} />
+                <FiHeart size={24} />
               </div>
               <div className="stat-label">Watchlist</div>
               <div className="stat-value">{stats.watchLaterCount}</div>
@@ -562,7 +705,7 @@ const Dashboard = () => {
 
             <motion.div className="stat-card" whileHover={{ y: -4 }}>
               <div className="stat-icon amber">
-                <Star size={24} />
+                <FiStar size={24} />
               </div>
               <div className="stat-label">Top Rated</div>
               <div className="stat-value">{stats.topRated.length}</div>
@@ -570,7 +713,7 @@ const Dashboard = () => {
 
             <motion.div className="stat-card" whileHover={{ y: -4 }}>
               <div className="stat-icon blue">
-                <TrendingUp size={24} />
+                <FiTrendingUp size={24} />
               </div>
               <div className="stat-label">This Year</div>
               <div className="stat-value">
@@ -588,11 +731,11 @@ const Dashboard = () => {
           >
             <div className="section-header">
               <h2 className="section-title">
-                <Film size={24} />
+                <FiFilm size={24} />
                 Recently Added
               </h2>
               <Link to="/diary" className="view-all-link">
-                View all <ChevronRight size={16} />
+                View all <FiChevronRight size={16} />
               </Link>
             </div>
 
@@ -607,33 +750,28 @@ const Dashboard = () => {
                     transition={{ delay: 0.3 + index * 0.1 }}
                   >
                     <div className="movie-poster">
-                      {movie.poster ? (
+                      {movie.Poster && movie.Poster !== "N/A" ? (
                         <img
-                          src={`https://image.tmdb.org/t/p/w500${movie.poster}`}
-                          alt={movie.title}
+                          src={movie.Poster}
+                          alt={movie.Title || movie.title}
                           onError={(e) => {
                             e.target.style.display = 'none';
                           }}
                         />
                       ) : (
-                        <Film size={32} />
+                        <FiFilm size={32} />
                       )}
                     </div>
                     <div className="movie-info">
-                      <div className="movie-title">{movie.title || "Untitled"}</div>
+                      <div className="movie-title">{movie.Title || movie.title || "Untitled"}</div>
                       <div className="movie-meta">
                         <span className="movie-date">
-                          {movie.dateWatched
-                            ? new Date(movie.dateWatched).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                            })
-                            : "No date"}
+                          {movie.Year || movie.year || "N/A"}
                         </span>
-                        {movie.rating && (
+                        {(movie.IMDbRating || movie.rating) && (
                           <span className="movie-rating">
-                            <Star size={14} fill="currentColor" />
-                            {movie.rating}
+                            <FiStar size={14} />
+                            {movie.IMDbRating || movie.rating}
                           </span>
                         )}
                       </div>
@@ -644,14 +782,14 @@ const Dashboard = () => {
             ) : (
               <div className="empty-state">
                 <div className="empty-state-icon">
-                  <Film size={32} />
+                  <FiFilm size={32} />
                 </div>
                 <h3 className="empty-state-title">No movies yet</h3>
                 <p className="empty-state-text">
                   Start your movie journey by adding your first film
                 </p>
                 <Link to="/finder" className="empty-state-btn">
-                  <Film size={18} />
+                  <FiFilm size={18} />
                   Find Movies
                 </Link>
               </div>
@@ -668,11 +806,11 @@ const Dashboard = () => {
             >
               <div className="section-header">
                 <h2 className="section-title">
-                  <Star size={24} />
+                  <FiStar size={24} />
                   Your Top Rated
                 </h2>
                 <Link to="/diary" className="view-all-link">
-                  View all <ChevronRight size={16} />
+                  View all <FiChevronRight size={16} />
                 </Link>
               </div>
 
@@ -686,32 +824,27 @@ const Dashboard = () => {
                     transition={{ delay: 0.5 + index * 0.1 }}
                   >
                     <div className="movie-poster">
-                      {movie.poster ? (
+                      {movie.Poster && movie.Poster !== "N/A" ? (
                         <img
-                          src={`https://image.tmdb.org/t/p/w500${movie.poster}`}
-                          alt={movie.title}
+                          src={movie.Poster}
+                          alt={movie.Title || movie.title}
                           onError={(e) => {
                             e.target.style.display = 'none';
                           }}
                         />
                       ) : (
-                        <Film size={32} />
+                        <FiFilm size={32} />
                       )}
                     </div>
                     <div className="movie-info">
-                      <div className="movie-title">{movie.title || "Untitled"}</div>
+                      <div className="movie-title">{movie.Title || movie.title || "Untitled"}</div>
                       <div className="movie-meta">
                         <span className="movie-date">
-                          {movie.dateWatched
-                            ? new Date(movie.dateWatched).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                            })
-                            : "No date"}
+                          {movie.Year || movie.year || "N/A"}
                         </span>
                         <span className="movie-rating">
-                          <Star size={14} fill="currentColor" />
-                          {movie.rating}
+                          <FiStar size={14} />
+                          {movie.IMDbRating || movie.rating}
                         </span>
                       </div>
                     </div>
@@ -730,7 +863,7 @@ const Dashboard = () => {
           >
             <div className="activity-chart">
               <h2 className="section-title">
-                <BarChart2 size={24} />
+                <FiBarChart2 size={24} />
                 Your Activity
               </h2>
               <div className="chart-bars">
@@ -739,7 +872,7 @@ const Dashboard = () => {
                     month: "short",
                   });
                   const maxCount = Math.max(...stats.monthlyActivity, 1);
-                  const height = `${(count / maxCount) * 100}%`;
+                  const height = `${Math.max((count / maxCount) * 100, 4)}%`;
                   return (
                     <motion.div
                       key={index}
