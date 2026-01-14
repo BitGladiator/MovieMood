@@ -31,38 +31,42 @@ const registerStyles = `
     display: flex;
   }
 
-  /* Left Section - Visual with Wave */
+  /* Left Section - Visual with Cloud Wave */
   .visual-section {
     flex: 1;
     position: relative;
     background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #9333ea 100%);
-    clip-path: polygon(
-      0% 0%,
-      80% 0%,
-      85% 5%,
-      82% 15%,
-      85% 25%,
-      82% 35%,
-      85% 45%,
-      82% 55%,
-      85% 65%,
-      82% 75%,
-      85% 85%,
-      82% 95%,
-      80% 100%,
-      0% 100%
-    );
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: -30px;
+    overflow: visible;
+  }
+
+  .cloud-wave-container {
+    position: absolute;
+    right: -1px;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    z-index: 10;
+    overflow: visible;
+  }
+
+  .cloud-wave-container svg {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 100px;
   }
 
   .visual-content {
     text-align: center;
     color: white;
     padding: 40px;
-    margin-right: 30px;
+    padding-right: 80px;
+    position: relative;
+    z-index: 3;
   }
 
   .visual-title {
@@ -77,7 +81,6 @@ const registerStyles = `
     opacity: 0.95;
     max-width: 300px;
   }
-
   /* Right Section - Form */
   .form-section {
     flex: 1;
@@ -290,13 +293,30 @@ export default function Register() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          {/* Left - Visual with Wave */}
+          {/* Left - Visual with Cloud Wave */}
           <div className="visual-section">
             <div className="visual-content">
               <h2 className="visual-title">Welcome!</h2>
               <p className="visual-description">
                 Create your account to discover movies that match your mood and start your journey.
               </p>
+            </div>
+            {/* Cloud Wave SVG */}
+            <div className="cloud-wave-container">
+              <svg viewBox="0 0 100 520" preserveAspectRatio="none" fill="white">
+                <path d="
+                  M100,0 
+                  L100,520 
+                  L60,520
+                  C70,485 40,450 55,420
+                  C75,385 35,350 55,320
+                  C80,285 30,250 55,220
+                  C85,185 35,150 55,120
+                  C80,85 40,50 55,25
+                  C65,5 80,0 100,0
+                  Z
+                " />
+              </svg>
             </div>
           </div>
 

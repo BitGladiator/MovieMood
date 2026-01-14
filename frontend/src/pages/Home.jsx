@@ -1213,7 +1213,7 @@ export default function Home() {
               transition={{ duration: 0.6 }}
             >
               <img
-                src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=600&h=400&fit=crop"
+                src="dash.png"
                 alt="MovieMood Dashboard"
                 style={{ borderRadius: '16px', boxShadow: '0 30px 60px rgba(0,0,0,0.15)' }}
               />

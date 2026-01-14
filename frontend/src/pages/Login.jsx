@@ -202,38 +202,42 @@ const loginStyles = `
     margin-bottom: 12px;
   }
 
-  /* Right Section - Visual with Wave */
+  /* Right Section - Visual with Cloud Wave */
   .visual-section {
     flex: 1;
     position: relative;
     background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #9333ea 100%);
-    clip-path: polygon(
-      20% 0%,
-      100% 0%,
-      100% 100%,
-      20% 100%,
-      15% 95%,
-      18% 85%,
-      15% 75%,
-      18% 65%,
-      15% 55%,
-      18% 45%,
-      15% 35%,
-      18% 25%,
-      15% 15%,
-      18% 5%
-    );
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: -30px;
+    overflow: visible;
+  }
+
+  .cloud-wave-container {
+    position: absolute;
+    left: -1px;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    z-index: 10;
+    overflow: visible;
+  }
+
+  .cloud-wave-container svg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100px;
   }
 
   .visual-content {
     text-align: center;
     color: white;
     padding: 40px;
-    margin-left: 30px;
+    padding-left: 80px;
+    position: relative;
+    z-index: 3;
   }
 
   .visual-title {
@@ -371,8 +375,25 @@ export default function Login() {
             </p>
           </div>
 
-          {/* Right - Visual with Wave */}
+          {/* Right - Visual with Cloud Wave */}
           <div className="visual-section">
+            {/* Cloud Wave SVG */}
+            <div className="cloud-wave-container">
+              <svg viewBox="0 0 100 520" preserveAspectRatio="none" fill="white">
+                <path d="
+                  M0,0 
+                  L0,520 
+                  L40,520
+                  C30,485 60,450 45,420
+                  C25,385 65,350 45,320
+                  C20,285 70,250 45,220
+                  C15,185 65,150 45,120
+                  C20,85 60,50 45,25
+                  C35,5 20,0 0,0
+                  Z
+                " />
+              </svg>
+            </div>
             <div className="visual-content">
               <h2 className="visual-title">Welcome Back!</h2>
               <p className="visual-description">

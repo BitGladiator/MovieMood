@@ -582,9 +582,9 @@ const finderStyles = `
 
   /* Modal */
   .modal-overlay {
-    position: fixed;
+    position: fixed !important;
     inset: 0;
-    z-index: 50;
+    z-index: 2147483647 !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -593,7 +593,7 @@ const finderStyles = `
 
   .finder-page.light .modal-overlay {
     background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(12px);
   }
 
   .finder-page.dark .modal-overlay {

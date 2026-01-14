@@ -202,59 +202,205 @@ export default function PremiumNavbar() {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            className="mobile-nav"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
+            className="mobile-sidebar-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Mobile Sidebar */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.aside
+            className="mobile-sidebar"
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
+            transition={{ type: 'tween', duration: 0.3 }}
           >
-            <ul className="mobile-nav-links">
-              {navItems.map((item) => (
-                <li key={item.path} className="mobile-nav-item">
+            {/* Sidebar Header */}
+            <div className="sidebar-header">
+              <div className="sidebar-user-info">
+                {user ? (
+                  <span className="sidebar-username">
+                    {user.displayName || user.email?.split('@')[0] || 'User'}'s
+                  </span>
+                ) : (
+                  <span className="sidebar-username">MovieMood</span>
+                )}
+              </div>
+              <button
+                className="sidebar-close-btn"
+                onClick={() => setMenuOpen(false)}
+                aria-label="Close menu"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Quick Action */}
+            <Link
+              to="/finder"
+              className="sidebar-quick-action"
+              onClick={() => setMenuOpen(false)}
+            >
+              <span>New Mood Discovery</span>
+              <span className="sidebar-action-icon">+</span>
+            </Link>
+
+            {/* Navigation Links */}
+            <nav className="sidebar-nav">
+              {user ? (
+                <>
                   <NavLink
-                    to={item.path}
-                    className={({ isActive }) =>
-                      `mobile-nav-link ${isActive ? 'active' : ''}`
-                    }
+                    to="/dashboard"
+                    className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}
                     onClick={() => setMenuOpen(false)}
                   >
-                    <span>{item.name}</span>
+                    <Home size={20} />
+                    <span>Dashboard</span>
                   </NavLink>
-                </li>
-              ))}
-            </ul>
+                  <NavLink
+                    to="/finder"
+                    className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <Zap size={20} />
+                    <span>Finder</span>
+                  </NavLink>
+                  <NavLink
+                    to="/diary"
+                    className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <Film size={20} />
+                    <span>Diary</span>
+                  </NavLink>
+                  <NavLink
+                    to="/watchlater"
+                    className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <Bell size={20} />
+                    <span>Watchlist</span>
+                  </NavLink>
+                  <NavLink
+                    to="/pricing"
+                    className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <Crown size={20} />
+                    <span>Pricing</span>
+                  </NavLink>
+                  <NavLink
+                    to="/settings"
+                    className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <Settings size={20} />
+                    <span>Settings</span>
+                  </NavLink>
+                </>
+              ) : (
+                <>
+                  <NavLink
+                    to="/"
+                    className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <Home size={20} />
+                    <span>Home</span>
+                  </NavLink>
+                  <NavLink
+                    to="/features"
+                    className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <Zap size={20} />
+                    <span>Features</span>
+                  </NavLink>
+                  <NavLink
+                    to="/how-it-works"
+                    className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <Film size={20} />
+                    <span>Docs</span>
+                  </NavLink>
+                  <NavLink
+                    to="/pricing"
+                    className={({ isActive }) => `sidebar-nav-item ${isActive ? 'active' : ''}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <Crown size={20} />
+                    <span>Pricing</span>
+                  </NavLink>
+                </>
+              )}
+            </nav>
 
-            {!user && (
-              <div className="mobile-auth-buttons">
-                <Link to="/login" className="btn-login" onClick={() => setMenuOpen(false)}>
-                  Login
-                </Link>
-                <Link to="/register" className="btn-get-started" onClick={() => setMenuOpen(false)}>
-                  Get Started
-                </Link>
+            {/* Divider */}
+            <div className="sidebar-divider"></div>
+
+            {/* Mood Collections */}
+            <div className="sidebar-collections">
+              <div className="sidebar-collection-item">
+                <span className="collection-dot" style={{ background: '#ef4444' }}></span>
+                <span>Action & Thriller</span>
               </div>
-            )}
+              <div className="sidebar-collection-item">
+                <span className="collection-dot" style={{ background: '#3b82f6' }}></span>
+                <span>Drama & Romance</span>
+              </div>
+              <div className="sidebar-collection-item">
+                <span className="collection-dot" style={{ background: '#22c55e' }}></span>
+                <span>Comedy & Feel-Good</span>
+              </div>
+              <button className="sidebar-add-collection">
+                Add collection
+              </button>
+            </div>
 
-            {user && (
-              <div className="mobile-auth-buttons">
-                <Link to="/profile" className="btn-login" onClick={() => setMenuOpen(false)}>
-                  Profile
-                </Link>
+            {/* Auth Section at Bottom */}
+            <div className="sidebar-footer">
+              {!user ? (
+                <>
+                  <Link
+                    to="/login"
+                    className="sidebar-auth-btn sidebar-login-btn"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="sidebar-auth-btn sidebar-register-btn"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Get Started
+                  </Link>
+                </>
+              ) : (
                 <button
-                  className="btn-login"
+                  className="sidebar-auth-btn sidebar-logout-btn"
                   onClick={() => {
                     auth.signOut();
                     setMenuOpen(false);
                   }}
                 >
-                  Logout
+                  <LogOut size={18} />
+                  <span>Logout</span>
                 </button>
-              </div>
-            )}
-          </motion.div>
+              )}
+            </div>
+          </motion.aside>
         )}
       </AnimatePresence>
     </nav>
