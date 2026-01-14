@@ -1,0 +1,421 @@
+/* Premium Vibrant Dark Mode - Rich Colors & Gradients */
+
+/* Rich Dark Mode Color Variables */
+[data-theme="dark"] {
+    --bg-primary: #0a0118;
+    --bg-secondary: #1a0b2e;
+    --bg-tertiary: #2d1b4e;
+    --text-primary: #f8f9ff;
+    --text-secondary: #c7d2fe;
+    --text-muted: #a5b4fc;
+    --border-color: rgba(167, 139, 250, 0.2);
+    --shadow: 0 8px 32px rgba(124, 58, 237, 0.3);
+}
+
+[data-theme="dark"] {
+
+    /* Page backgrounds - Rich purple-tinted gradients */
+    .light-theme-page,
+    .howitworks-page,
+    .pricing-page {
+        background: radial-gradient(ellipse at top, #1e1b4b 0%, #0a0118 50%, #000000 100%) !important;
+        color: var(--text-primary) !important;
+    }
+
+    /* Hero sections - Vibrant dark with glowing purple */
+    .grovix-hero,
+    .howitworks-hero,
+    .pricing-hero {
+        background: radial-gradient(ellipse at top,
+                #2e1065 0%,
+                #1e1b4b 20%,
+                #1a0b2e 60%,
+                #0a0118 100%) !important;
+        position: relative;
+    }
+
+    /* Add subtle glow effect to hero */
+    .grovix-hero::before,
+    .howitworks-hero::before,
+    .pricing-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    /* Auth pages - Keep the good styling */
+    .login-page,
+    .register-page,
+    .auth-page {
+        background: linear-gradient(135deg, #1e1b4b 0%, #0f0a1e 100%) !important;
+    }
+
+    /* Cards - Vibrant with purple glow */
+    .feature-card,
+    .stat-card,
+    .mood-card,
+    .testimonial-card,
+    .pricing-card {
+        background: linear-gradient(135deg,
+                rgba(88, 28, 135, 0.15) 0%,
+                rgba(30, 27, 75, 0.6) 100%) !important;
+        backdrop-filter: blur(20px);
+        color: var(--text-primary) !important;
+        border: 1px solid rgba(167, 139, 250, 0.2) !important;
+        box-shadow: 0 8px 32px rgba(124, 58, 237, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .feature-card:hover,
+    .pricing-card:hover,
+    .mood-card:hover {
+        background: linear-gradient(135deg,
+                rgba(124, 58, 237, 0.25) 0%,
+                rgba(88, 28, 135, 0.4) 100%) !important;
+        border-color: rgba(167, 139, 250, 0.4) !important;
+        transform: translateY(-8px);
+        box-shadow: 0 20px 60px rgba(124, 58, 237, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    }
+
+    /* Step items for How It Works */
+    .step-item,
+    .faq-item {
+        background: linear-gradient(135deg,
+                rgba(88, 28, 135, 0.12) 0%,
+                rgba(30, 27, 75, 0.5) 100%) !important;
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(167, 139, 250, 0.15) !important;
+        box-shadow: 0 4px 20px rgba(124, 58, 237, 0.15) !important;
+    }
+
+    /* Step image boxes */
+    .step-image {
+        background: linear-gradient(135deg,
+                rgba(124, 58, 237, 0.2) 0%,
+                rgba(168, 85, 247, 0.15) 100%) !important;
+        border: 1px solid rgba(167, 139, 250, 0.3) !important;
+    }
+
+    /* Auth cards - Enhanced */
+    .login-card,
+    .register-card,
+    .auth-card {
+        background: rgba(17, 24, 39, 0.95) !important;
+        backdrop-filter: blur(30px);
+        border: 1px solid rgba(167, 139, 250, 0.2) !important;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6),
+            0 0 80px rgba(124, 58, 237, 0.15) !important;
+    }
+
+    .form-section {
+        background: rgba(17, 24, 39, 0.95) !important;
+        color: var(--text-primary) !important;
+    }
+
+    /* Text colors - Brighter and more vibrant */
+    .hero-title,
+    .section-title,
+    .form-title,
+    .auth-title,
+    .visual-title,
+    .plan-name,
+    .step-title,
+    .feature-title,
+    .faq-question,
+    .cta-title {
+        color: #f8f9ff !important;
+        text-shadow: 0 2px 20px rgba(167, 139, 250, 0.3);
+    }
+
+    .hero-subtitle,
+    .section-subtitle,
+    .form-subtitle,
+    .auth-subtitle {
+        color: #c7d2fe !important;
+    }
+
+    .plan-desc,
+    .step-desc,
+    .feature-desc,
+    .faq-answer,
+    .visual-description,
+    .visual-desc {
+        color: #a5b4fc !important;
+    }
+
+    /* Accent text - Keep vibrant */
+    .accent-text {
+        background: linear-gradient(135deg, #a78bfa 0%, #ec4899 100%) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        background-clip: text !important;
+    }
+
+    /* Input fields - Better contrast */
+    .form-input,
+    .input-field {
+        background: rgba(30, 27, 75, 0.5) !important;
+        color: #f8f9ff !important;
+        border: 1.5px solid rgba(167, 139, 250, 0.2) !important;
+    }
+
+    .form-input::placeholder,
+    .input-field::placeholder {
+        color: #8b8bb8 !important;
+    }
+
+    .form-input:focus,
+    .input-field:focus {
+        background: rgba(46, 16, 101, 0.4) !important;
+        border-color: #a78bfa !important;
+        box-shadow: 0 0 0 4px rgba(167, 139, 250, 0.1),
+            0 4px 20px rgba(167, 139, 250, 0.3) !important;
+    }
+
+    /* Buttons - Vibrant gradients */
+    .submit-btn,
+    .submit-button,
+    .btn-get-started,
+    .btn-primary,
+    .plan-button.primary {
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #ec4899 100%) !important;
+        color: white !important;
+        box-shadow: 0 4px 20px rgba(124, 58, 237, 0.5),
+            0 0 40px rgba(167, 139, 250, 0.3) !important;
+        border: none !important;
+    }
+
+    .submit-btn:hover,
+    .submit-button:hover,
+    .btn-get-started:hover,
+    .plan-button.primary:hover {
+        background: linear-gradient(135deg, #6d28d9 0%, #9333ea 50%, #db2777 100%) !important;
+        box-shadow: 0 8px 30px rgba(124, 58, 237, 0.6),
+            0 0 60px rgba(167, 139, 250, 0.4) !important;
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary,
+    .btn-login {
+        background: rgba(88, 28, 135, 0.3) !important;
+        color: #c7d2fe !important;
+        border: 1px solid rgba(167, 139, 250, 0.3) !important;
+        backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover,
+    .btn-login:hover {
+        background: rgba(124, 58, 237, 0.4) !important;
+        border-color: rgba(167, 139, 250, 0.5) !important;
+        color: #f8f9ff !important;
+    }
+
+    /* Purple gradient sections - Rich and vibrant */
+    .visual-section {
+        background: linear-gradient(135deg, #581c87 0%, #7c3aed 50%, #a855f7 100%) !important;
+    }
+
+    .wave-background {
+        background: linear-gradient(135deg, #581c87 0%, #7c3aed 50%, #a855f7 100%) !important;
+    }
+
+    /* Dropdown - Glowing effect */
+    .profile-dropdown {
+        background: rgba(26, 11, 46, 0.98) !important;
+        backdrop-filter: blur(30px);
+        border: 1px solid rgba(167, 139, 250, 0.3) !important;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8),
+            0 0 40px rgba(124, 58, 237, 0.2) !important;
+    }
+
+    .dropdown-item {
+        color: #c7d2fe !important;
+    }
+
+    .dropdown-item:hover {
+        background: rgba(124, 58, 237, 0.25) !important;
+        color: #f8f9ff !important;
+    }
+
+    .dropdown-divider {
+        background: rgba(167, 139, 250, 0.2) !important;
+    }
+
+    /* Sections - Subtle purple tint */
+    .features-section,
+    .trusted-section,
+    .faq-section {
+        background: rgba(26, 11, 46, 0.3) !important;
+        position: relative;
+    }
+
+    .features-section::before,
+    .faq-section::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at center, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    /* Stat cards - Glowing */
+    .stat-floating-card {
+        background: linear-gradient(135deg,
+                rgba(124, 58, 237, 0.2) 0%,
+                rgba(88, 28, 135, 0.3) 100%) !important;
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(167, 139, 250, 0.3) !important;
+        box-shadow: 0 8px 32px rgba(124, 58, 237, 0.3) !important;
+    }
+
+    /* Mobile menu - Rich background */
+    .mobile-nav {
+        background: rgba(26, 11, 46, 0.98) !important;
+        backdrop-filter: blur(30px);
+        border-bottom: 1px solid rgba(167, 139, 250, 0.2) !important;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8),
+            0 0 40px rgba(124, 58, 237, 0.15) !important;
+    }
+
+    .mobile-nav-link {
+        color: #c7d2fe !important;
+    }
+
+    .mobile-nav-link:hover,
+    .mobile-nav-link.active {
+        background: linear-gradient(90deg,
+                rgba(124, 58, 237, 0.2) 0%,
+                rgba(168, 85, 247, 0.15) 100%) !important;
+        color: #a78bfa !important;
+    }
+
+    /* Footer - Dark but with purple accent */
+    .footer {
+        background: linear-gradient(180deg, #0a0118 0%, #000000 100%) !important;
+        border-top: 1px solid rgba(167, 139, 250, 0.15) !important;
+    }
+
+    /* Icons - Vibrant purple */
+    .feature-icon,
+    .plan-icon,
+    .input-icon,
+    .step-icon {
+        color: #a78bfa !important;
+    }
+
+    /* Logo and branding */
+    .logo-icon {
+        color: #a78bfa !important;
+    }
+
+    /* Billing toggle */
+    .toggle-switch {
+        background: rgba(88, 28, 135, 0.4) !important;
+    }
+
+    .toggle-switch.active {
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%) !important;
+        box-shadow: 0 0 20px rgba(124, 58, 237, 0.5) !important;
+    }
+
+    .save-badge {
+        background: rgba(34, 197, 94, 0.2) !important;
+        color: #86efac !important;
+        border: 1px solid rgba(34, 197, 94, 0.3) !important;
+    }
+
+    /* Popular badge - Glowing */
+    .popular-badge {
+        background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%) !important;
+        box-shadow: 0 4px 20px rgba(236, 72, 153, 0.4) !important;
+    }
+
+    /* Number badges and step numbers */
+    .step-number {
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%) !important;
+        box-shadow: 0 4px 20px rgba(124, 58, 237, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    }
+
+    /* Feature step elements */
+    .step-feature {
+        background: rgba(88, 28, 135, 0.2) !important;
+        border: 1px solid rgba(167, 139, 250, 0.2) !important;
+        color: #c7d2fe !important;
+    }
+
+    /* Price displays */
+    .price-amount,
+    .price-currency {
+        color: #f8f9ff !important;
+    }
+
+    .price-period {
+        color: #a5b4fc !important;
+    }
+
+    /* Form options */
+    .remember-me,
+    .checkbox-label,
+    .form-options {
+        color: #a5b4fc !important;
+    }
+
+    .forgot-link,
+    .form-footer a,
+    .auth-footer a {
+        color: #c7a2fe !important;
+    }
+
+    .forgot-link:hover,
+    .form-footer a:hover,
+    .auth-footer a:hover {
+        color: #e9d5ff !important;
+    }
+
+    /* Error messages */
+    .error-message,
+    .error-box {
+        background: rgba(220, 38, 38, 0.15) !important;
+        color: #fca5a5 !important;
+        border: 1px solid rgba(220, 38, 38, 0.4) !important;
+    }
+
+    /* Add glow to interactive elements */
+    .feature-card,
+    .pricing-card,
+    .mood-card,
+    .step-item {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    /* Password toggle button */
+    .password-toggle,
+    .toggle-password {
+        color: #a5b4fc !important;
+    }
+
+    .password-toggle:hover,
+    .toggle-password:hover {
+        color: #c7d2fe !important;
+    }
+
+    /* Notification badge */
+    .notification-badge {
+        background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%) !important;
+        box-shadow: 0 0 10px rgba(236, 72, 153, 0.6) !important;
+    }
+
+    /* Profile avatar in dark mode */
+    .profile-avatar {
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%) !important;
+        box-shadow: 0 0 20px rgba(124, 58, 237, 0.5) !important;
+    }
+}
