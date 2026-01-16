@@ -294,9 +294,9 @@ export default function EntryCard({ entry, onClick, onDelete }) {
           </motion.button>
         </div>
 
-        {/* Content Section */}
+      
         <div className="card-content">
-          {/* Header with Title and Rating */}
+       
           <div className="card-header">
             <h3 className="card-title">{title}</h3>
             {rating && (
@@ -312,7 +312,7 @@ export default function EntryCard({ entry, onClick, onDelete }) {
             <p className="card-description">{plot}</p>
           )}
 
-          {/* Tags */}
+        
           <div className="card-tags">
             {rating && (
               <span className="card-tag">
