@@ -71,28 +71,7 @@ export default function PremiumNavbar() {
                 <Film className="logo-icon" />
               </div>
             </Link>
-            <div className="version-dropdown">
-              <button
-                className="version-button"
-                onClick={() => setVersionOpen(!versionOpen)}
-              >
-                v1.0
-                <ChevronDown size={14} />
-              </button>
-              <AnimatePresence>
-                {versionOpen && (
-                  <motion.div
-                    className="version-menu"
-                    initial={{ opacity: 0, y: -5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -5 }}
-                  >
-                    <div className="version-item active">v1.0 (Current)</div>
-                    <div className="version-item">v0.9</div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            
           </div>
 
           {/* Navigation Links */}
