@@ -85,7 +85,7 @@ export default function PremiumNavbar() {
                   }
                 >
                   {item.name}
-                  {item.hasDropdown && <ChevronDown size={14} className="dropdown-icon" />}
+                 
                 </NavLink>
               </li>
             ))}
