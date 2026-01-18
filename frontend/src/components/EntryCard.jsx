@@ -240,7 +240,7 @@ const entryCardStyles = `
 export default function EntryCard({ entry, onClick, onDelete }) {
   const { theme } = useTheme();
 
-  // Get display values with fallbacks
+  
   const title = entry.Title || entry.title || "Untitled";
   const year = entry.Year || entry.year || "";
   const rating = entry.IMDbRating || entry.rating || "";
@@ -250,7 +250,7 @@ export default function EntryCard({ entry, onClick, onDelete }) {
   const plot = entry.Plot || entry.plot || entry.review || "";
   const mood = entry.mood || "";
 
-  // Parse genre to get first genre
+
   const primaryGenre = genre ? genre.split(",")[0].trim() : "";
 
   // Format runtime
@@ -307,7 +307,7 @@ export default function EntryCard({ entry, onClick, onDelete }) {
             )}
           </div>
 
-          {/* Description */}
+         
           {plot && (
             <p className="card-description">{plot}</p>
           )}
@@ -334,7 +334,7 @@ export default function EntryCard({ entry, onClick, onDelete }) {
             )}
           </div>
 
-          {/* Action Button */}
+        
           <button className="card-action-btn">
             View Details
           </button>

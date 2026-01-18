@@ -243,18 +243,26 @@ const registerStyles = `
       max-width: 420px;
     }
 
+    /* Hide the purple visual section completely on mobile */
     .visual-section {
-      min-height: 200px;
-      clip-path: none;
-      margin-right: 0;
-    }
-
-    .visual-content {
-      margin-right: 0;
+      display: none;
     }
 
     .form-section {
       padding: 40px 30px;
+    }
+
+    .form-title {
+      font-size: 2rem;
+    }
+
+    .form-subtitle {
+      font-size: 0.875rem;
+    }
+
+    .submit-button {
+      width: 100%;
+      padding: 14px 20px;
     }
   }
 `;
