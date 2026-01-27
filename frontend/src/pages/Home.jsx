@@ -425,6 +425,7 @@ const lightThemeStyles = `
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
+    loading:lazy;
   }
 
   .mood-card:hover img {

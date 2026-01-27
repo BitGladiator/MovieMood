@@ -775,6 +775,58 @@ const watchLaterStyles = `
     color: #c7d2fe;
     border-color: rgba(167, 139, 250, 0.3);
   }
+
+  /* Loading State */
+  .loading-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .watchlater-page.light .loading-screen {
+    background: linear-gradient(180deg, #fdfbf9 0%, #faf5ff 100%);
+  }
+
+  .watchlater-page.dark .loading-screen {
+    background: radial-gradient(ellipse at top, #1e1b4b 0%, #0a0118 50%, #000000 100%);
+  }
+
+  .loading-content {
+    text-align: center;
+  }
+
+  .loading-spinner {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    border: 4px solid #f3e8ff;
+    border-top-color: #7c3aed;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .loading-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #7c3aed, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .watchlater-page .loading-text {
+    color: #64748b;
+  }
+
+  .watchlater-page.dark .loading-text {
+    color: #a5b4fc;
+  }
 `;
 
 export default function WatchLater() {
@@ -783,13 +835,17 @@ export default function WatchLater() {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [movieDetails, setMovieDetails] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [mood, setMood] = useState("");
   const [review, setReview] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const { theme } = useTheme();
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => setUser(u));
+    const unsub = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      if (!u) setInitialLoading(false);
+    });
     return unsub;
   }, []);
 
@@ -811,6 +867,7 @@ export default function WatchLater() {
         };
       });
       setMovies(data);
+      setInitialLoading(false);
     });
 
     return () => unsubscribe();
@@ -909,6 +966,23 @@ export default function WatchLater() {
     const avg = rated.reduce((acc, m) => acc + parseFloat(m.imdbRating), 0) / rated.length;
     return avg.toFixed(1);
   }, [movies]);
+
+  if (initialLoading) {
+    return (
+      <>
+        <style>{watchLaterStyles}</style>
+        <div className={`watchlater-page ${theme}`}>
+          <div className="loading-screen">
+            <div className="loading-content">
+              <div className="loading-spinner"></div>
+              <h2 className="loading-title">Loading Your Watchlist</h2>
+              <p className="loading-text">Preparing your movie queue...</p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   if (!user) {
     return (
