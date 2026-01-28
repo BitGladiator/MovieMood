@@ -662,11 +662,13 @@ const watchLaterStyles = `
     border-radius: 12px;
     overflow: hidden;
     margin: 0 auto;
+    display: none; /* Hide on mobile by default */
   }
 
   @media (min-width: 768px) {
     .modal-poster {
       margin: 0;
+      display: block; /* Show on desktop */
     }
   }
 
