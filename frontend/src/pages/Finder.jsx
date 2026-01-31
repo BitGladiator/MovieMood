@@ -579,7 +579,11 @@ const finderStyles = `
   .finder-page.dark .empty-state-text {
     color: #a5b4fc;
   }
-
+   @media (max-width: 768px) {
+    .spotlight-shortcuts {
+      display:none;
+    }
+  }
   /* Modal */
   .modal-overlay {
     position: fixed !important;
