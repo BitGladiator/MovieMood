@@ -362,7 +362,7 @@ const dashboardStyles = `
     font-weight: 600;
     margin-bottom: 0.5rem;
   }
-
+  
   .dashboard-page.light .empty-state-title {
     color: #1a1a2e;
   }
@@ -504,7 +504,10 @@ const dashboardStyles = `
   @keyframes spin {
     to { transform: rotate(360deg); }
   }
-
+  @media (max-width: 640px) {
+    .section-icon{
+    display:none}
+  }
   .loading-title {
     font-size: 1.5rem;
     font-weight: 700;
@@ -731,7 +734,7 @@ const Dashboard = () => {
           >
             <div className="section-header">
               <h2 className="section-title">
-                <FiFilm size={24} />
+                <FiFilm size={24} className="section-icon"/>
                 Recently Added
               </h2>
               <Link to="/diary" className="view-all-link">
@@ -806,7 +809,7 @@ const Dashboard = () => {
             >
               <div className="section-header">
                 <h2 className="section-title">
-                  <FiStar size={24} />
+                  <FiStar size={24} className="section-icon"/>
                   Your Top Rated
                 </h2>
                 <Link to="/diary" className="view-all-link">
@@ -863,7 +866,7 @@ const Dashboard = () => {
           >
             <div className="activity-chart">
               <h2 className="section-title">
-                <FiBarChart2 size={24} />
+                <FiBarChart2 size={24} className="section-icon"/>
                 Your Activity
               </h2>
               <div className="chart-bars">
