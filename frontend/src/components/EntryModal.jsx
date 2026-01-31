@@ -607,7 +607,7 @@ export default function EntryModal({ entry, onClose }) {
             {/* Review */}
             <div className="review-section">
               <div className="review-label">
-                <span>📝</span> Your Review
+                 Your Review
               </div>
               <div className="review-content">
                 {review ? (
