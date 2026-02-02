@@ -6,13 +6,13 @@ import { GiSpy } from "react-icons/gi";
 export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-950 text-gray-100 px-4 py-12 md:py-16 relative overflow-hidden">
-      {/* Animated background elements */}
+    
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute w-[1200px] h-[1200px] bg-gradient-to-br from-purple-900/20 via-indigo-900/10 to-transparent blur-[150px] rounded-full -top-1/2 -left-1/4 animate-float-slow"></div>
         <div className="absolute w-[800px] h-[800px] bg-gradient-to-br from-amber-900/10 via-rose-900/10 to-transparent blur-[120px] rounded-full -bottom-1/4 -right-1/4 animate-float-reverse-slow"></div>
       </div>
 
-      {/* Glowing particles */}
+    
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {[...Array(20)].map((_, i) => (
           <motion.div
