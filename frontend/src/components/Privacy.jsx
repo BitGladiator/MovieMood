@@ -40,7 +40,7 @@ export default function PrivacyPolicy() {
         transition={{ duration: 0.7, ease: "easeOut" }}
         className="max-w-4xl mx-auto relative z-10 bg-gray-900/80 backdrop-blur-xl border border-gray-700/50 shadow-2xl shadow-purple-500/20 rounded-3xl p-8 sm:p-10 overflow-hidden"
       >
-        {/* Header */}
+       
         <div className="text-center mb-12">
           <motion.div
             initial={{ scale: 0.9 }}
@@ -58,9 +58,9 @@ export default function PrivacyPolicy() {
           </p>
         </div>
 
-        {/* Main content */}
+      
         <div className="space-y-10">
-          {/* Section 1 */}
+        
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -91,7 +91,7 @@ export default function PrivacyPolicy() {
             </div>
           </motion.div>
 
-          {/* Section 2 */}
+
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -120,7 +120,7 @@ export default function PrivacyPolicy() {
             </div>
           </motion.div>
 
-          {/* Section 3 */}
+       
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -148,7 +148,7 @@ export default function PrivacyPolicy() {
             </div>
           </motion.div>
 
-          {/* Section 4 */}
+        
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -193,11 +193,11 @@ export default function PrivacyPolicy() {
         </div>
       </motion.div>
 
-      {/* Floating decorative elements */}
+    
       <div className="fixed top-1/4 left-10 -translate-y-1/2 w-40 h-40 bg-purple-600/10 rounded-full filter blur-3xl opacity-30 animate-float-slow z-0"></div>
       <div className="fixed bottom-1/3 right-10 translate-y-1/2 w-60 h-60 bg-amber-600/10 rounded-full filter blur-3xl opacity-30 animate-float-reverse-slow z-0"></div>
 
-      {/* Animation keyframes */}
+    
       <style jsx global>{`
         @keyframes float-slow {
           0%, 100% { transform: translateY(0) translateX(0); }

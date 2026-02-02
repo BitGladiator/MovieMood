@@ -589,11 +589,11 @@ export default function Diary() {
   const [sortOption, setSortOption] = useState("dateDesc");
   const { theme } = useTheme();
 
-  // Memoized filtered and sorted entries
+
   const filteredEntries = useMemo(() => {
     let result = [...entries];
 
-    // Filter by search query
+   
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter(entry =>
@@ -604,7 +604,7 @@ export default function Diary() {
       );
     }
 
-    // Sort options with proper null handling
+ 
     switch (sortOption) {
       case "dateAsc":
         return [...result].sort((a, b) => (new Date(a.watchedDate || a.createdAt || "1970-01-01") - new Date(b.watchedDate || b.createdAt || "1970-01-01")));
