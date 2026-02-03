@@ -64,7 +64,7 @@ export default function PremiumNavbar() {
     <nav className={`premium-navbar ${scrolled ? 'scrolled' : ''}`}>
       <div className="navbar-wrapper">
         <div className="navbar-content">
-          {/* Logo with Version */}
+      
           <div className="logo-section">
             <Link to={user ? "/dashboard" : "/"} className="logo-container">
               <div className="logo-box">
@@ -74,7 +74,7 @@ export default function PremiumNavbar() {
             
           </div>
 
-          {/* Navigation Links */}
+        
           <ul className="nav-links">
             {navItems.map((item) => (
               <li key={item.path} className="nav-item">
@@ -91,9 +91,9 @@ export default function PremiumNavbar() {
             ))}
           </ul>
 
-          {/* Right Section */}
+         
           <div className="nav-right">
-            {/* Action Icons */}
+          
             <div className="action-icons">
               <button className="action-button" aria-label="Twitter">
                 <Twitter size={18} />
@@ -106,7 +106,7 @@ export default function PremiumNavbar() {
               </button>
             </div>
 
-            {/* Auth Buttons (for non-logged in users) */}
+         
             {!user && (
               <div className="auth-buttons">
                 <Link to="/login" className="btn-login">
@@ -118,7 +118,7 @@ export default function PremiumNavbar() {
               </div>
             )}
 
-            {/* User Section (for logged in users) */}
+       
             {user && (
               <div className="user-section">
                 <button className="notifications-button">
@@ -170,7 +170,7 @@ export default function PremiumNavbar() {
               </div>
             )}
 
-            {/* Mobile Menu Toggle */}
+          
             <button
               className="mobile-toggle"
               onClick={() => setMenuOpen(!menuOpen)}
@@ -181,7 +181,7 @@ export default function PremiumNavbar() {
         </div>
       </div>
 
-      {/* Mobile Sidebar Overlay */}
+    
       <AnimatePresence>
         {menuOpen && (
           <motion.div
