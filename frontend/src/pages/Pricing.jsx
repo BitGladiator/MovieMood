@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Check, Sparkles, Crown, Zap, Star, ArrowRight } from "lucide-react";
+import { auth } from "../firebase";
 
 const lightStyles = `
   .pricing-page {
@@ -343,6 +344,26 @@ const lightStyles = `
 
 const Pricing = () => {
   const [isAnnual, setIsAnnual] = useState(true);
+  const navigate = useNavigate();
+
+  const handlePlanClick = (e, plan) => {
+    // If it's the free plan, allow redirect to register
+    if (plan.monthlyPrice === 0) {
+      return; // Let the Link handle it
+    }
+
+    // For paid plans, check authentication
+    e.preventDefault();
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+      // User is not signed in, redirect to login
+      navigate("/login");
+    } else {
+      // User is signed in, redirect to payment
+      navigate("/payment");
+    }
+  };
 
   const plans = [
     {
