@@ -3,6 +3,7 @@ import { signup } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Lock, Mail, Eye, EyeOff, User } from "lucide-react";
+import Footer from "../components/Footer";
 
 const registerStyles = `
   * {
@@ -396,6 +397,9 @@ export default function Register() {
             </p>
           </div>
         </motion.div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </>
   );

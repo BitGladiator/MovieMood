@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import Footer from '../components/Footer';
 import {
   Film,
   Search,
@@ -480,6 +481,9 @@ const HowitWorks = () => {
             </Link>
           </motion.div>
         </section>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </>
   );

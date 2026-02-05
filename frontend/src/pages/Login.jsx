@@ -3,6 +3,7 @@ import { login } from "../firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Lock, Mail, Eye, EyeOff } from "lucide-react";
+import Footer from "../components/Footer";
 
 const loginStyles = `
   * {
@@ -409,6 +410,9 @@ export default function Login() {
             </div>
           </div>
         </motion.div>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </>
   );

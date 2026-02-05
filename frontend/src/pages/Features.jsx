@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import Footer from '../components/Footer';
 import {
   Search,
   Heart,
@@ -563,6 +564,9 @@ const Features = () => {
             </Link>
           </motion.div>
         </section>
+
+        {/* Footer */}
+        <Footer />
       </div>
     </>
   );

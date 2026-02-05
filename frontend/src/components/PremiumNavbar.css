@@ -563,7 +563,7 @@
 .mobile-sidebar {
   position: fixed;
   top: 0;
-  left: 0;
+  right: 0;
   width: 280px;
   max-width: 85vw;
   height: 100vh;
@@ -571,13 +571,13 @@
   z-index: 1002;
   display: flex;
   flex-direction: column;
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.12);
   overflow-y: auto;
 }
 
 [data-theme="dark"] .mobile-sidebar {
   background: #1a1a2e;
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+  box-shadow: -4px 0 24px rgba(0, 0, 0, 0.4);
 }
 
 /* Sidebar Header */

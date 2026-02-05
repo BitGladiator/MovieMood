@@ -64,17 +64,17 @@ export default function PremiumNavbar() {
     <nav className={`premium-navbar ${scrolled ? 'scrolled' : ''}`}>
       <div className="navbar-wrapper">
         <div className="navbar-content">
-      
+
           <div className="logo-section">
             <Link to={user ? "/dashboard" : "/"} className="logo-container">
               <div className="logo-box">
                 <Film className="logo-icon" />
               </div>
             </Link>
-            
+
           </div>
 
-        
+
           <ul className="nav-links">
             {navItems.map((item) => (
               <li key={item.path} className="nav-item">
@@ -85,15 +85,15 @@ export default function PremiumNavbar() {
                   }
                 >
                   {item.name}
-                 
+
                 </NavLink>
               </li>
             ))}
           </ul>
 
-         
+
           <div className="nav-right">
-          
+
             <div className="action-icons">
               <button className="action-button" aria-label="Twitter">
                 <Twitter size={18} />
@@ -106,7 +106,7 @@ export default function PremiumNavbar() {
               </button>
             </div>
 
-         
+
             {!user && (
               <div className="auth-buttons">
                 <Link to="/login" className="btn-login">
@@ -118,7 +118,7 @@ export default function PremiumNavbar() {
               </div>
             )}
 
-       
+
             {user && (
               <div className="user-section">
                 <button className="notifications-button">
@@ -170,7 +170,7 @@ export default function PremiumNavbar() {
               </div>
             )}
 
-          
+
             <button
               className="mobile-toggle"
               onClick={() => setMenuOpen(!menuOpen)}
@@ -181,7 +181,7 @@ export default function PremiumNavbar() {
         </div>
       </div>
 
-    
+
       <AnimatePresence>
         {menuOpen && (
           <motion.div
@@ -199,9 +199,9 @@ export default function PremiumNavbar() {
         {menuOpen && (
           <motion.aside
             className="mobile-sidebar"
-            initial={{ x: '-100%' }}
+            initial={{ x: '100%' }}
             animate={{ x: 0 }}
-            exit={{ x: '-100%' }}
+            exit={{ x: '100%' }}
             transition={{ type: 'tween', duration: 0.3 }}
           >
             {/* Sidebar Header */}

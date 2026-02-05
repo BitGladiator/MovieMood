@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Mail, Phone, MapPin, Send, Clock, ChevronRight } from "lucide-react";
+import Footer from "../components/Footer";
 
 export default function Contacts() {
   const [formData, setFormData] = useState({
@@ -19,13 +20,13 @@ export default function Contacts() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     // Simulate form submission
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitStatus("success");
       setFormData({ name: "", email: "", message: "" });
-      
+
       // Reset status after 5 seconds
       setTimeout(() => setSubmitStatus(null), 5000);
     }, 1500);
@@ -80,7 +81,7 @@ export default function Contacts() {
       {/* Contact Methods */}
       <section className="py-16 bg-gray-900/50">
         <div className="container mx-auto px-6">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -118,7 +119,7 @@ export default function Contacts() {
               {/* Form Side */}
               <div className="md:w-1/2 p-8 md:p-12">
                 <h2 className="text-2xl font-bold mb-6">Send us a message</h2>
-                
+
                 {submitStatus === "success" ? (
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -250,7 +251,7 @@ export default function Contacts() {
               Visit us at our Hollywood office for a personalized experience
             </p>
           </div>
-          
+
           <div className="aspect-w-16 aspect-h-9 bg-gray-800 rounded-xl overflow-hidden border border-gray-700">
             {/* Replace with your actual map embed */}
             <div className="w-full h-96 flex items-center justify-center bg-gradient-to-br from-purple-900/20 to-gray-900">
@@ -260,6 +261,9 @@ export default function Contacts() {
           </div>
         </div>
       </section>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Check, Sparkles, Crown, Zap, Star, ArrowRight } from "lucide-react";
 import { auth } from "../firebase";
+import Footer from "../components/Footer";
 
 const lightStyles = `
   .pricing-page {
@@ -568,6 +569,9 @@ const Pricing = () => {
             ))}
           </div>
         </section >
+
+        {/* Footer */}
+        <Footer />
       </div >
     </>
   );
