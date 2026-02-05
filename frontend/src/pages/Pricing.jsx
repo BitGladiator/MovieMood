@@ -530,6 +530,7 @@ const Pricing = () => {
                 <Link
                   to={plan.monthlyPrice === 0 ? "/register" : "/payment"}
                   className={`plan-button ${plan.buttonClass}`}
+                  onClick={(e) => handlePlanClick(e, plan)}
                 >
                   {plan.buttonText}
                   <ArrowRight className="w-4 h-4" />
@@ -537,10 +538,10 @@ const Pricing = () => {
               </motion.div>
             ))}
           </div>
-        </section>
+        </section >
 
         {/* FAQ Section */}
-        <section className="faq-section">
+        < section className="faq-section" >
           <div className="faq-header">
             <motion.h2
               className="faq-title"
@@ -566,8 +567,8 @@ const Pricing = () => {
               </motion.div>
             ))}
           </div>
-        </section>
-      </div>
+        </section >
+      </div >
     </>
   );
 };
