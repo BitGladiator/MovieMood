@@ -399,7 +399,7 @@ export default function Register() {
         </motion.div>
 
         {/* Footer */}
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </>
   );

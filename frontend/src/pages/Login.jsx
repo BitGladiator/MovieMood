@@ -412,7 +412,7 @@ export default function Login() {
         </motion.div>
 
         {/* Footer */}
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </>
   );
