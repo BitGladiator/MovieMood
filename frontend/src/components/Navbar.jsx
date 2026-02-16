@@ -94,7 +94,7 @@ export default function PremiumNavbar() {
 
           <div className="nav-right">
 
-            <div className="action-icons">
+            {/* <div className="action-icons">
               <button className="action-button" aria-label="Twitter">
                 <Twitter size={18} />
               </button>
@@ -104,7 +104,7 @@ export default function PremiumNavbar() {
               <button className="action-button" aria-label="Discord">
                 <MessageCircle size={18} />
               </button>
-            </div>
+            </div> */}
 
 
             {!user && (
